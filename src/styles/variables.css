@@ -1,0 +1,37 @@
+:root {
+  /* App background (from task brief) */
+  --veloop-bg: #161827;
+  --veloop-bg-elevated: #1e2138;
+  --veloop-bg-card: #1c1f33;
+
+  /* Premium palette — navy / charcoal / gold / silver / soft purple */
+  --veloop-navy: #232640;
+  --veloop-charcoal: #2a2d3e;
+  --veloop-gold: #f0b90b;
+  --veloop-gold-light: #ffd75e;
+  --veloop-silver: #c9ced9;
+  --veloop-purple: #8b7cf6;
+  --veloop-white: #f5f6fa;
+
+  /* Text */
+  --veloop-text-primary: #f5f6fa;
+  --veloop-text-secondary: #9a9db3;
+  --veloop-text-muted: #6b6e85;
+
+  /* Play Now button */
+  --veloop-btn-bg: linear-gradient(135deg, #f0b90b, #ffd75e);
+  --veloop-btn-text: #161827;
+  --veloop-btn-shadow: 0 4px 14px rgba(240, 185, 11, 0.35);
+
+  /* Card */
+  --veloop-card-radius: 16px;
+  --veloop-card-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  --veloop-card-border: 1px solid rgba(255, 255, 255, 0.06);
+
+  /* Spacing */
+  --veloop-space-xs: 4px;
+  --veloop-space-sm: 8px;
+  --veloop-space-md: 16px;
+  --veloop-space-lg: 24px;
+  --veloop-space-xl: 32px;
+}

@@ -1,0 +1,48 @@
+.nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  z-index: 50;
+}
+
+.light {
+  background: #ffffff;
+  border-top: 1px solid #eceef3;
+  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.06);
+}
+
+.dark {
+  background: var(--veloop-bg-elevated);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.3);
+}
+
+.navItem {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 10px 0 12px;
+  text-decoration: none;
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+.light .navItem {
+  color: #9a9db3;
+}
+
+.dark .navItem {
+  color: var(--veloop-text-secondary);
+}
+
+.navItem span:first-child {
+  font-size: 1.1rem;
+}
+
+.active {
+  color: var(--veloop-gold) !important;
+}

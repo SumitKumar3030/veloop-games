@@ -1,0 +1,257 @@
+.page {
+  min-height: 100vh;
+  background: var(--veloop-bg);
+  color: var(--veloop-text-primary);
+  padding-bottom: 90px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  background: var(--veloop-bg-elevated);
+  border-bottom: var(--veloop-card-border);
+}
+
+.backLink {
+  color: var(--veloop-text-primary);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.pageTitle {
+  font-size: 1.1rem;
+  font-weight: 800;
+  margin: 0;
+}
+
+.balanceBanner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 28px 20px;
+}
+
+.balanceIcon {
+  width: 32px;
+  height: auto;
+}
+
+.balanceValue {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--veloop-gold);
+}
+
+.balanceLabel {
+  font-size: 0.9rem;
+  color: var(--veloop-text-secondary);
+  align-self: flex-end;
+  margin-bottom: 6px;
+}
+
+.successToast {
+  text-align: center;
+  background: rgba(79, 156, 99, 0.15);
+  color: #7ee0a0;
+  font-weight: 700;
+  padding: 10px;
+  margin: 0 20px 12px;
+  border-radius: 12px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 14px;
+  padding: 0 20px;
+}
+
+.card {
+  background: var(--veloop-bg-card);
+  border: var(--veloop-card-border);
+  border-radius: var(--veloop-card-radius);
+  padding: 20px 14px;
+  text-align: center;
+  box-shadow: var(--veloop-card-shadow);
+}
+
+.cardIcon {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+}
+
+.inlineIcon {
+  width: 16px;
+  height: auto;
+  vertical-align: middle;
+  display: inline-block;
+  margin: 0 2px;
+}
+
+.cardTitle {
+  font-weight: 700;
+  margin: 10px 0 2px;
+  font-size: 0.9rem;
+  color: var(--veloop-text-primary);
+}
+
+.cardDesc {
+  font-size: 0.75rem;
+  color: var(--veloop-text-secondary);
+  margin: 0 0 14px;
+}
+
+.redeemBtn {
+  width: 100%;
+  padding: 9px;
+  border: none;
+  border-radius: 999px;
+  background: var(--veloop-btn-bg);
+  color: var(--veloop-btn-text);
+  font-weight: 700;
+  font-size: 0.8rem;
+  cursor: pointer;
+  box-shadow: var(--veloop-btn-shadow);
+}
+
+.redeemBtn:active {
+  transform: scale(0.97);
+}
+
+.historySection {
+  margin-top: 28px;
+  padding: 0 20px;
+}
+
+.historyTitle {
+  font-size: 0.95rem;
+  font-weight: 800;
+  margin-bottom: 10px;
+  color: var(--veloop-text-primary);
+}
+
+.historyList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.historyItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--veloop-bg-card);
+  border: var(--veloop-card-border);
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 0.8rem;
+  color: var(--veloop-text-primary);
+}
+
+.historyLine {
+  display: flex;
+  align-items: center;
+}
+
+.historyWhen {
+  color: var(--veloop-text-muted);
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 200;
+}
+
+.modal {
+  background: var(--veloop-bg-elevated);
+  border: var(--veloop-card-border);
+  border-radius: 20px;
+  padding: 28px 24px;
+  max-width: 320px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+  color: var(--veloop-text-primary);
+}
+
+.modalTitle {
+  font-weight: 800;
+  font-size: 1.05rem;
+  margin: 0 0 12px;
+}
+
+.modalText {
+  font-size: 0.9rem;
+  color: var(--veloop-text-secondary);
+  line-height: 1.7;
+  margin: 0 0 12px;
+}
+
+.modalHighlight {
+  color: var(--veloop-text-primary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.remaining {
+  font-size: 0.8rem;
+  color: var(--veloop-text-muted);
+  margin-bottom: 18px;
+}
+
+.modalActions {
+  display: flex;
+  gap: 10px;
+}
+
+.cancelBtn,
+.confirmBtn,
+.playGamesBtn {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.cancelBtn {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--veloop-text-primary);
+}
+
+.confirmBtn,
+.playGamesBtn {
+  background: var(--veloop-btn-bg);
+  color: var(--veloop-btn-text);
+}
+
+.insufficientTitle {
+  font-weight: 800;
+  font-size: 1.05rem;
+  color: #ff6b6b;
+  margin: 0 0 12px;
+}
+
+.hint {
+  font-size: 0.8rem;
+  color: var(--veloop-text-secondary);
+  margin-bottom: 18px;
+}

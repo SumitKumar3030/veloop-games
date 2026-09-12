@@ -1,0 +1,242 @@
+.wrapper {
+  width: 100%;
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: var(--veloop-space-lg) 0;
+}
+
+.heading {
+  padding: 0 var(--veloop-space-lg);
+  margin-bottom: var(--veloop-space-md);
+}
+
+.eyebrow {
+  color: var(--veloop-gold);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin: 0 0 4px 0;
+}
+
+.title {
+  color: var(--veloop-text-primary);
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+
+/* =========================================
+   CAROUSEL
+========================================= */
+
+.track {
+  position: relative;
+
+  display: flex;
+  gap: 16px;
+
+  overflow-x: auto;
+
+  padding: 18px var(--veloop-space-lg) 20px;
+
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+
+  cursor: grab;
+
+  /*
+    Prevent browser from taking over
+    horizontal gestures.
+  */
+  touch-action: pan-x;
+
+  /*
+    Smooth visual movement
+  */
+  scroll-behavior: smooth;
+}
+
+.track::-webkit-scrollbar {
+  display: none;
+}
+
+
+/* =========================================
+   CARD WRAPPER
+========================================= */
+
+.cardWrapper {
+  flex: 0 0 auto;
+
+  /*
+    Center cards look slightly bigger
+    than edge cards.
+  */
+  transform: scale(0.94);
+
+  opacity: 0.98;
+
+  transition:
+    transform 0.45s ease,
+    opacity 0.45s ease,
+    filter 0.45s ease;
+}
+
+
+/*
+  Cards get a little more emphasis
+  when hovering.
+*/
+.cardWrapper:hover {
+  transform: scale(1);
+  opacity: 1.1;
+}
+
+
+/* =========================================
+   DRAGGING
+========================================= */
+
+.dragging {
+  cursor: grabbing;
+}
+
+.dragging .cardWrapper {
+  transition: none;
+}
+
+.dragging .cardWrapper:hover {
+  transform: scale(0.94);
+}
+
+
+/* =========================================
+   EDGE FADE
+========================================= */
+
+/*
+  The mask creates a smooth fade at both
+  left and right edges.
+
+  Middle remains fully visible.
+*/
+
+.track {
+  mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    black 7%,
+    black 93%,
+    transparent 100%
+  );
+
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    black 7%,
+    black 93%,
+    transparent 100%
+  );
+}
+
+
+/* =========================================
+   DOTS
+========================================= */
+
+.dots {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  gap: 8px;
+
+  margin-top: var(--veloop-space-md);
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+
+  border-radius: 50%;
+  border: none;
+
+  background: rgba(255, 255, 255, 0.2);
+
+  cursor: pointer;
+  padding: 0;
+
+  transition:
+    background 0.25s ease,
+    width 0.25s ease,
+    transform 0.25s ease;
+}
+
+.dot:hover {
+  transform: scale(1.2);
+}
+
+.dotActive {
+  background: var(--veloop-gold);
+
+  width: 20px;
+
+  border-radius: 4px;
+}
+
+.dot:focus-visible {
+  outline: 2px solid var(--veloop-gold);
+  outline-offset: 3px;
+}
+
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 768px) {
+  .track {
+    gap: 12px;
+
+    padding-left: 20px;
+    padding-right: 20px;
+
+    mask-image: linear-gradient(
+      to right,
+      transparent 0%,
+      black 5%,
+      black 95%,
+      transparent 100%
+    );
+
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent 0%,
+      black 5%,
+      black 95%,
+      transparent 100%
+    );
+  }
+
+  .cardWrapper {
+    transform: scale(0.96);
+    opacity: 0.85;
+  }
+}
+
+
+/* =========================================
+   REDUCED MOTION
+========================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .cardWrapper {
+    transition: none;
+  }
+
+  .track {
+    scroll-behavior: smooth;
+  }
+}

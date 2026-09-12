@@ -1,0 +1,79 @@
+.card {
+  position: relative;
+  width: 300px;
+  height: auto;
+  flex: 0 0 auto;
+  border-radius: var(--veloop-card-radius);
+  overflow: hidden;
+  background: var(--veloop-bg-card);
+  border: var(--veloop-card-border);
+  box-shadow: var(--veloop-card-shadow);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.card:active {
+  transform: scale(0.98);
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.5);
+}
+
+/* Image area — game artwork only, per task brief */
+.imageWrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  background: var(--veloop-navy);
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+
+/* Coded bottom strip — Play Now section */
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px 14px;
+  background: var(--veloop-bg-elevated);
+  border-top: var(--veloop-card-border);
+}
+
+/* Token cost pill (shared by TokenCost.jsx) */
+.tokenCost {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--veloop-silver);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.tokenIcon {
+  width: 30px;
+  height: auto;
+  display: block;
+}
+
+.tokenText {
+  white-space: nowrap;
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  .card {
+    width: 220px;
+  }
+}
