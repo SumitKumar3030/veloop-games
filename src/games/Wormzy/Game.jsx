@@ -1,231 +1,566 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+"use client";
+
 import {
-  BOARD_SIZE,
-  TICK_MS,
-  COUNTDOWN_SECONDS,
-  createInitialSnake,
-  randomEmptyCell,
-  createPortals,
-  tick,
-  isOpposite,
-  reviveSnake,
-  calculateReward,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+
+import {
+  COLS,
+  ROWS,
+  KEY_TO_DIRECTION,
+  calculateScore,
+  calculateStars,
+  createLevelState,
+  getCellKey,
+  getCellType,
+  getTotalLevels,
+  moveWorm,
 } from "./logic";
-import GameOver from "../../components/games/GameOver";
+
 import styles from "./Game.module.css";
 
-function WormzyGame({ onGameEnd }) {
-  const [snake, setSnake] = useState(createInitialSnake);
-  const [food, setFood] = useState(() => randomEmptyCell(createInitialSnake()));
-  const [portals, setPortals] = useState(() =>
-    createPortals(createInitialSnake(), food)
-  );
-  const [score, setScore] = useState(0);
-  const [gameOver, setGameOver] = useState(false);
-  const [hasUsedRevive, setHasUsedRevive] = useState(false);
-  const [phase, setPhase] = useState("idle"); // idle -> counting -> playing
-  const [countdown, setCountdown] = useState(COUNTDOWN_SECONDS);
+const COUNTDOWN_SECONDS = 3;
 
-  const directionRef = useRef("right");
-  const nextDirectionRef = useRef("right"); // buffered — prevents double-turns within one tick
+function WormzyGame({ onGameEnd }) {
+  const gameRef = useRef(null);
   const touchStartRef = useRef(null);
 
-  const setDirection = useCallback((newDir) => {
-    if (isOpposite(newDir, directionRef.current)) return; // can't reverse into self
-    nextDirectionRef.current = newDir;
+  const [levelIndex, setLevelIndex] = useState(0);
+  const [gameState, setGameState] = useState(() =>
+    createLevelState(0),
+  );
+
+  const [phase, setPhase] = useState("idle");
+  const [countdown, setCountdown] = useState(COUNTDOWN_SECONDS);
+  const [elapsedSeconds, setElapsedSeconds] = useState(0);
+  const [showHowToPlay, setShowHowToPlay] = useState(false);
+  const [screenShake, setScreenShake] = useState(false);
+
+  const totalLevels = getTotalLevels();
+
+  const score = calculateScore(gameState, elapsedSeconds);
+  const stars = calculateStars(gameState, elapsedSeconds);
+
+  const enterFullscreen = useCallback(async () => {
+    try {
+      if (
+        !document.fullscreenElement &&
+        gameRef.current &&
+        document.fullscreenEnabled
+      ) {
+        await gameRef.current.requestFullscreen();
+      }
+    } catch (error) {
+      console.warn("Fullscreen was not available:", error);
+    }
   }, []);
 
-  const handlePlay = () => {
-    setCountdown(COUNTDOWN_SECONDS);
-    setPhase("counting");
-  };
+  const startLevel = useCallback(
+    async (nextLevelIndex = levelIndex) => {
+      await enterFullscreen();
 
-  // 3-second countdown after Play is tapped
+      setLevelIndex(nextLevelIndex);
+      setGameState(createLevelState(nextLevelIndex));
+      setElapsedSeconds(0);
+      setCountdown(COUNTDOWN_SECONDS);
+      setPhase("counting");
+      setShowHowToPlay(false);
+      setScreenShake(false);
+    },
+    [enterFullscreen, levelIndex],
+  );
+
   useEffect(() => {
-    if (phase !== "counting") return;
+    if (phase !== "counting") {
+      return undefined;
+    }
 
-    const t = setTimeout(() => {
+    const timer = setTimeout(() => {
       if (countdown === 0) {
         setPhase("playing");
       } else {
-        setCountdown((c) => c - 1);
+        setCountdown((current) => current - 1);
       }
-    }, 1000);
+    }, countdown === 0 ? 700 : 1000);
 
-    return () => clearTimeout(t);
+    return () => clearTimeout(timer);
   }, [phase, countdown]);
 
-  // Keyboard controls
   useEffect(() => {
-    const onKeyDown = (e) => {
-      const keyMap = {
-        ArrowUp: "up",
-        ArrowDown: "down",
-        ArrowLeft: "left",
-        ArrowRight: "right",
-      };
-      if (keyMap[e.key]) {
-        e.preventDefault();
-        setDirection(keyMap[e.key]);
+    if (phase !== "playing") {
+      return undefined;
+    }
+
+    const timer = setInterval(() => {
+      setElapsedSeconds((current) => current + 1);
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [phase]);
+
+  useEffect(() => {
+    if (!gameState.completed) {
+      return;
+    }
+
+    setPhase("complete");
+  }, [gameState.completed]);
+
+  const handleMove = useCallback(
+    (direction) => {
+      if (phase !== "playing" || gameState.completed) {
+        return;
       }
-    };
-    window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
-  }, [setDirection]);
 
-  // Game loop
-  useEffect(() => {
-    if (gameOver || phase !== "playing") return;
+      setGameState((currentState) => {
+        const nextState = moveWorm(currentState, direction);
 
-    const interval = setInterval(() => {
-      directionRef.current = nextDirectionRef.current;
+        if (nextState.invalidMove) {
+          setScreenShake(true);
 
-      setSnake((prevSnake) => {
-        setFood((prevFood) => {
-          const result = tick(prevSnake, directionRef.current, prevFood, portals);
+          setTimeout(() => {
+            setScreenShake(false);
+          }, 180);
+        }
 
-          if (result.crashed) {
-            setGameOver(true);
-            return prevFood;
-          }
-
-          if (result.ate) {
-            setScore((s) => s + 10);
-            setSnake(result.snake);
-            const nextFood = randomEmptyCell(result.snake, portals);
-            setPortals(createPortals(result.snake, nextFood));
-            return nextFood;
-          }
-
-          setSnake(result.snake);
-          return prevFood;
-        });
-        return prevSnake; // actual snake update happens inside setFood callback above
+        return nextState;
       });
-    }, TICK_MS);
+    },
+    [phase, gameState.completed],
+  );
 
-    return () => clearInterval(interval);
-  }, [gameOver, phase, portals]);
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      const direction = KEY_TO_DIRECTION[event.key];
 
-  // Touch swipe
-  const handleTouchStart = (e) => {
-    const t = e.touches[0];
-    touchStartRef.current = { x: t.clientX, y: t.clientY };
+      if (!direction) {
+        return;
+      }
+
+      event.preventDefault();
+      handleMove(direction);
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [handleMove]);
+
+  const handleTouchStart = (event) => {
+    const touch = event.touches[0];
+
+    touchStartRef.current = {
+      x: touch.clientX,
+      y: touch.clientY,
+    };
   };
 
-  const handleTouchEnd = (e) => {
-    if (!touchStartRef.current) return;
-    const t = e.changedTouches[0];
-    const dx = t.clientX - touchStartRef.current.x;
-    const dy = t.clientY - touchStartRef.current.y;
-    const absDx = Math.abs(dx);
-    const absDy = Math.abs(dy);
-    if (Math.max(absDx, absDy) < 20) return;
-
-    if (absDx > absDy) {
-      setDirection(dx > 0 ? "right" : "left");
-    } else {
-      setDirection(dy > 0 ? "down" : "up");
+  const handleTouchEnd = (event) => {
+    if (!touchStartRef.current) {
+      return;
     }
+
+    const touch = event.changedTouches[0];
+
+    const deltaX = touch.clientX - touchStartRef.current.x;
+    const deltaY = touch.clientY - touchStartRef.current.y;
+
+    const absoluteX = Math.abs(deltaX);
+    const absoluteY = Math.abs(deltaY);
+    const swipeThreshold = 25;
+
+    if (
+      Math.max(absoluteX, absoluteY) < swipeThreshold
+    ) {
+      touchStartRef.current = null;
+      return;
+    }
+
+    if (absoluteX > absoluteY) {
+      handleMove(deltaX > 0 ? "right" : "left");
+    } else {
+      handleMove(deltaY > 0 ? "down" : "up");
+    }
+
     touchStartRef.current = null;
   };
 
-  const handleRevive = () => {
-    const fresh = createInitialSnake();
-    const freshFood = randomEmptyCell(fresh);
-    setSnake(fresh);
-    setFood(freshFood);
-    setPortals(createPortals(fresh, freshFood));
-    directionRef.current = "right";
-    nextDirectionRef.current = "right";
-    setGameOver(false);
-    setHasUsedRevive(true);
+  const handleRestart = () => {
+    startLevel(levelIndex);
   };
 
-  const handleNoThanks = () => {
-    const reward = calculateReward(score);
-    onGameEnd(reward);
-  };
+  const handleNextLevel = () => {
+    const nextLevel = levelIndex + 1;
 
-  const snakeSet = new Set(snake.map((s) => `${s.x},${s.y}`));
-  const headKey = `${snake[0].x},${snake[0].y}`;
-  const portalKeys = portals.map((p) => `${p.x},${p.y}`);
+    if (nextLevel >= totalLevels) {
+      if (onGameEnd) {
+        onGameEnd({
+          score,
+          stars,
+          level: levelIndex + 1,
+        });
+      }
 
-  const cells = [];
-  for (let y = 0; y < BOARD_SIZE; y++) {
-    for (let x = 0; x < BOARD_SIZE; x++) {
-      const key = `${x},${y}`;
-      let cls = styles.cell;
-      if (key === headKey) cls = `${styles.cell} ${styles.snakeHead}`;
-      else if (snakeSet.has(key)) cls = `${styles.cell} ${styles.snakeBody}`;
-      else if (food.x === x && food.y === y) cls = `${styles.cell} ${styles.food}`;
-      else if (portalKeys.includes(key)) cls = `${styles.cell} ${styles.portal}`;
-      cells.push(<div key={key} className={cls} />);
+      setPhase("finished");
+      return;
     }
-  }
+
+    startLevel(nextLevel);
+  };
+
+  const renderCellContent = (cellType) => {
+    switch (cellType) {
+      case "wormHead":
+        return <span className={styles.wormHead}>👀</span>;
+
+      case "wormBody":
+        return <span className={styles.wormBody} />;
+
+      case "apple":
+        return <span className={styles.apple}>🍎</span>;
+
+      case "hole":
+        return <span className={styles.hole}>🕳️</span>;
+
+      case "block":
+        return <span className={styles.stone}>🪨</span>;
+
+      case "blockOnTarget":
+        return <span className={styles.stone}>🪨</span>;
+
+      default:
+        return null;
+    }
+  };
+
+  const renderBoard = () => {
+    const cells = [];
+
+    for (let row = 0; row < ROWS; row += 1) {
+      for (let col = 0; col < COLS; col += 1) {
+        const cellType = getCellType(gameState, row, col);
+        const cellKey = getCellKey(row, col);
+
+        const isBlockOnTarget = cellType === "blockOnTarget";
+
+        cells.push(
+          <div
+            key={cellKey}
+            className={`${styles.cell} ${
+              styles[`cell${cellType}`] || ""
+            } ${isBlockOnTarget ? styles.cellSolved : ""}`}
+          >
+            {renderCellContent(cellType)}
+          </div>,
+        );
+      }
+    }
+
+    return cells;
+  };
 
   return (
-    <div className={styles.wrapper}>
-      <div className={styles.hud}>
-        <div className={styles.scoreBox}>
-          <div className={styles.scoreLabel}>Score</div>
-          <div className={styles.scoreValue}>{score}</div>
-        </div>
-      </div>
+    <main
+      ref={gameRef}
+      className={`${styles.gameContainer} ${
+        screenShake ? styles.screenShake : ""
+      }`}
+    >
+      <div className={styles.backgroundDecor}>
+  <span className={`${styles.cloud} ${styles.cloudOne}`}>☁️</span>
+  <span className={`${styles.cloud} ${styles.cloudTwo}`}>☁️</span>
 
-      <div className={styles.boardWrap}>
-        <div
-          className={styles.board}
-          style={{
-            gridTemplateColumns: `repeat(${BOARD_SIZE}, 1fr)`,
-            gridTemplateRows: `repeat(${BOARD_SIZE}, 1fr)`,
-          }}
-          onTouchStart={handleTouchStart}
-          onTouchEnd={handleTouchEnd}
-        >
-          {cells}
-        </div>
+  <span className={`${styles.tree} ${styles.treeOne}`}>🌲</span>
+  <span className={`${styles.tree} ${styles.treeTwo}`}>🌳</span>
+  <span className={`${styles.tree} ${styles.treeThree}`}>🌲</span>
+</div>
 
-        {phase !== "playing" && (
-          <div className={styles.overlay}>
-            {phase === "idle" && (
-              <button className={styles.playBtn} onClick={handlePlay}>
-                Play Now
-              </button>
+      <section className={styles.game}>
+        <header className={styles.header}>
+          <div>
+            <p className={styles.eyebrow}>PUZZLE ADVENTURE</p>
+            <h1 className={styles.title}>Wormzy</h1>
+            <p className={styles.subtitle}>
+              Eat. Push. Escape.
+            </p>
+          </div>
+
+          <div className={styles.levelBadge}>
+            <span>LEVEL</span>
+            <strong>
+              {levelIndex + 1}/{totalLevels}
+            </strong>
+          </div>
+        </header>
+
+        <section className={styles.stats}>
+          <div className={styles.statBox}>
+            <span className={styles.statLabel}>MOVES</span>
+            <strong>{gameState.moves}</strong>
+          </div>
+
+          <div className={styles.statBox}>
+            <span className={styles.statLabel}>TIME</span>
+            <strong>{elapsedSeconds}s</strong>
+          </div>
+
+          <div className={styles.statBox}>
+            <span className={styles.statLabel}>STARS</span>
+            <strong>
+              {stars > 0 ? "★".repeat(stars) : "—"}
+            </strong>
+          </div>
+        </section>
+
+        <section className={styles.levelInfo}>
+          <div>
+            <p className={styles.levelTitle}>
+              {gameState.levelName}
+            </p>
+            <p className={styles.levelDescription}>
+              {gameState.description}
+            </p>
+          </div>
+
+          <div className={styles.objective}>
+            <span>🍎</span>
+            <span>→</span>
+            <span>🕳️</span>
+          </div>
+        </section>
+
+        <section className={styles.boardSection}>
+          <div
+            className={styles.board}
+            style={{
+              gridTemplateColumns: `repeat(${COLS}, 1fr)`,
+              gridTemplateRows: `repeat(${ROWS}, 1fr)`,
+            }}
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
+          >
+            {renderBoard()}
+
+            {phase !== "playing" && (
+              <div className={styles.overlay}>
+                {phase === "idle" && (
+                  <div className={styles.startPanel}>
+                    <div className={styles.logoWorm}>🐛</div>
+
+                    <h2>Welcome to Wormzy</h2>
+
+                    <p>
+                      Guide the worm, collect the apple,
+                      solve the stone puzzle, and reach the hole.
+                    </p>
+
+                    <div className={styles.overlayButtons}>
+                      <button
+                        type="button"
+                        className={styles.primaryButton}
+                        onClick={() => startLevel(levelIndex)}
+                      >
+                        <span>▶</span>
+                        Play
+                      </button>
+
+                      <button
+                        type="button"
+                        className={styles.secondaryButton}
+                        onClick={() => setShowHowToPlay(true)}
+                      >
+                        How to Play
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {phase === "counting" && (
+                  <div className={styles.countdown}>
+                    {countdown === 0 ? "GO!" : countdown}
+                  </div>
+                )}
+
+                {phase === "complete" && (
+                  <div className={styles.completePanel}>
+                    <div className={styles.completeIcon}>🎉</div>
+
+                    <h2>Level Complete!</h2>
+
+                    <div className={styles.resultStars}>
+                      {"★".repeat(stars)}
+                      <span>{"★".repeat(3 - stars)}</span>
+                    </div>
+
+                    <p className={styles.resultScore}>
+                      Score: <strong>{score}</strong>
+                    </p>
+
+                    <p className={styles.resultDetails}>
+                      Completed in {gameState.moves} moves
+                      and {elapsedSeconds} seconds.
+                    </p>
+
+                    <div className={styles.overlayButtons}>
+                      <button
+                        type="button"
+                        className={styles.primaryButton}
+                        onClick={handleNextLevel}
+                      >
+                        {levelIndex + 1 >= totalLevels
+                          ? "Finish Game"
+                          : "Next Level"}
+                      </button>
+
+                      <button
+                        type="button"
+                        className={styles.secondaryButton}
+                        onClick={handleRestart}
+                      >
+                        Replay
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {phase === "finished" && (
+                  <div className={styles.completePanel}>
+                    <div className={styles.completeIcon}>🏆</div>
+
+                    <h2>All Levels Complete!</h2>
+
+                    <p>
+                      You completed the entire Wormzy adventure.
+                    </p>
+
+                    <button
+                      type="button"
+                      className={styles.primaryButton}
+                      onClick={() => startLevel(0)}
+                    >
+                      Play Again
+                    </button>
+                  </div>
+                )}
+              </div>
             )}
-            {phase === "counting" && (
-              <div className={styles.countdown} key={countdown}>
-                {countdown === 0 ? "GO!" : countdown}
+
+            {showHowToPlay && (
+              <div className={styles.overlay}>
+                <div className={styles.instructionsPanel}>
+                  <h2>How to Play</h2>
+
+                  <div className={styles.instructionItem}>
+                    <span>🐛</span>
+                    <p>Move Wormzy using arrow keys or swipe.</p>
+                  </div>
+
+                  <div className={styles.instructionItem}>
+                    <span>🍎</span>
+                    <p>Eat the apple to make Wormzy longer.</p>
+                  </div>
+
+                  <div className={styles.instructionItem}>
+                    <span>🪨</span>
+                    <p>Push stones onto the glowing target areas.</p>
+                  </div>
+
+                  <div className={styles.instructionItem}>
+                    <span>🕳️</span>
+                    <p>After solving the puzzle, reach the hole.</p>
+                  </div>
+
+                  <div className={styles.instructionItem}>
+                    <span>⭐</span>
+                    <p>Fewer moves and less time give more stars.</p>
+                  </div>
+
+                  <button
+                    type="button"
+                    className={styles.primaryButton}
+                    onClick={() => {
+                      setShowHowToPlay(false);
+                      startLevel(levelIndex);
+                    }}
+                  >
+                    Start Game
+                  </button>
+
+                  <button
+                    type="button"
+                    className={styles.backButton}
+                    onClick={() => setShowHowToPlay(false)}
+                  >
+                    Back
+                  </button>
+                </div>
               </div>
             )}
           </div>
-        )}
-      </div>
+        </section>
 
-      <p className={styles.hint}>Arrow keys or swipe to steer Wormzy · hit a portal to warp</p>
+        <section className={styles.mobileControls}>
+          <button
+            type="button"
+            aria-label="Move up"
+            onClick={() => handleMove("up")}
+          >
+            ▲
+          </button>
 
-      {/* On-screen D-pad — helps on mobile where swipe-per-tick can feel fiddly */}
-      <div className={styles.dpad}>
-        <div />
-        <button className={styles.dpadBtn} onClick={() => setDirection("up")}>↑</button>
-        <div />
-        <button className={styles.dpadBtn} onClick={() => setDirection("left")}>←</button>
-        <div />
-        <button className={styles.dpadBtn} onClick={() => setDirection("right")}>→</button>
-        <div />
-        <button className={styles.dpadBtn} onClick={() => setDirection("down")}>↓</button>
-        <div />
-      </div>
+          <div className={styles.horizontalControls}>
+            <button
+              type="button"
+              aria-label="Move left"
+              onClick={() => handleMove("left")}
+            >
+              ◀
+            </button>
 
-      {gameOver && (
-        <GameOver
-          score={score}
-          canRevive={!hasUsedRevive}
-          onRevive={handleRevive}
-          onNoThanks={handleNoThanks}
-        />
-      )}
-    </div>
+            <button
+              type="button"
+              aria-label="Move down"
+              onClick={() => handleMove("down")}
+            >
+              ▼
+            </button>
+
+            <button
+              type="button"
+              aria-label="Move right"
+              onClick={() => handleMove("right")}
+            >
+              ▶
+            </button>
+          </div>
+        </section>
+
+        <footer className={styles.footer}>
+          <button
+            type="button"
+            className={styles.footerButton}
+            onClick={handleRestart}
+          >
+            ↻ Restart
+          </button>
+
+          <p>Use arrow keys, swipe, or the controls</p>
+
+          <button
+            type="button"
+            className={styles.footerButton}
+            onClick={() => setShowHowToPlay(true)}
+          >
+            ? Help
+          </button>
+        </footer>
+      </section>
+    </main>
   );
 }
 

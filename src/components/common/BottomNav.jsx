@@ -1,18 +1,19 @@
 import { Link, useLocation, useParams } from "react-router-dom";
 import styles from "./BottomNav.module.css";
 
-function BottomNav() {
+function BottomNav({ theme = "light" }) {
   const location = useLocation();
   const { slug } = useParams();
 
-  // "Home" means the current GAME's home page, not the main carousel
-  // (per task brief 55.28 — Home returns to that game's home screen)
   const gameHomePath = slug ? `/games/${slug}` : "/";
   const isHomeActive = location.pathname === gameHomePath;
   const isRedeemActive = location.pathname === "/redeem";
 
   return (
-    <nav className={styles.nav} aria-label="Game navigation">
+    <nav
+      className={`${styles.nav} ${theme === "dark" ? styles.dark : styles.light}`}
+      aria-label="Game navigation"
+    >
       <Link
         to={gameHomePath}
         className={`${styles.navItem} ${isHomeActive ? styles.active : ""}`}

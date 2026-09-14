@@ -1,114 +1,447 @@
-export const BOARD_SIZE = 15; // 15x15 grid
-export const TICK_MS = 150; // game speed — lower = faster
-export const COUNTDOWN_SECONDS = 3;
+// Wormzy puzzle game logic
 
-export function createInitialSnake() {
-  const mid = Math.floor(BOARD_SIZE / 2);
-  // 3 segments, head first, moving right
-  return [
-    { x: mid, y: mid },
-    { x: mid - 1, y: mid },
-    { x: mid - 2, y: mid },
-  ];
-}
+export const ROWS = 8;
+export const COLS = 10;
 
-export function randomEmptyCell(snake, portals = []) {
-  const occupied = new Set(snake.map((s) => `${s.x},${s.y}`));
-  portals.forEach((p) => occupied.add(`${p.x},${p.y}`));
-  let cell;
-  do {
-    cell = {
-      x: Math.floor(Math.random() * BOARD_SIZE),
-      y: Math.floor(Math.random() * BOARD_SIZE),
-    };
-  } while (occupied.has(`${cell.x},${cell.y}`));
-  return cell;
-}
-
-// Spawns a linked pair of portal tiles in empty cells — echoes the
-// glowing warp hole shown in the block puzzle artwork.
-export function createPortals(snake, food) {
-  const occupied = new Set(snake.map((s) => `${s.x},${s.y}`));
-  occupied.add(`${food.x},${food.y}`);
-
-  const pickCell = () => {
-    let cell;
-    do {
-      cell = {
-        x: Math.floor(Math.random() * BOARD_SIZE),
-        y: Math.floor(Math.random() * BOARD_SIZE),
-      };
-    } while (occupied.has(`${cell.x},${cell.y}`));
-    occupied.add(`${cell.x},${cell.y}`);
-    return cell;
-  };
-
-  return [pickCell(), pickCell()];
-}
-
-const DIRECTIONS = {
-  up: { x: 0, y: -1 },
-  down: { x: 0, y: 1 },
-  left: { x: -1, y: 0 },
-  right: { x: 1, y: 0 },
+export const DIRECTIONS = {
+  up: { row: -1, col: 0 },
+  down: { row: 1, col: 0 },
+  left: { row: 0, col: -1 },
+  right: { row: 0, col: 1 },
 };
 
-export function isOpposite(dirA, dirB) {
-  const a = DIRECTIONS[dirA];
-  const b = DIRECTIONS[dirB];
-  return a.x === -b.x && a.y === -b.y;
+export const KEY_TO_DIRECTION = {
+  ArrowUp: "up",
+  ArrowDown: "down",
+  ArrowLeft: "left",
+  ArrowRight: "right",
+  w: "up",
+  W: "up",
+  s: "down",
+  S: "down",
+  a: "left",
+  A: "left",
+  d: "right",
+  D: "right",
+};
+
+const LEVELS = [
+  {
+    name: "First Bite",
+    description: "Eat the apple and find the exit hole.",
+    worm: [
+      { row: 6, col: 2 },
+      { row: 6, col: 1 },
+    ],
+    apple: { row: 6, col: 5 },
+    hole: { row: 1, col: 8 },
+    blocks: [],
+    targets: [],
+    walls: [
+      { row: 3, col: 2 },
+      { row: 3, col: 3 },
+      { row: 3, col: 4 },
+      { row: 3, col: 5 },
+      { row: 3, col: 6 },
+    ],
+  },
+  {
+    name: "Stone Path",
+    description: "Push the stone onto the glowing target.",
+    worm: [
+      { row: 6, col: 1 },
+      { row: 6, col: 0 },
+    ],
+    apple: { row: 2, col: 7 },
+    hole: { row: 1, col: 8 },
+    blocks: [{ row: 4, col: 4 }],
+    targets: [{ row: 4, col: 6 }],
+    walls: [
+      { row: 2, col: 2 },
+      { row: 3, col: 2 },
+      { row: 4, col: 2 },
+      { row: 5, col: 2 },
+    ],
+  },
+  {
+    name: "The Crossing",
+    description: "Move the stone down to open your route.",
+    worm: [
+      { row: 6, col: 1 },
+      { row: 6, col: 0 },
+    ],
+    apple: { row: 2, col: 8 },
+    hole: { row: 1, col: 8 },
+    blocks: [{ row: 3, col: 4 }],
+    targets: [{ row: 5, col: 4 }],
+    walls: [
+      { row: 1, col: 3 },
+      { row: 2, col: 3 },
+      { row: 3, col: 3 },
+      { row: 4, col: 3 },
+      { row: 5, col: 3 },
+    ],
+  },
+  {
+    name: "Double Trouble",
+    description: "Place both stones correctly before leaving.",
+    worm: [
+      { row: 6, col: 1 },
+      { row: 6, col: 0 },
+    ],
+    apple: { row: 2, col: 8 },
+    hole: { row: 1, col: 8 },
+    blocks: [
+      { row: 4, col: 3 },
+      { row: 4, col: 6 },
+    ],
+    targets: [
+      { row: 4, col: 5 },
+      { row: 4, col: 8 },
+    ],
+    walls: [
+      { row: 2, col: 2 },
+      { row: 3, col: 2 },
+      { row: 4, col: 2 },
+      { row: 5, col: 2 },
+      { row: 5, col: 7 },
+    ],
+  },
+  {
+    name: "Final Garden",
+    description: "Solve the garden and reach the mysterious hole.",
+    worm: [
+      { row: 6, col: 1 },
+      { row: 6, col: 0 },
+    ],
+    apple: { row: 1, col: 8 },
+    hole: { row: 0, col: 8 },
+    blocks: [
+      { row: 5, col: 4 },
+      { row: 3, col: 6 },
+    ],
+    targets: [
+      { row: 5, col: 7 },
+      { row: 3, col: 8 },
+    ],
+    walls: [
+      { row: 1, col: 2 },
+      { row: 2, col: 2 },
+      { row: 3, col: 2 },
+      { row: 4, col: 2 },
+      { row: 5, col: 2 },
+      { row: 2, col: 5 },
+      { row: 3, col: 5 },
+      { row: 4, col: 5 },
+    ],
+  },
+];
+
+function samePosition(first, second) {
+  return first?.row === second?.row && first?.col === second?.col;
 }
 
-// Advances the snake one tick.
-// Returns { snake, ate, crashed }
-export function tick(snake, direction, food, portals = []) {
-  const delta = DIRECTIONS[direction];
-  const head = snake[0];
-  let newHead = { x: head.x + delta.x, y: head.y + delta.y };
+function positionKey(position) {
+  return `${position.row}-${position.col}`;
+}
 
-  // Wall collision
-  if (
-    newHead.x < 0 ||
-    newHead.x >= BOARD_SIZE ||
-    newHead.y < 0 ||
-    newHead.y >= BOARD_SIZE
-  ) {
-    return { snake, ate: false, crashed: true };
-  }
+function clonePosition(position) {
+  return {
+    row: position.row,
+    col: position.col,
+  };
+}
 
-  // Portal warp — stepping on one portal exits at its linked pair
-  if (portals.length === 2) {
-    const [a, b] = portals;
-    if (newHead.x === a.x && newHead.y === a.y) {
-      newHead = { x: b.x, y: b.y };
-    } else if (newHead.x === b.x && newHead.y === b.y) {
-      newHead = { x: a.x, y: a.y };
-    }
-  }
-
-  // Self collision (check against body, excluding the tail which will move away)
-  const bodyToCheck = snake.slice(0, -1);
-  const hitSelf = bodyToCheck.some(
-    (s) => s.x === newHead.x && s.y === newHead.y
+function isInsideBoard(position) {
+  return (
+    position.row >= 0 &&
+    position.row < ROWS &&
+    position.col >= 0 &&
+    position.col < COLS
   );
-  if (hitSelf) {
-    return { snake, ate: false, crashed: true };
+}
+
+function containsPosition(collection, position) {
+  return collection.some((item) => samePosition(item, position));
+}
+
+function getLevelData(levelIndex) {
+  return LEVELS[levelIndex % LEVELS.length];
+}
+
+export function getTotalLevels() {
+  return LEVELS.length;
+}
+
+export function getLevelInfo(levelIndex) {
+  return getLevelData(levelIndex);
+}
+
+export function createLevelState(levelIndex = 0) {
+  const level = getLevelData(levelIndex);
+
+  return {
+    levelIndex,
+    levelName: level.name,
+    description: level.description,
+    worm: level.worm.map(clonePosition),
+    apple: level.apple ? clonePosition(level.apple) : null,
+    hole: clonePosition(level.hole),
+    blocks: level.blocks.map(clonePosition),
+    targets: level.targets.map(clonePosition),
+    walls: level.walls.map(clonePosition),
+    appleEaten: false,
+    moves: 0,
+    completed: false,
+    invalidMove: false,
+    lastDirection: null,
+  };
+}
+
+function isWall(state, position) {
+  return containsPosition(state.walls, position);
+}
+
+function getBlockIndex(state, position) {
+  return state.blocks.findIndex((block) => samePosition(block, position));
+}
+
+function isWormPosition(state, position, ignoreTail = false) {
+  const worm = ignoreTail ? state.worm.slice(0, -1) : state.worm;
+
+  return containsPosition(worm, position);
+}
+
+function isTarget(state, position) {
+  return containsPosition(state.targets, position);
+}
+
+function allBlocksAreOnTargets(state) {
+  if (state.blocks.length === 0) {
+    return true;
   }
 
-  const ate = newHead.x === food.x && newHead.y === food.y;
-  const newSnake = [newHead, ...snake];
-  if (!ate) newSnake.pop(); // only grow if food was eaten
-
-  return { snake: newSnake, ate, crashed: false };
+  return state.blocks.every((block) => isTarget(state, block));
 }
 
-// Revive: shrink the snake back to 3 segments centered safely,
-// keep the score, let the player continue.
-export function reviveSnake() {
-  return createInitialSnake();
+function canOccupyBlockDestination(state, destination) {
+  if (!isInsideBoard(destination)) {
+    return false;
+  }
+
+  if (isWall(state, destination)) {
+    return false;
+  }
+
+  if (getBlockIndex(state, destination) !== -1) {
+    return false;
+  }
+
+  if (isWormPosition(state, destination)) {
+    return false;
+  }
+
+  if (state.apple && samePosition(state.apple, destination)) {
+    return false;
+  }
+
+  if (samePosition(state.hole, destination)) {
+    return false;
+  }
+
+  return true;
 }
 
-// Score-to-reward conversion for Wormzy
-export function calculateReward(score) {
-  return Math.max(5, Math.round(score / 2));
+export function moveWorm(state, directionName) {
+  if (state.completed) {
+    return state;
+  }
+
+  const direction = DIRECTIONS[directionName];
+
+  if (!direction) {
+    return state;
+  }
+
+  const head = state.worm[0];
+
+  const nextHead = {
+    row: head.row + direction.row,
+    col: head.col + direction.col,
+  };
+
+  if (!isInsideBoard(nextHead) || isWall(state, nextHead)) {
+    return {
+      ...state,
+      invalidMove: true,
+    };
+  }
+
+  const blockIndex = getBlockIndex(state, nextHead);
+  let nextBlocks = state.blocks.map(clonePosition);
+
+  // If the worm moves into a stone, attempt to push it.
+  if (blockIndex !== -1) {
+    const block = state.blocks[blockIndex];
+
+    const pushedBlockPosition = {
+      row: block.row + direction.row,
+      col: block.col + direction.col,
+    };
+
+    if (!canOccupyBlockDestination(state, pushedBlockPosition)) {
+      return {
+        ...state,
+        invalidMove: true,
+      };
+    }
+
+    nextBlocks[blockIndex] = pushedBlockPosition;
+  }
+
+  // The worm cannot move into its own body.
+  // Its current tail can be ignored because it moves away during a normal move.
+  const hitsWorm = isWormPosition(
+    {
+      ...state,
+      blocks: nextBlocks,
+    },
+    nextHead,
+    true,
+  );
+
+  if (hitsWorm) {
+    return {
+      ...state,
+      invalidMove: true,
+    };
+  }
+
+  const ateApple =
+    !state.appleEaten &&
+    state.apple &&
+    samePosition(nextHead, state.apple);
+
+  let nextWorm;
+
+  if (ateApple) {
+    // Add a segment when eating the apple.
+    nextWorm = [nextHead, ...state.worm.map(clonePosition)];
+  } else {
+    // Normal movement: remove the tail.
+    nextWorm = [nextHead, ...state.worm.slice(0, -1).map(clonePosition)];
+  }
+
+  const nextState = {
+    ...state,
+    worm: nextWorm,
+    blocks: nextBlocks,
+    apple: ateApple ? null : state.apple,
+    appleEaten: state.appleEaten || Boolean(ateApple),
+    moves: state.moves + 1,
+    invalidMove: false,
+    lastDirection: directionName,
+  };
+
+  const completed =
+    nextState.appleEaten &&
+    samePosition(nextHead, nextState.hole) &&
+    allBlocksAreOnTargets(nextState);
+
+  return {
+    ...nextState,
+    completed,
+  };
+}
+
+export function calculateStars(state, elapsedSeconds) {
+  if (!state.completed) {
+    return 0;
+  }
+
+  const levelNumber = state.levelIndex + 1;
+
+  const moveLimit = 25 + levelNumber * 8;
+  const timeLimit = 30 + levelNumber * 15;
+
+  if (state.moves <= moveLimit && elapsedSeconds <= timeLimit) {
+    return 3;
+  }
+
+  if (
+    state.moves <= moveLimit + 15 &&
+    elapsedSeconds <= timeLimit + 25
+  ) {
+    return 2;
+  }
+
+  return 1;
+}
+
+export function calculateScore(state, elapsedSeconds) {
+  const stars = calculateStars(state, elapsedSeconds);
+
+  if (!state.completed) {
+    return 0;
+  }
+
+  const levelBonus = (state.levelIndex + 1) * 100;
+  const appleBonus = 100;
+  const moveBonus = Math.max(0, 200 - state.moves * 5);
+  const timeBonus = Math.max(0, 300 - elapsedSeconds * 3);
+  const starBonus = stars * 100;
+
+  return (
+    levelBonus +
+    appleBonus +
+    moveBonus +
+    timeBonus +
+    starBonus
+  );
+}
+
+export function isPositionOnTarget(state, position) {
+  return isTarget(state, position);
+}
+
+export function getCellType(state, row, col) {
+  const position = { row, col };
+
+  if (isWall(state, position)) {
+    return "wall";
+  }
+
+  if (samePosition(state.hole, position)) {
+    return "hole";
+  }
+
+  if (state.apple && samePosition(state.apple, position)) {
+    return "apple";
+  }
+
+  const blockIndex = getBlockIndex(state, position);
+
+  if (blockIndex !== -1) {
+    return isTarget(state, state.blocks[blockIndex])
+      ? "blockOnTarget"
+      : "block";
+  }
+
+  const wormIndex = state.worm.findIndex((part) =>
+    samePosition(part, position),
+  );
+
+  if (wormIndex !== -1) {
+    return wormIndex === 0 ? "wormHead" : "wormBody";
+  }
+
+  if (isTarget(state, position)) {
+    return "target";
+  }
+
+  return "empty";
+}
+
+export function getCellKey(row, col) {
+  return positionKey({ row, col });
 }
