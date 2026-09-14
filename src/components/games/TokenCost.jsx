@@ -4,7 +4,7 @@ function TokenCost({ cost = 20, currency = "Tokens" }) {
   return (
     <div className={styles.tokenCost}>
       <img
-        src="/src/assets/icons/token-icon.png"
+        src="/assets/icons/token-icon.png"
         alt=""
         aria-hidden="true"
         className={styles.tokenIcon}

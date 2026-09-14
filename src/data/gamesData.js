@@ -146,7 +146,7 @@ const gamesData = [
     slug: "aqua-fill",
     name: "Aqua Fill",
     tagline: "Think, Draw & Fill!",
-    image: "/public/assets/games/game-12.avif",
+    image: "/assets/games/game-12.avif",
     cost: 20,
     currency: "Tokens",
     playable: false,

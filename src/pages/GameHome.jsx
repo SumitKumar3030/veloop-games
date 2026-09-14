@@ -136,7 +136,7 @@ function GameHome() {
               <p className={styles.entry}>
                 Entry:{" "}
                 <img
-                  src="/src/assets/icons/token-icon.png"
+                  src="/assets/icons/token-icon.png"
                   alt=""
                   className={styles.inlineIcon}
                 />{" "}
