@@ -122,7 +122,7 @@ const gamesData = [
     slug: "wormzy",
     name: "Wormzy",
     tagline: "Guide Wormzy, Reach the Apple!",
-    image: "/assets/game-11.avif",
+    image: "/assets/games/game-11.avif",
     cost: 20,
     currency: "Tokens",
     playable: true,
