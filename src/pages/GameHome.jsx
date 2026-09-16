@@ -23,7 +23,6 @@ function GameHome() {
   const [gameStarted, setGameStarted] = useState(false);
   const [rewardToast, setRewardToast] = useState(null);
   const [isStarting, setIsStarting] = useState(false);
-  
 
   const game = gamesData.find((g) => g.slug === slug);
 
@@ -89,20 +88,20 @@ function GameHome() {
             ← Back
           </Link>
           <div className={styles.coinBalance}>
-  <img src="/assets/icons/game-coin-icon.png" alt="" className={styles.coinIcon} />
-  {gameCoinBalance} Game Coins
-</div>
+            <img src="/assets/icons/game-coin-icon.png" alt="" className={styles.coinIcon} />
+            {gameCoinBalance} Game Coins
+          </div>
         </header>
 
         <div
-  className={styles.artworkBackdrop}
-  style={{
-    background: `
-      radial-gradient(circle at 18% 15%, ${accentColor}40 0%, transparent 45%),
-      radial-gradient(circle at 82% 70%, ${accentColor}2a 0%, transparent 50%)
-    `,
-  }}
-/>
+          className={styles.artworkBackdrop}
+          style={{
+            background: `
+              radial-gradient(circle at 18% 15%, ${accentColor}40 0%, transparent 45%),
+              radial-gradient(circle at 82% 70%, ${accentColor}2a 0%, transparent 50%)
+            `,
+          }}
+        />
 
         {game.slug === "wormzy" && (
           <svg
@@ -119,9 +118,9 @@ function GameHome() {
 
         {rewardToast !== null && (
           <div className={styles.rewardToast}>
-  <img src="/assets/icons/game-coin-icon.png" alt="" className={styles.coinIcon} />
-  +{rewardToast} Game Coins earned!
-</div>
+            <img src="/assets/icons/game-coin-icon.png" alt="" className={styles.coinIcon} />
+            +{rewardToast} Game Coins earned!
+          </div>
         )}
 
         <main className={styles.content}>
@@ -191,7 +190,7 @@ function GameHome() {
           )}
 
           {gameStarted && game.slug === "wormzy" && (
-            <WormzyGame onGameEnd={handleGameEnd} />
+            <WormzyGame onGameEnd={handleGameEnd} onExit={() => setGameStarted(false)} />
           )}
 
           {gameStarted &&

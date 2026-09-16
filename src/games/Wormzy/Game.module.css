@@ -396,8 +396,48 @@
   filter: drop-shadow(0 4px 2px rgba(48, 44, 25, 0.4));
 }
 
+.stone {
+  width: 78%;
+  height: 78%;
+  border-radius: 40% 45% 42% 48%;
+  background:
+    radial-gradient(circle at 30% 25%, rgba(255, 255, 255, 0.35), transparent 45%),
+    linear-gradient(145deg, #8b8f8a, #4d5049);
+  box-shadow:
+    inset 0 -4px 0 rgba(0, 0, 0, 0.25),
+    0 3px 0 rgba(0, 0, 0, 0.2);
+}
+
 .cellSolved .stone {
   animation: solvedPulse 1.3s ease-in-out infinite;
+}
+
+.cellstone {
+  background:
+    radial-gradient(circle at 35% 25%, #879e67 0%, transparent 30%),
+    linear-gradient(145deg, #687952, #394d38);
+  box-shadow: inset 0 0 0 2px rgba(37, 61, 37, 0.3);
+}
+
+.cellstoneOnTarget {
+  background:
+    radial-gradient(
+      circle,
+      rgba(255, 232, 102, 0.7) 0%,
+      rgba(255, 232, 102, 0.15) 45%,
+      transparent 70%
+    ),
+    #76b454;
+}
+
+.cellstoneOnTarget::after {
+  content: "";
+  position: absolute;
+  width: 65%;
+  height: 65%;
+  border: 3px dashed rgba(255, 224, 75, 0.9);
+  border-radius: 50%;
+  box-shadow: 0 0 10px rgba(255, 229, 75, 0.45);
 }
 
 .overlay {
@@ -813,6 +853,46 @@
   .completePanel p {
     font-size: 12px;
   }
+}
+
+.cellsky {
+  background: transparent;
+  border: none;
+}
+
+.cellplatform {
+  background:
+    radial-gradient(circle at 30% 25%, rgba(255, 255, 255, 0.15), transparent 40%),
+    linear-gradient(180deg, #8a5a34, #5e3c22);
+  box-shadow: inset 0 3px 0 rgba(255, 220, 160, 0.3);
+}
+
+.cellspike {
+  background: #3a2418;
+}
+
+.spikeIcon {
+  font-size: clamp(16px, 3vw, 26px);
+  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.5));
+}
+
+.exitButton {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 36px;
+  height: 36px;
+  border: 2px solid rgba(78, 45, 27, 0.6);
+  border-radius: 10px;
+  background: rgba(255, 248, 223, 0.85);
+  color: #4e2d1b;
+  font-weight: 900;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.exitButton:hover {
+  background: #fff;
 }
 
 @media (prefers-reduced-motion: reduce) {
