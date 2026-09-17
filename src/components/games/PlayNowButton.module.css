@@ -1,9 +1,15 @@
 .playBtn {
   position: relative;
   overflow: hidden;
+
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
+
+  min-height: 42px;
+  min-width: 112px;
+
   padding: 10px 20px;
 
   /* Golden button */
@@ -11,6 +17,8 @@
   border-radius: 999px;
 
   -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  user-select: none;
 
   background:
     linear-gradient(#d4a017, #f0b90b) padding-box,
@@ -27,13 +35,18 @@
   color: #ffffff;
   font-weight: 700;
   font-size: 0.9rem;
+  line-height: 1;
+
   cursor: pointer;
 
   box-shadow:
     0 4px 14px rgba(212, 160, 23, 0.35),
     inset 0 1px 1px rgba(255, 255, 255, 0.25);
 
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+
   white-space: nowrap;
 
   /* Border light continuously travels around */
@@ -50,6 +63,12 @@
   to {
     --angle: 360deg;
   }
+}
+
+/* Keep button content above the shimmer */
+.playBtn > span {
+  position: relative;
+  z-index: 2;
 }
 
 .playBtn:hover {
@@ -77,9 +96,11 @@
 /* Existing shimmer sweep */
 .playBtn::after {
   content: "";
+
   position: absolute;
   top: 0;
   left: -75%;
+
   width: 50%;
   height: 100%;
 
@@ -91,7 +112,9 @@
   );
 
   transform: skewX(-20deg);
+
   animation: shimmerFill 2.8s infinite;
+
   pointer-events: none;
 }
 
@@ -104,26 +127,27 @@
   outline-offset: 3px;
 }
 
+/* Ripple */
 .ripple {
   position: absolute;
+
   border-radius: 50%;
+
   background: rgba(255, 255, 255, 0.5);
+
   transform: scale(0);
+
   animation: rippleEffect 0.6s ease-out;
+
   pointer-events: none;
+
+  z-index: 3;
 }
 
 @keyframes rippleEffect {
   to {
     transform: scale(2.5);
     opacity: 0;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .ripple {
-    animation: none;
-    display: none;
   }
 }
 
@@ -137,24 +161,99 @@
   }
 }
 
-/* Mobile fix */
-@media screen and (max-width: 480px) {
-  .playnow-button {
-    font-size: 14px; /* Shrinks the text so it fits on phones */
-    padding: 10px 18px; /* Slightly reduces padding if needed */
+/* =========================================
+   DISABLED
+========================================= */
+
+.playBtn:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+
+  transform: none;
+
+  box-shadow:
+    0 3px 10px rgba(0, 0, 0, 0.18);
+
+  animation: none;
+}
+
+.playBtn:disabled::after {
+  animation: none;
+}
+
+.playBtn:disabled:hover {
+  transform: none;
+}
+
+/* =========================================
+   TABLET
+========================================= */
+
+@media screen and (min-width: 481px) and (max-width: 1024px) {
+  .playBtn {
+    min-height: 42px;
+    padding: 10px 18px;
+    font-size: 0.88rem;
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
+/* =========================================
+   MOBILE
+========================================= */
+
+@media screen and (max-width: 480px) {
   .playBtn {
+    min-height: 40px;
+    min-width: 104px;
+
+    padding: 9px 16px;
+
+    font-size: 0.82rem;
+    gap: 5px;
+  }
+
+  .playBtn:active {
+    transform: scale(0.95);
+  }
+}
+
+/* =========================================
+   VERY SMALL PHONES
+========================================= */
+
+@media screen and (max-width: 360px) {
+  .playBtn {
+    min-height: 38px;
+    min-width: 98px;
+
+    padding: 8px 14px;
+
+    font-size: 0.78rem;
+  }
+}
+
+/* =========================================
+   REDUCED MOTION
+========================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .playBtn,
+  .playBtn::after,
+  .ripple {
     animation: none;
   }
 
-  .playBtn::after {
-    animation: none;
+  .playBtn,
+  .arrow {
+    transition: none;
   }
 
-  .playBtn:hover {
+  .playBtn:hover,
+  .playBtn:active {
     transform: none;
+  }
+
+  .ripple {
+    display: none;
   }
 }

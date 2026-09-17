@@ -47,6 +47,7 @@
   justify-content: space-between;
   gap: 10px;
   padding: 12px 14px;
+  min-height: 66px;
   background: var(--veloop-bg-elevated);
   border-top: var(--veloop-card-border);
 }
@@ -63,8 +64,10 @@
 
 .tokenIcon {
   width: 30px;
-  height: auto;
+  height: 30px;
+  object-fit: contain;
   display: block;
+  flex: 0 0 auto;
 }
 
 .tokenText {

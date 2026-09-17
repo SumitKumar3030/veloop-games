@@ -24,16 +24,23 @@ function GamesCarousel({ onPlay }) {
   const startScrollLeftRef = useRef(0);
   const dragDistanceRef = useRef(0);
 
+  const prefersReducedMotion = () =>
+  window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
   // --------------------------------------------------
   // Helper: how wide is one card + gap, in px
   // --------------------------------------------------
   const getStep = useCallback(() => {
-    const track = trackRef.current;
-    if (!track || !track.firstChild) return 0;
-    const cardWidth = track.firstChild.offsetWidth || 0;
-    const gap = 16;
-    return cardWidth + gap;
-  }, []);
+  const track = trackRef.current;
+  if (!track || !track.firstChild) return 0;
+
+  const cardWidth = track.firstChild.offsetWidth || 0;
+
+  const styles = window.getComputedStyle(track);
+  const gap = parseFloat(styles.columnGap || styles.gap || "0");
+
+  return cardWidth + gap;
+}, []);
 
   // --------------------------------------------------
   // Helper: which card index are we currently nearest to
@@ -52,33 +59,38 @@ function GamesCarousel({ onPlay }) {
     const track = trackRef.current;
     if (!track) return;
 
-    intervalRef.current = setInterval(() => {
-      if (isPaused || isDraggingRef.current) return;
+   intervalRef.current = setInterval(() => {
+  if (prefersReducedMotion()) return;
 
-      const step = getStep();
-      if (step === 0) return;
+  if (isPaused || isDraggingRef.current) return;
 
-      const current = getNearestIndex();
-      const nextIndex = current + 1;
-      const nextCard = track.children[nextIndex];
-      if (!nextCard) return;
+  const step = getStep();
+  if (step === 0) return;
 
-      track.scrollTo({ left: nextCard.offsetLeft, behavior: "smooth" });
+  const current = getNearestIndex();
+  const nextIndex = current + 1;
+  const nextCard = track.children[nextIndex];
 
-      // After the smooth-scroll settles, silently wrap back to the
-      // start of set 1 once we've scrolled into set 2 — invisible
-      // since set 2 looks identical to set 1.
-      clearTimeout(snapTimeoutRef.current);
-      snapTimeoutRef.current = setTimeout(() => {
-        if (nextIndex >= gamesData.length) {
-          const wrappedIndex = nextIndex - gamesData.length;
-          const wrappedCard = track.children[wrappedIndex];
-          if (wrappedCard) {
-            track.scrollLeft = wrappedCard.offsetLeft; // instant, no animation
-          }
-        }
-      }, SNAP_BACK_DELAY_MS);
-    }, CARD_INTERVAL_MS);
+  if (!nextCard) return;
+
+  track.scrollTo({
+    left: nextCard.offsetLeft,
+    behavior: "smooth",
+  });
+
+  clearTimeout(snapTimeoutRef.current);
+
+  snapTimeoutRef.current = setTimeout(() => {
+    if (nextIndex >= gamesData.length) {
+      const wrappedIndex = nextIndex - gamesData.length;
+      const wrappedCard = track.children[wrappedIndex];
+
+      if (wrappedCard) {
+        track.scrollLeft = wrappedCard.offsetLeft;
+      }
+    }
+  }, SNAP_BACK_DELAY_MS);
+}, CARD_INTERVAL_MS);
 
     return () => {
       clearInterval(intervalRef.current);
