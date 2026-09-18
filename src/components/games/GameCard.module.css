@@ -1,77 +1,198 @@
 .card {
   position: relative;
-  width: 250px;
+  width: 280px;
   height: auto;
   flex: 0 0 auto;
+
+  display: flex;
+  flex-direction: column;
+
   border-radius: var(--veloop-card-radius);
   overflow: hidden;
+
   background: var(--veloop-bg-card);
   border: var(--veloop-card-border);
   box-shadow: var(--veloop-card-shadow);
-  display: flex;
-  flex-direction: column;
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
+
+  transition:
+    transform 0.28s ease,
+    box-shadow 0.28s ease,
+    border-color 0.28s ease;
+
   -webkit-tap-highlight-color: transparent;
 }
 
+/* --------------------------------------------------
+   PREMIUM CARD FOCUS BORDER
+-------------------------------------------------- */
+
+.card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+
+  padding: 1px;
+  border-radius: inherit;
+
+  background: conic-gradient(
+    from var(--card-angle),
+    transparent 0deg,
+    transparent 250deg,
+    var(--veloop-gold) 290deg,
+    var(--veloop-gold-light) 315deg,
+    transparent 345deg,
+    transparent 360deg
+  );
+
+  opacity: 0;
+
+  pointer-events: none;
+
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+
+  -webkit-mask-composite: xor;
+
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+
+  mask-composite: exclude;
+
+  transition: opacity 0.3s ease;
+
+  animation: cardBorderSpin 3.2s linear infinite;
+}
+
+@keyframes cardBorderSpin {
+  to {
+    --card-angle: 360deg;
+  }
+}
+
+@property --card-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+.card:focus-within::before {
+  opacity: 1;
+}
+
+/* --------------------------------------------------
+   CLICK / TOUCH
+-------------------------------------------------- */
+
 .card:active {
-  transform: scale(0.98);
+  transform: scale(0.985);
 }
 
-.card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.5);
+/* --------------------------------------------------
+   DESKTOP HOVER
+-------------------------------------------------- */
+
+@media (hover: hover) and (pointer: fine) {
+  .card:hover {
+    transform: translateY(-4px);
+
+    box-shadow:
+      0 16px 34px rgba(0, 0, 0, 0.48),
+      0 0 0 1px rgba(240, 185, 11, 0.08);
+  }
 }
 
-/* Image area — game artwork only, per task brief */
+/* --------------------------------------------------
+   IMAGE AREA
+   Supplied game artwork only
+-------------------------------------------------- */
+
 .imageWrap {
   position: relative;
+
   width: 100%;
   aspect-ratio: 3 / 4;
+
   overflow: hidden;
+
   background: var(--veloop-navy);
 }
 
 .image {
   width: 100%;
   height: 100%;
+
+  display: block;
+
   object-fit: cover;
   object-position: center;
-  display: block;
+
+  transition: transform 0.45s ease;
 }
 
-/* Coded bottom strip — Play Now section */
+/* Very subtle artwork depth on desktop.
+   Does not alter or cover the supplied artwork. */
+
+@media (hover: hover) and (pointer: fine) {
+  .card:hover .image {
+    transform: scale(1.015);
+  }
+}
+
+/* --------------------------------------------------
+   CODED BOTTOM SECTION
+-------------------------------------------------- */
+
 .footer {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
+
+  gap: 12px;
+
+  min-height: 68px;
   padding: 12px 14px;
-  min-height: 66px;
+
   background: var(--veloop-bg-elevated);
+
   border-top: var(--veloop-card-border);
 }
 
-/* Token cost pill (shared by TokenCost.jsx) */
+/* --------------------------------------------------
+   TOKEN COST
+-------------------------------------------------- */
+
 .tokenCost {
   display: flex;
   align-items: center;
+
+  min-width: 0;
+
   gap: 6px;
+
   color: var(--veloop-silver);
+
   font-size: 0.85rem;
   font-weight: 600;
+
+  line-height: 1;
 }
 
 .tokenIcon {
   width: 30px;
   height: 30px;
-  object-fit: contain;
-  display: block;
+
   flex: 0 0 auto;
 
+  display: block;
+
+  object-fit: contain;
+
   filter:
-    drop-shadow(0 0 3px rgba(240, 185, 11, 0.55))
-    drop-shadow(0 0 7px rgba(240, 185, 11, 0.2));
+    drop-shadow(0 0 3px rgba(240, 185, 11, 0.45))
+    drop-shadow(0 0 6px rgba(240, 185, 11, 0.15));
 
   animation: tokenGlow 2.8s ease-in-out infinite;
 }
@@ -86,8 +207,8 @@
 
   50% {
     filter:
-      drop-shadow(0 0 5px rgba(240, 185, 11, 0.8))
-      drop-shadow(0 0 10px rgba(240, 185, 11, 0.3));
+      drop-shadow(0 0 5px rgba(240, 185, 11, 0.75))
+      drop-shadow(0 0 9px rgba(240, 185, 11, 0.28));
   }
 }
 
@@ -95,9 +216,98 @@
   white-space: nowrap;
 }
 
-/* Mobile */
-@media (max-width: 480px) {
+/* --------------------------------------------------
+   TABLET
+-------------------------------------------------- */
+
+@media (max-width: 1024px) {
+  .card {
+    width: 235px;
+  }
+
+  .footer {
+    min-height: 66px;
+    padding: 11px 13px;
+  }
+}
+
+/* --------------------------------------------------
+   MOBILE
+-------------------------------------------------- */
+
+@media (max-width: 768px) {
   .card {
     width: 220px;
+  }
+
+  .footer {
+    min-height: 64px;
+    padding: 10px 12px;
+  }
+
+  .tokenCost {
+    font-size: 0.82rem;
+  }
+
+  .tokenIcon {
+    width: 21px;
+    height: 21px;
+  }
+}
+
+/* --------------------------------------------------
+   SMALL MOBILE — 360px and below
+-------------------------------------------------- */
+
+@media (max-width: 360px) {
+  .card {
+    width: 205px;
+  }
+
+  .footer {
+    gap: 8px;
+    min-height: 62px;
+    padding: 10px;
+  }
+
+  .tokenCost {
+    gap: 5px;
+    font-size: 0.78rem;
+  }
+
+  .tokenIcon {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+/* --------------------------------------------------
+   REDUCED MOTION
+-------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .card,
+  .image {
+    transition: none;
+  }
+
+   .card::before {
+    animation: none;
+  }
+
+  .tokenIcon {
+    animation: none;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .card:hover::before {
+    opacity: 1;
+  }
+
+  .card:hover {
+    box-shadow:
+      0 16px 34px rgba(0, 0, 0, 0.48),
+      0 0 18px rgba(240, 185, 11, 0.12);
   }
 }
