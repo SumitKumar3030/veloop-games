@@ -8,13 +8,9 @@ function GameCard({ game, onPlay }) {
 
   const [isPressed, setIsPressed] = useState(false);
 
-  const handleTap = () => {
-    setIsPressed(true);
-
-    setTimeout(() => {
-      setIsPressed(false);
-    }, 700);
-  };
+ const handleTap = () => {
+  setIsPressed(true);
+};
 
   return (
     <div
