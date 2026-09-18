@@ -8,23 +8,18 @@ function GameCard({ game, onPlay }) {
 
   const [isPressed, setIsPressed] = useState(false);
 
-  const handlePointerDown = () => {
+  const handleTap = () => {
     setIsPressed(true);
-  };
 
-  const handlePointerUp = () => {
     setTimeout(() => {
       setIsPressed(false);
-    }, 450);
+    }, 700);
   };
 
   return (
     <div
       className={`${styles.card} ${isPressed ? styles.pressed : ""}`}
-      onPointerDown={handlePointerDown}
-      onPointerUp={handlePointerUp}
-      onPointerCancel={() => setIsPressed(false)}
-      onPointerLeave={() => setIsPressed(false)}
+      onClick={handleTap}
     >
       <div className={styles.imageWrap}>
         <img
@@ -37,6 +32,7 @@ function GameCard({ game, onPlay }) {
 
       <div className={styles.footer}>
         <TokenCost cost={cost} currency={currency} />
+
         <PlayNowButton onClick={() => onPlay(game)} />
       </div>
     </div>
