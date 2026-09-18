@@ -26,7 +26,7 @@ function calculateCoinReward(totalScore) {
   return Math.max(5, Math.round(totalScore / 15));
 }
 
-function WormzyGame({ onGameEnd, onExit }) {
+function WormzyGame({ onGameEnd, onExit, onGameOver }) {
   const gameRef = useRef(null);
   const touchStartRef = useRef(null);
   const totalScoreRef = useRef(0); // running total across all completed levels this session
@@ -40,6 +40,7 @@ function WormzyGame({ onGameEnd, onExit }) {
   const [showHowToPlay, setShowHowToPlay] = useState(false);
   const [screenShake, setScreenShake] = useState(false);
   const [finalReward, setFinalReward] = useState(0);
+  const [fallRetryUsed, setFallRetryUsed] = useState(false);
 
   const totalLevels = getTotalLevels();
 
@@ -116,10 +117,19 @@ function WormzyGame({ onGameEnd, onExit }) {
       } else if (next.completed) {
         setPhase("complete");
       } else if (next.failed) {
-        setPhase("failed");
+        if (next.failReason === "fell") {
+          if (!fallRetryUsed) {
+            setFallRetryUsed(true);
+            setPhase("failed"); // first fall — free retry, same as before
+          } else {
+            setPhase("gameover"); // second fall this session — real consequence
+          }
+        } else {
+          setPhase("failed"); // spikes stay unlimited free retries
+        }
       }
     },
-    [phase, gameState],
+    [phase, gameState, fallRetryUsed],
   );
 
   useEffect(() => {
@@ -188,6 +198,16 @@ function WormzyGame({ onGameEnd, onExit }) {
   const handleExit = async () => {
     await exitFullscreen();
     if (onExit) onExit();
+  };
+
+  const handleGameOverRetry = async () => {
+    await exitFullscreen();
+    if (onGameOver) onGameOver(true);
+  };
+
+  const handleGameOverGoBack = async () => {
+    await exitFullscreen();
+    if (onGameOver) onGameOver(false);
   };
 
   const renderCellContent = (cellType) => {
@@ -373,6 +393,33 @@ function WormzyGame({ onGameEnd, onExit }) {
                         onClick={handleExit}
                       >
                         Exit
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {phase === "gameover" && (
+                  <div className={styles.completePanel}>
+                    <div className={styles.completeIcon}>💀</div>
+                    <h2>Game Over</h2>
+                    <p>
+                      You've used your retry and fallen again. Try again with a
+                      fresh entry?
+                    </p>
+                    <div className={styles.overlayButtons}>
+                      <button
+                        type="button"
+                        className={styles.primaryButton}
+                        onClick={handleGameOverRetry}
+                      >
+                        Try Again (20 Tokens)
+                      </button>
+                      <button
+                        type="button"
+                        className={styles.secondaryButton}
+                        onClick={handleGameOverGoBack}
+                      >
+                        Go Back
                       </button>
                     </div>
                   </div>

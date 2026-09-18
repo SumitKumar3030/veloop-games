@@ -73,6 +73,13 @@ function GameHome() {
     setTimeout(() => setRewardToast(null), 3500);
   };
 
+  const handleWormzyGameOver = (shouldRetry) => {
+    setGameStarted(false);
+    if (shouldRetry) {
+      setTimeout(() => handlePlayNow(), 50);
+    }
+  };
+
   const themeClass =
     game.theme?.key === "merge-master"
       ? styles.themeMergeMaster
@@ -88,7 +95,11 @@ function GameHome() {
             ← Back
           </Link>
           <div className={styles.coinBalance}>
-            <img src="/assets/icons/game-coin-icon.png" alt="" className={styles.coinIcon} />
+            <img
+              src="/assets/icons/game-coin-icon.png"
+              alt=""
+              className={styles.coinIcon}
+            />
             {gameCoinBalance} Game Coins
           </div>
         </header>
@@ -118,7 +129,11 @@ function GameHome() {
 
         {rewardToast !== null && (
           <div className={styles.rewardToast}>
-            <img src="/assets/icons/game-coin-icon.png" alt="" className={styles.coinIcon} />
+            <img
+              src="/assets/icons/game-coin-icon.png"
+              alt=""
+              className={styles.coinIcon}
+            />
             +{rewardToast} Game Coins earned!
           </div>
         )}
@@ -190,7 +205,11 @@ function GameHome() {
           )}
 
           {gameStarted && game.slug === "wormzy" && (
-            <WormzyGame onGameEnd={handleGameEnd} onExit={() => setGameStarted(false)} />
+            <WormzyGame
+              onGameEnd={handleGameEnd}
+              onExit={() => setGameStarted(false)}
+              onGameOver={handleWormzyGameOver}
+            />
           )}
 
           {gameStarted &&

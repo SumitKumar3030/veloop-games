@@ -1,50 +1,299 @@
 .overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.5);
+
   display: flex;
   align-items: center;
   justify-content: center;
+
   padding: 20px;
+
+  background: rgba(12, 14, 25, 0.58);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+
   z-index: 100;
+
+  animation: overlayIn 0.22s ease-out;
 }
 
 .modal {
-  background: #ffffff;
-  color: #1c1f2e;
-  border-radius: 20px;
-  padding: 28px 24px;
-  max-width: 360px;
   width: 100%;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+  max-width: 380px;
+
+  padding: 28px 26px 24px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #ffffff 0%,
+      #fafbff 100%
+    );
+
+  color: #1c1f2e;
+
+  border: 1px solid rgba(28, 31, 46, 0.08);
+  border-radius: 22px;
+
+  box-shadow:
+    0 24px 70px rgba(0, 0, 0, 0.24),
+    0 4px 14px rgba(0, 0, 0, 0.08);
+
   text-align: left;
+
+  animation: modalIn 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
+
+/* --------------------------------
+   TITLE
+-------------------------------- */
 
 .title {
-  font-size: 1.2rem;
-  font-weight: 800;
-  margin: 0 0 16px 0;
+  position: relative;
+
+  margin: 0 0 22px;
+
+  padding-bottom: 14px;
+
+  font-size: 1.25rem;
+  line-height: 1.25;
+  font-weight: 850;
+
   text-align: center;
+  letter-spacing: -0.02em;
+
+  color: #1c1f2e;
 }
 
+.title::after {
+  content: "";
+
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+
+  width: 42px;
+  height: 3px;
+
+  transform: translateX(-50%);
+
+  border-radius: 999px;
+
+  background: linear-gradient(
+    90deg,
+    #f0b90b,
+    #ffd75e
+  );
+}
+
+/* --------------------------------
+   STEPS
+-------------------------------- */
+
 .steps {
-  margin: 0 0 20px 0;
-  padding-left: 20px;
+  margin: 0 0 22px;
+  padding: 0;
+
+  list-style: none;
+
   display: flex;
   flex-direction: column;
   gap: 10px;
+
   font-size: 0.9rem;
+  line-height: 1.5;
+
   color: #3a3d4d;
+
+  counter-reset: guide-step;
 }
+
+.steps li {
+  position: relative;
+
+  display: flex;
+  align-items: flex-start;
+
+  min-height: 42px;
+
+  padding: 10px 12px 10px 46px;
+
+  border: 1px solid rgba(28, 31, 46, 0.06);
+  border-radius: 12px;
+
+  background: #f7f8fb;
+
+  counter-increment: guide-step;
+}
+
+.steps li::before {
+  content: counter(guide-step);
+
+  position: absolute;
+  left: 12px;
+  top: 50%;
+
+  width: 24px;
+  height: 24px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  transform: translateY(-50%);
+
+  border-radius: 50%;
+
+  background: rgba(240, 185, 11, 0.14);
+  color: #a77900;
+
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+/* --------------------------------
+   BUTTON
+-------------------------------- */
 
 .gotItBtn {
   width: 100%;
-  padding: 12px;
+  min-height: 44px;
+
+  padding: 11px 18px;
+
   border: none;
   border-radius: 999px;
-  background: linear-gradient(135deg, #f0b90b, #ffd75e);
+
+  background: linear-gradient(
+    135deg,
+    #f0b90b,
+    #ffd75e
+  );
+
   color: #1c1f27;
-  font-weight: 700;
-  font-size: 1rem;
+
+  font-weight: 800;
+  font-size: 0.95rem;
+
   cursor: pointer;
+
+  box-shadow:
+    0 8px 20px rgba(240, 185, 11, 0.24);
+
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    filter 0.18s ease;
+
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.gotItBtn:hover {
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 11px 24px rgba(240, 185, 11, 0.32);
+
+  filter: brightness(1.02);
+}
+
+.gotItBtn:active {
+  transform: scale(0.97);
+}
+
+.gotItBtn:focus-visible {
+  outline: 2px solid #b8860b;
+  outline-offset: 3px;
+}
+
+/* --------------------------------
+   ANIMATION
+-------------------------------- */
+
+@keyframes overlayIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes modalIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.97);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* --------------------------------
+   MOBILE
+-------------------------------- */
+
+@media (max-width: 480px) {
+  .overlay {
+    padding: 16px;
+  }
+
+  .modal {
+    max-width: 100%;
+    padding: 24px 20px 20px;
+    border-radius: 20px;
+  }
+
+  .title {
+    font-size: 1.15rem;
+    margin-bottom: 18px;
+  }
+
+  .steps {
+    gap: 8px;
+    font-size: 0.86rem;
+  }
+
+  .steps li {
+    min-height: 40px;
+    padding: 9px 10px 9px 43px;
+  }
+
+  .gotItBtn {
+    min-height: 42px;
+  }
+}
+
+@media (max-width: 360px) {
+  .overlay {
+    padding: 12px;
+  }
+
+  .modal {
+    padding: 22px 16px 17px;
+    border-radius: 18px;
+  }
+
+  .steps li {
+    padding-left: 40px;
+  }
+}
+
+/* --------------------------------
+   REDUCED MOTION
+-------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .overlay,
+  .modal {
+    animation: none;
+  }
+
+  .gotItBtn {
+    transition: none;
+  }
 }
