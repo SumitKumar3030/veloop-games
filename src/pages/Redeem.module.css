@@ -5,6 +5,10 @@
   padding-bottom: 90px;
 }
 
+/* ========================================
+   HEADER
+   ======================================== */
+
 .header {
   display: flex;
   align-items: center;
@@ -18,6 +22,13 @@
   color: var(--veloop-text-primary);
   text-decoration: none;
   font-weight: 600;
+  white-space: nowrap;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.backLink:hover {
+  color: var(--veloop-gold);
+  transform: translateX(-2px);
 }
 
 .pageTitle {
@@ -26,21 +37,49 @@
   margin: 0;
 }
 
+/* ========================================
+   GAME COIN BALANCE
+   ======================================== */
+
 .balanceBanner {
+  width: min(100% - 40px, 760px);
+  margin: 24px auto 22px;
+  padding: 22px 24px;
+
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
-  padding: 28px 20px;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(240, 185, 11, 0.08),
+      rgba(255, 255, 255, 0.025)
+    );
+
+  border: 1px solid rgba(240, 185, 11, 0.18);
+  border-radius: 18px;
+
+  box-shadow:
+    0 12px 30px rgba(0, 0, 0, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
 
 .balanceIcon {
-  width: 32px;
-  height: auto;
+  width: 34px;
+  height: 34px;
+  object-fit: contain;
+  flex: 0 0 auto;
+
+  filter:
+    drop-shadow(0 0 3px rgba(255, 196, 60, 0.95))
+    drop-shadow(0 0 10px rgba(255, 170, 20, 0.65));
 }
 
 .balanceValue {
   font-size: 2rem;
+  line-height: 1;
   font-weight: 800;
   color: var(--veloop-gold);
 }
@@ -49,88 +88,277 @@
   font-size: 0.9rem;
   color: var(--veloop-text-secondary);
   align-self: flex-end;
-  margin-bottom: 6px;
+  margin-bottom: 2px;
 }
 
+/* ========================================
+   SUCCESS TOAST
+   ======================================== */
+
 .successToast {
+  width: min(100% - 40px, 760px);
+  margin: 0 auto 18px;
+
   text-align: center;
-  background: rgba(79, 156, 99, 0.15);
+  background: rgba(79, 156, 99, 0.12);
+  border: 1px solid rgba(126, 224, 160, 0.2);
   color: #7ee0a0;
+
   font-weight: 700;
-  padding: 10px;
-  margin: 0 20px 12px;
+  padding: 11px 14px;
   border-radius: 12px;
 }
 
+/* ========================================
+   REDEMPTION GRID
+   ======================================== */
+
 .grid {
+  width: min(100% - 40px, 1100px);
+  margin: 0 auto;
+
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 14px;
-  padding: 0 20px;
 }
+
+/* ========================================
+   REWARD CARD
+   ======================================== */
 
 .card {
-  background: var(--veloop-bg-card);
+  position: relative;
+  overflow: hidden;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  min-width: 0;
+  min-height: 250px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.025),
+      rgba(255, 255, 255, 0)
+    ),
+    var(--veloop-bg-card);
+
   border: var(--veloop-card-border);
   border-radius: var(--veloop-card-radius);
-  padding: 20px 14px;
+
+  padding: 22px 14px 16px;
   text-align: center;
+
   box-shadow: var(--veloop-card-shadow);
+
+  transition:
+    transform 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
 }
+
+/* Subtle premium top highlight */
+.card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 14%;
+  right: 14%;
+  height: 1px;
+
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.16),
+    transparent
+  );
+
+  pointer-events: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(240, 185, 11, 0.24);
+
+    box-shadow:
+      0 16px 34px rgba(0, 0, 0, 0.38),
+      0 0 20px rgba(240, 185, 11, 0.06);
+  }
+}
+
+/* ========================================
+   REWARD ICONS
+   ======================================== */
 
 .cardIcon {
-  width: 44px;
-  height: 44px;
+  width: 48px;
+  height: 48px;
   object-fit: contain;
+  flex: 0 0 auto;
+
+  filter:
+    drop-shadow(0 0 3px rgba(255, 255, 255, 0.25))
+    drop-shadow(0 0 9px rgba(255, 196, 60, 0.25));
+
+  transition: filter 0.25s ease;
 }
 
-.inlineIcon {
-  width: 16px;
-  height: auto;
-  vertical-align: middle;
-  display: inline-block;
-  margin: 0 2px;
+@media (hover: hover) and (pointer: fine) {
+  .card:hover .cardIcon {
+    filter:
+      drop-shadow(0 0 4px rgba(255, 255, 255, 0.35))
+      drop-shadow(0 0 13px rgba(255, 196, 60, 0.38));
+  }
 }
+
+/* VEs */
+.card:nth-child(1) .cardIcon {
+  filter:
+    drop-shadow(0 0 4px rgba(255, 215, 80, 0.9))
+    drop-shadow(0 0 12px rgba(255, 180, 30, 0.65))
+    drop-shadow(0 0 22px rgba(255, 160, 0, 0.28));
+}
+
+/* SVEs */
+.card:nth-child(2) .cardIcon {
+  filter:
+    drop-shadow(0 0 4px rgba(190, 100, 255, 0.85))
+    drop-shadow(0 0 12px rgba(160, 50, 255, 0.6))
+    drop-shadow(0 0 22px rgba(140, 0, 255, 0.25));
+}
+
+/* Gems */
+.card:nth-child(3) .cardIcon {
+  filter:
+    drop-shadow(0 0 4px rgba(80, 210, 255, 0.9))
+    drop-shadow(0 0 12px rgba(0, 150, 255, 0.6))
+    drop-shadow(0 0 22px rgba(0, 100, 255, 0.25));
+}
+
+/* Tokens */
+.card:nth-child(4) .cardIcon {
+  filter:
+    drop-shadow(0 0 4px rgba(110, 255, 130, 0.9))
+    drop-shadow(0 0 12px rgba(40, 220, 80, 0.6))
+    drop-shadow(0 0 22px rgba(0, 200, 60, 0.25));
+}
+
+/* Spins */
+.card:nth-child(5) .cardIcon {
+  filter:
+    drop-shadow(0 0 4px rgba(255, 130, 255, 0.9))
+    drop-shadow(0 0 12px rgba(220, 50, 255, 0.6))
+    drop-shadow(0 0 22px rgba(180, 0, 255, 0.25));
+}
+
+/* ========================================
+   CARD TEXT
+   ======================================== */
 
 .cardTitle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+
   font-weight: 700;
-  margin: 10px 0 2px;
+  margin: 13px 0 5px;
+
   font-size: 0.9rem;
+  line-height: 1.25;
+
   color: var(--veloop-text-primary);
 }
 
 .cardDesc {
+  min-height: 30px;
+
   font-size: 0.75rem;
+  line-height: 1.4;
+
   color: var(--veloop-text-secondary);
-  margin: 0 0 14px;
+
+  margin: 0 0 16px;
 }
+
+/* Small Game Coin icons */
+.inlineIcon {
+  width: 17px;
+  height: 17px;
+  object-fit: contain;
+
+  vertical-align: middle;
+  display: inline-block;
+  margin: 0 3px;
+
+  filter:
+    drop-shadow(0 0 2px rgba(255, 220, 100, 0.9))
+    drop-shadow(0 0 6px rgba(255, 170, 20, 0.45));
+}
+
+/* ========================================
+   REDEEM BUTTON
+   ======================================== */
 
 .redeemBtn {
   width: 100%;
-  padding: 9px;
-  border: none;
+  min-height: 38px;
+
+  margin-top: auto;
+
+  padding: 9px 12px;
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 999px;
+
   background: var(--veloop-btn-bg);
   color: var(--veloop-btn-text);
+
   font-weight: 700;
   font-size: 0.8rem;
+
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+
   box-shadow: var(--veloop-btn-shadow);
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    filter 0.2s ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .redeemBtn:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.06);
+
+    box-shadow:
+      var(--veloop-btn-shadow),
+      0 0 14px rgba(240, 185, 11, 0.18);
+  }
 }
 
 .redeemBtn:active {
   transform: scale(0.97);
 }
 
+/* ========================================
+   REDEMPTION HISTORY
+   ======================================== */
+
 .historySection {
-  margin-top: 28px;
-  padding: 0 20px;
+  width: min(100% - 40px, 1100px);
+  margin: 30px auto 0;
 }
 
 .historyTitle {
   font-size: 0.95rem;
   font-weight: 800;
-  margin-bottom: 10px;
+  margin: 0 0 10px;
   color: var(--veloop-text-primary);
 }
 
@@ -138,6 +366,7 @@
   list-style: none;
   padding: 0;
   margin: 0;
+
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -147,10 +376,14 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 12px;
+
   background: var(--veloop-bg-card);
   border: var(--veloop-card-border);
-  padding: 10px 14px;
+
+  padding: 11px 14px;
   border-radius: 10px;
+
   font-size: 0.8rem;
   color: var(--veloop-text-primary);
 }
@@ -158,32 +391,58 @@
 .historyLine {
   display: flex;
   align-items: center;
+  min-width: 0;
 }
 
 .historyWhen {
+  flex: 0 0 auto;
   color: var(--veloop-text-muted);
 }
+
+/* ========================================
+   MODAL / OVERLAY
+   ======================================== */
 
 .overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.6);
+
+  background: rgba(0, 0, 0, 0.68);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+
   display: flex;
   align-items: center;
   justify-content: center;
+
   padding: 20px;
+
   z-index: 200;
 }
 
 .modal {
-  background: var(--veloop-bg-elevated);
-  border: var(--veloop-card-border);
-  border-radius: 20px;
-  padding: 28px 24px;
-  max-width: 320px;
   width: 100%;
+  max-width: 340px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.035),
+      transparent
+    ),
+    var(--veloop-bg-elevated);
+
+  border: 1px solid rgba(240, 185, 11, 0.16);
+  border-radius: 20px;
+
+  padding: 28px 24px;
+
   text-align: center;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+
+  box-shadow:
+    0 24px 60px rgba(0, 0, 0, 0.55),
+    0 0 30px rgba(240, 185, 11, 0.05);
+
   color: var(--veloop-text-primary);
 }
 
@@ -202,6 +461,7 @@
 
 .modalHighlight {
   color: var(--veloop-text-primary);
+
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -213,6 +473,10 @@
   margin-bottom: 18px;
 }
 
+/* ========================================
+   MODAL BUTTONS
+   ======================================== */
+
 .modalActions {
   display: flex;
   gap: 10px;
@@ -222,14 +486,26 @@
 .confirmBtn,
 .playGamesBtn {
   flex: 1;
+
+  min-height: 40px;
   padding: 10px;
+
   border: none;
   border-radius: 999px;
+
   font-weight: 700;
   font-size: 0.85rem;
+
   cursor: pointer;
   text-decoration: none;
-  display: inline-block;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  transition:
+    transform 0.2s ease,
+    filter 0.2s ease;
 }
 
 .cancelBtn {
@@ -243,82 +519,210 @@
   color: var(--veloop-btn-text);
 }
 
+@media (hover: hover) and (pointer: fine) {
+  .cancelBtn:hover,
+  .confirmBtn:hover,
+  .playGamesBtn:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.06);
+  }
+}
+
+.cancelBtn:active,
+.confirmBtn:active,
+.playGamesBtn:active {
+  transform: scale(0.97);
+}
+
+/* ========================================
+   INSUFFICIENT BALANCE
+   ======================================== */
+
 .insufficientTitle {
   font-weight: 800;
   font-size: 1.05rem;
+
   color: #ff6b6b;
+
   margin: 0 0 12px;
 }
 
 .hint {
   font-size: 0.8rem;
+  line-height: 1.5;
+
   color: var(--veloop-text-secondary);
+
   margin-bottom: 18px;
 }
 
 /* ========================================
-   PREMIUM REWARD ICON GLOW
+   TABLET
    ======================================== */
 
-/* Main Game Coin balance icon */
-.balanceIcon {
-  filter:
-    drop-shadow(0 0 3px rgba(255, 196, 60, 0.95))
-    drop-shadow(0 0 10px rgba(255, 170, 20, 0.75))
-    drop-shadow(0 0 22px rgba(255, 150, 0, 0.4));
+@media screen and (max-width: 1024px) {
+  .grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .card {
+    min-height: 245px;
+  }
 }
 
-/* Reward icons — soft, premium glow */
-.cardIcon {
-  filter:
-    drop-shadow(0 0 3px rgba(255, 255, 255, 0.3))
-    drop-shadow(0 0 10px rgba(255, 196, 60, 0.3));
-  transition: filter 0.25s ease;
+/* ========================================
+   MOBILE
+   ======================================== */
+
+@media screen and (max-width: 700px) {
+  .header {
+    padding: 14px 16px;
+    gap: 12px;
+  }
+
+  .pageTitle {
+    font-size: 1rem;
+  }
+
+  .balanceBanner {
+    width: calc(100% - 32px);
+    margin: 18px auto 18px;
+    padding: 18px;
+  }
+
+  .balanceIcon {
+    width: 30px;
+    height: 30px;
+  }
+
+  .balanceValue {
+    font-size: 1.75rem;
+  }
+
+  .grid {
+    width: calc(100% - 32px);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .card {
+    min-height: 238px;
+    padding: 19px 12px 14px;
+  }
+
+  .cardIcon {
+    width: 44px;
+    height: 44px;
+  }
+
+  .historySection {
+    width: calc(100% - 32px);
+  }
 }
 
-/* VEs — warm gold */
-.card:nth-child(1) .cardIcon {
-  filter:
-    drop-shadow(0 0 4px rgba(255, 215, 80, 0.95))
-    drop-shadow(0 0 12px rgba(255, 180, 30, 0.75))
-    drop-shadow(0 0 24px rgba(255, 160, 0, 0.35));
+/* ========================================
+   SMALL MOBILE
+   ======================================== */
+
+@media screen and (max-width: 380px) {
+  .header {
+    padding: 13px 12px;
+  }
+
+  .backLink {
+    font-size: 0.85rem;
+  }
+
+  .pageTitle {
+    font-size: 0.92rem;
+  }
+
+  .balanceBanner {
+    width: calc(100% - 24px);
+    padding: 16px 12px;
+    gap: 8px;
+  }
+
+  .balanceIcon {
+    width: 27px;
+    height: 27px;
+  }
+
+  .balanceValue {
+    font-size: 1.55rem;
+  }
+
+  .balanceLabel {
+    font-size: 0.78rem;
+  }
+
+  .grid {
+    width: calc(100% - 24px);
+    gap: 10px;
+  }
+
+  .card {
+    min-height: 225px;
+    padding: 17px 9px 12px;
+    border-radius: 14px;
+  }
+
+  .cardIcon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .cardTitle {
+    font-size: 0.82rem;
+    margin-top: 11px;
+  }
+
+  .cardDesc {
+    font-size: 0.69rem;
+    margin-bottom: 13px;
+  }
+
+  .redeemBtn {
+    min-height: 36px;
+    padding: 8px 8px;
+    font-size: 0.74rem;
+  }
+
+  .inlineIcon {
+    width: 15px;
+    height: 15px;
+  }
+
+  .historyItem {
+    padding: 10px 11px;
+    font-size: 0.74rem;
+  }
+
+  .modal {
+    padding: 24px 18px;
+  }
 }
 
-/* SVEs — purple */
-.card:nth-child(2) .cardIcon {
-  filter:
-    drop-shadow(0 0 4px rgba(190, 100, 255, 0.95))
-    drop-shadow(0 0 12px rgba(160, 50, 255, 0.75))
-    drop-shadow(0 0 24px rgba(140, 0, 255, 0.35));
-}
+/* ========================================
+   REDUCED MOTION
+   ======================================== */
 
-/* Gems — cyan blue */
-.card:nth-child(3) .cardIcon {
-  filter:
-    drop-shadow(0 0 4px rgba(80, 210, 255, 0.95))
-    drop-shadow(0 0 12px rgba(0, 150, 255, 0.75))
-    drop-shadow(0 0 24px rgba(0, 100, 255, 0.35));
-}
+@media (prefers-reduced-motion: reduce) {
+  .backLink,
+  .card,
+  .cardIcon,
+  .redeemBtn,
+  .cancelBtn,
+  .confirmBtn,
+  .playGamesBtn {
+    transition: none;
+  }
 
-/* Tokens — green */
-.card:nth-child(4) .cardIcon {
-  filter:
-    drop-shadow(0 0 4px rgba(110, 255, 130, 0.95))
-    drop-shadow(0 0 12px rgba(40, 220, 80, 0.75))
-    drop-shadow(0 0 24px rgba(0, 200, 60, 0.35));
-}
-
-/* Spins — pink / violet */
-.card:nth-child(5) .cardIcon {
-  filter:
-    drop-shadow(0 0 4px rgba(255, 130, 255, 0.95))
-    drop-shadow(0 0 12px rgba(220, 50, 255, 0.75))
-    drop-shadow(0 0 24px rgba(180, 0, 255, 0.35));
-}
-
-/* Small coin icons — subtle gold glow */
-.inlineIcon {
-  filter:
-    drop-shadow(0 0 2px rgba(255, 220, 100, 0.9))
-    drop-shadow(0 0 6px rgba(255, 170, 20, 0.55));
+  .card:hover,
+  .redeemBtn:hover,
+  .cancelBtn:hover,
+  .confirmBtn:hover,
+  .playGamesBtn:hover {
+    transform: none;
+  }
 }
