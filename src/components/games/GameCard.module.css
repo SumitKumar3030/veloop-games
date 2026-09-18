@@ -66,6 +66,22 @@
   animation: cardBorderSpin 3.2s linear infinite;
 }
 
+/* --------------------------------------------------
+   TAP / PRESS EFFECT
+-------------------------------------------------- */
+
+.pressed::before {
+  opacity: 1;
+}
+
+.pressed {
+  transform: scale(0.985);
+
+  box-shadow:
+    0 12px 28px rgba(0, 0, 0, 0.42),
+    0 0 18px rgba(240, 185, 11, 0.16);
+}
+
 @keyframes cardBorderSpin {
   to {
     --card-angle: 360deg;
