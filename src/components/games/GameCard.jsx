@@ -9,7 +9,7 @@ function GameCard({ game, onPlay }) {
   const [isPressed, setIsPressed] = useState(false);
 
  const handleTap = () => {
-  setIsPressed(true);
+  setIsPressed((prev) => !prev);
 };
 
   return (
