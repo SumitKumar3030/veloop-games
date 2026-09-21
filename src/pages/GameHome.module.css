@@ -1,4 +1,7 @@
-/* Light theme, per task brief section 55.6 — mandatory inside game pages */
+/* =========================================
+   GAME HOME — LIGHT THEME
+   ========================================= */
+
 .page {
   min-height: 100vh;
   background: #f7f8fb;
@@ -8,207 +11,555 @@
 }
 
 .header {
+  position: relative;
+  z-index: 10;
+
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 20px;
-  background: #ffffff;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+
+  padding: 14px 20px;
+
+  background: rgba(255, 255, 255, 0.94);
+  border-bottom: 1px solid rgba(28, 31, 46, 0.06);
+
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06);
+
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
 .backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
   color: #1c1f2e;
   text-decoration: none;
-  font-weight: 600;
+  font-size: 0.9rem;
+  font-weight: 700;
+
+  transition:
+    transform 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.backLink:hover {
+  transform: translateX(-2px);
+  opacity: 0.72;
 }
 
 .coinBalance {
   display: flex;
   align-items: center;
-  gap: 6px;
-  font-weight: 700;
-  color: #b8860b;
+  gap: 7px;
+
+  padding: 7px 12px;
+
+  border: 1px solid rgba(184, 134, 11, 0.2);
+  border-radius: 999px;
+
+  background: rgba(255, 248, 224, 0.9);
+
+  color: #9a6f00;
+  font-size: 0.82rem;
+  font-weight: 800;
+
+  box-shadow: 0 4px 12px rgba(184, 134, 11, 0.08);
 }
 
 .coinIcon {
-  width: 20px;
-  height: auto;
+  width: 21px;
+  height: 21px;
+  object-fit: contain;
 }
 
+/* =========================================
+   BACKGROUND
+   ========================================= */
+
+.artworkBackdrop {
+  position: fixed;
+  inset: 0;
+
+  z-index: 0;
+  pointer-events: none;
+
+  opacity: 0.7;
+}
+
+/* =========================================
+   CONTENT
+   ========================================= */
+
 .content {
+  position: relative;
+  z-index: 1;
+
+  width: min(100%, 760px);
+  margin: 0 auto;
+
   display: flex;
   flex-direction: column;
   align-items: center;
+
+  padding: 34px 20px 100px;
+}
+
+/* =========================================
+   GAME HERO
+   ========================================= */
+
+.gameHero {
+  width: 100%;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
   text-align: center;
-  padding: 32px 20px;
+}
+
+.artworkFrame {
+  position: relative;
+
+  width: min(100%, 360px);
+
+  border-radius: 24px;
+
+  padding: 5px;
+
+  background: rgba(255, 255, 255, 0.72);
+
+  box-shadow:
+    0 18px 45px rgba(0, 0, 0, 0.12),
+    0 4px 12px rgba(0, 0, 0, 0.06);
+
+  isolation: isolate;
 }
 
 .artwork {
+  position: relative;
+  z-index: 2;
+
+  display: block;
+
   width: 100%;
-  max-width: 320px;
-  border-radius: 16px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  height: auto;
+
+  border-radius: 20px;
+
+  object-fit: cover;
+}
+
+.artworkGlow {
+  position: absolute;
+  inset: 10%;
+
+  z-index: -1;
+
+  border-radius: 50%;
+
+  background: var(--accent, rgba(240, 185, 11, 0.25));
+
+  filter: blur(35px);
+  opacity: 0.22;
+}
+
+.gameHeading {
+  margin-top: 22px;
+}
+
+.gameLabel {
+  display: inline-block;
+
+  padding: 5px 10px;
+
+  border-radius: 999px;
+
+  background: rgba(28, 31, 46, 0.06);
+
+  color: #777b90;
+
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
 }
 
 .title {
-  margin-top: 20px;
-  font-size: 1.6rem;
-  font-weight: 800;
+  margin: 9px 0 0;
+
+  font-size: clamp(1.8rem, 5vw, 2.35rem);
+  line-height: 1.1;
+  font-weight: 900;
+  letter-spacing: -0.03em;
 }
 
 .tagline {
+  max-width: 520px;
+
+  margin: 8px auto 0;
+
   color: #6b6e85;
-  margin-top: 4px;
+
+  font-size: 0.95rem;
+  line-height: 1.5;
 }
 
-.entry {
-  margin-top: 16px;
-  font-weight: 700;
-  color: #1c1f2e;
+/* =========================================
+   GAME INFO PANEL
+   ========================================= */
+
+.gamePanel {
+  width: min(100%, 540px);
+
+  margin-top: 28px;
+  padding: 20px;
+
+  border: 1px solid rgba(28, 31, 46, 0.08);
+  border-radius: 22px;
+
+  background: rgba(255, 255, 255, 0.88);
+
+  box-shadow:
+    0 12px 35px rgba(0, 0, 0, 0.07),
+    0 2px 8px rgba(0, 0, 0, 0.04);
+
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
-.status {
-  margin-top: 20px;
-  font-size: 0.9rem;
-  color: #6b6e85;
+.entryInfo {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+
+  min-height: 66px;
 }
 
-.notFound {
-  min-height: 100vh;
+.entryItem {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: 12px;
-  background: #f7f8fb;
-  color: #1c1f2e;
+  gap: 7px;
 }
 
-.tokenBalanceLine {
-  font-size: 0.85rem;
-  color: #6b6e85;
-  margin-top: 4px;
-}
+.infoLabel {
+  color: #9295a7;
 
-.playNowBtn {
-  margin-top: 20px;
-  padding: 14px 32px;
-  border: none;
-  border-radius: 999px;
-  background: linear-gradient(135deg, #f0b90b, #ffd75e);
-  color: #1c1f27;
+  font-size: 0.67rem;
   font-weight: 800;
-  font-size: 1.05rem;
-  cursor: pointer;
-  box-shadow: 0 8px 20px rgba(240, 185, 11, 0.35);
+  letter-spacing: 0.1em;
 }
 
-.playNowBtn:active {
-  transform: scale(0.97);
-}
-
-.howToPlayLink {
-  margin-top: 14px;
-  background: none;
-  border: none;
-  color: #6b6e85;
-  text-decoration: underline;
-  font-size: 0.85rem;
-  cursor: pointer;
-}
-
-.gameStartedPlaceholder {
-  margin-top: 30px;
-  padding: 24px;
-  border-radius: 16px;
-  background: #eef0f7;
-  color: #3a3d4d;
-}
-
-.smallNote {
-  font-size: 0.8rem;
-  color: #9a9db3;
-  margin-top: 8px;
-}
-
-.overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.5);
+.entryValue,
+.balanceValue {
   display: flex;
   align-items: center;
-  justify-content: center;
-  padding: 20px;
-  z-index: 100;
-}
+  gap: 5px;
 
-.insufficientModal {
-  background: #ffffff;
-  color: #1c1f2e;
-  border-radius: 20px;
-  padding: 28px 24px;
-  max-width: 320px;
-  width: 100%;
-  text-align: center;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
-}
+  color: #242737;
 
-.insufficientTitle {
+  font-size: 0.92rem;
   font-weight: 800;
-  font-size: 1.1rem;
-  margin-bottom: 8px;
-  color: #c0392b;
 }
 
-.earnMoreBtn {
-  margin-top: 16px;
-  padding: 10px 24px;
-  border: none;
-  border-radius: 999px;
-  background: #1c1f2e;
-  color: #ffffff;
-  font-weight: 700;
-  cursor: pointer;
+.balanceValue {
+  color: #9a6f00;
 }
 
-.rewardToast {
-  position: fixed;
-  top: 70px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: #1c1f2e;
-  color: #ffd75e;
-  padding: 10px 20px;
-  border-radius: 999px;
+.balanceValue span {
   font-weight: 700;
-  font-size: 0.9rem;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
-  z-index: 300;
-  animation: toastIn 0.3s ease;
+}
+
+.divider {
+  width: 1px;
+  height: 38px;
+
+  background: rgba(28, 31, 46, 0.1);
 }
 
 .inlineIcon {
+  width: 22px;
   height: 22px;
-  width: auto;
-  vertical-align: middle;
-  display: inline-block;
+
+  object-fit: contain;
 }
+
+/* =========================================
+   PLAY BUTTON
+   ========================================= */
+
+.playNowBtn {
+  position: relative;
+
+  width: 100%;
+
+  margin-top: 20px;
+  padding: 14px 24px;
+
+  border: none;
+  border-radius: 14px;
+
+  color: #1c1f27;
+
+  font-size: 1rem;
+  font-weight: 900;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 10px 24px rgba(240, 185, 11, 0.22);
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    filter 0.2s ease;
+}
+
+.playNowBtn:hover {
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 14px 30px rgba(240, 185, 11, 0.28);
+
+  filter: brightness(1.03);
+}
+
+.playNowBtn:active {
+  transform: translateY(0) scale(0.985);
+}
+
+.playNowBtn:disabled {
+  cursor: wait;
+  opacity: 0.75;
+}
+
+.playIcon {
+  margin-right: 7px;
+}
+
+/* =========================================
+   HOW TO PLAY
+   ========================================= */
+
+.howToPlayLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+
+  margin: 15px auto 0;
+
+  padding: 7px 12px;
+
+  border: 1px solid rgba(28, 31, 46, 0.08);
+  border-radius: 999px;
+
+  background: transparent;
+
+  color: #6b6e85;
+
+  font-size: 0.82rem;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.howToPlayLink:hover {
+  background: #f2f3f7;
+  border-color: rgba(28, 31, 46, 0.14);
+  color: #1c1f2e;
+}
+
+/* =========================================
+   INSUFFICIENT TOKENS
+   ========================================= */
 
 .insufficientBtn {
   background: #eceef3;
-  color: #9a9db3;
+  color: #9295a7;
+
   box-shadow: none;
 }
 
 .insufficientBtn:hover {
   transform: none;
+  filter: none;
+  box-shadow: none;
 }
 
-/* Merge Master — warm, puzzle/block feel */
+/* =========================================
+   STATUS / PLACEHOLDER
+   ========================================= */
+
+.status {
+  margin-top: 20px;
+
+  padding: 12px 15px;
+
+  border-radius: 12px;
+
+  background: #f0f1f5;
+
+  color: #6b6e85;
+
+  font-size: 0.86rem;
+}
+
+.gameStartedPlaceholder {
+  width: 100%;
+
+  margin-top: 30px;
+  padding: 24px;
+
+  border-radius: 16px;
+
+  background: #eef0f7;
+  color: #3a3d4d;
+}
+
+/* =========================================
+   NOT FOUND
+   ========================================= */
+
+.notFound {
+  min-height: 100vh;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  gap: 12px;
+
+  background: #f7f8fb;
+  color: #1c1f2e;
+}
+
+/* =========================================
+   INSUFFICIENT TOKEN MODAL
+   ========================================= */
+
+.overlay {
+  position: fixed;
+  inset: 0;
+
+  z-index: 100;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 20px;
+
+  background: rgba(15, 17, 27, 0.48);
+
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+}
+
+.insufficientModal {
+  width: min(100%, 340px);
+
+  padding: 28px 24px;
+
+  border: 1px solid rgba(28, 31, 46, 0.08);
+  border-radius: 22px;
+
+  background: #ffffff;
+
+  color: #1c1f2e;
+
+  text-align: center;
+
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.25);
+
+  animation: modalIn 0.22s ease;
+}
+
+.insufficientTitle {
+  margin-bottom: 8px;
+
+  color: #c0392b;
+
+  font-size: 1.1rem;
+  font-weight: 900;
+}
+
+.earnMoreBtn {
+  margin-top: 16px;
+
+  padding: 10px 24px;
+
+  border: none;
+  border-radius: 999px;
+
+  background: #1c1f2e;
+  color: #ffffff;
+
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+/* =========================================
+   REWARD TOAST
+   ========================================= */
+
+.rewardToast {
+  position: fixed;
+
+  top: 70px;
+  left: 50%;
+
+  z-index: 300;
+
+  display: flex;
+  align-items: center;
+  gap: 7px;
+
+  transform: translateX(-50%);
+
+  padding: 10px 18px;
+
+  border: 1px solid rgba(255, 215, 94, 0.2);
+  border-radius: 999px;
+
+  background: #1c1f2e;
+  color: #ffd75e;
+
+  font-size: 0.88rem;
+  font-weight: 800;
+
+  white-space: nowrap;
+
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
+
+  animation: toastIn 0.3s ease;
+}
+
+/* =========================================
+   GAME THEMES
+   ========================================= */
+
 .themeMergeMaster {
   background:
-    radial-gradient(circle at 15% 20%, rgba(240, 185, 11, 0.08) 0%, transparent 40%),
-    radial-gradient(circle at 85% 75%, rgba(245, 149, 99, 0.1) 0%, transparent 40%),
+    radial-gradient(
+      circle at 15% 20%,
+      rgba(240, 185, 11, 0.08) 0%,
+      transparent 40%
+    ),
+    radial-gradient(
+      circle at 85% 75%,
+      rgba(245, 149, 99, 0.1) 0%,
+      transparent 40%
+    ),
     repeating-linear-gradient(
       45deg,
       rgba(240, 185, 11, 0.03) 0px,
@@ -219,48 +570,56 @@
     #fdfbf6;
 }
 
-/* Wormzy — fresh, garden/nature feel */
 .themeWormzy {
   background:
-    radial-gradient(circle at 20% 15%, rgba(79, 156, 99, 0.1) 0%, transparent 40%),
-    radial-gradient(circle at 80% 80%, rgba(231, 76, 60, 0.06) 0%, transparent 35%),
+    radial-gradient(
+      circle at 20% 15%,
+      rgba(79, 156, 99, 0.1) 0%,
+      transparent 40%
+    ),
+    radial-gradient(
+      circle at 80% 80%,
+      rgba(231, 76, 60, 0.06) 0%,
+      transparent 35%
+    ),
     #f5faf6;
 }
 
-
-.artworkBackdrop {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-}
-
-.header,
-.content {
-  position: relative;
-  z-index: 1;
-  padding-bottom: 72px;
-}
+/* =========================================
+   WORMZY DECORATION
+   ========================================= */
 
 .snakeTrail {
   position: absolute;
+
   top: 0;
   left: 0;
+
   width: 100%;
   height: 320px;
+
   z-index: 0;
+
   pointer-events: none;
+
   opacity: 0.35;
 }
 
 .snakeTrailPath {
   fill: none;
+
   stroke: #4f9c63;
   stroke-width: 10;
+
   stroke-linecap: round;
   stroke-dasharray: 18 14;
+
   animation: snakeDash 6s linear infinite;
 }
+
+/* =========================================
+   ANIMATIONS
+   ========================================= */
 
 @keyframes snakeDash {
   to {
@@ -268,13 +627,144 @@
   }
 }
 
+@keyframes toastIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+@keyframes modalIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* =========================================
+   MOBILE
+   ========================================= */
+
+@media (max-width: 600px) {
+  .header {
+    padding: 12px 15px;
+  }
+
+  .coinBalance {
+    padding: 6px 10px;
+    font-size: 0.76rem;
+  }
+
+  .coinIcon {
+    width: 19px;
+    height: 19px;
+  }
+
+  .content {
+    padding: 24px 14px 95px;
+  }
+
+  .artworkFrame {
+    width: min(100%, 340px);
+    border-radius: 20px;
+  }
+
+  .artwork {
+    border-radius: 16px;
+  }
+
+  .gameHeading {
+    margin-top: 18px;
+  }
+
+  .title {
+    font-size: 1.85rem;
+  }
+
+  .tagline {
+    font-size: 0.88rem;
+  }
+
+  .gamePanel {
+    margin-top: 22px;
+    padding: 17px 14px;
+    border-radius: 18px;
+  }
+
+  .entryInfo {
+    min-height: 60px;
+  }
+
+  .infoLabel {
+    font-size: 0.61rem;
+  }
+
+  .entryValue,
+  .balanceValue {
+    font-size: 0.82rem;
+  }
+
+  .inlineIcon {
+    width: 20px;
+    height: 20px;
+  }
+
+  .playNowBtn {
+    padding: 13px 18px;
+  }
+}
+
+@media (max-width: 360px) {
+  .header {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .backLink {
+    font-size: 0.82rem;
+  }
+
+  .coinBalance {
+    font-size: 0.7rem;
+  }
+
+  .content {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  .title {
+    font-size: 1.65rem;
+  }
+
+  .gamePanel {
+    padding: 15px 11px;
+  }
+
+  .entryValue,
+  .balanceValue {
+    font-size: 0.76rem;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .snakeTrailPath {
     animation: none;
   }
-}
 
-@keyframes toastIn {
-  from { opacity: 0; transform: translate(-50%, -10px); }
-  to { opacity: 1; transform: translate(-50%, 0); }
+  .playNowBtn,
+  .backLink,
+  .howToPlayLink {
+    transition: none;
+  }
 }

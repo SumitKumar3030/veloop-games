@@ -139,87 +139,133 @@ function GameHome() {
         )}
 
         <main className={styles.content}>
-          <img src={game.image} alt={game.name} className={styles.artwork} />
-          <h1 className={styles.title} style={{ color: accentColor }}>
-            {game.name}
-          </h1>
-          <p className={styles.tagline}>{game.tagline}</p>
+  <div className={styles.gameHero}>
+    <div className={styles.artworkFrame}>
+      <img
+        src={game.image}
+        alt={game.name}
+        className={styles.artwork}
+      />
+      <div className={styles.artworkGlow} />
+    </div>
 
-          {!gameStarted && (
-            <>
-              <p className={styles.entry}>
-                Entry:{" "}
-                <img
-                  src="/assets/icons/token-icon.png"
-                  alt=""
-                  className={styles.inlineIcon}
-                />{" "}
-                {game.cost} {game.currency}
-              </p>
-              <p className={styles.tokenBalanceLine}>
-                Your Balance: {tokenBalance} Tokens
-              </p>
+    <div className={styles.gameHeading}>
+      <span className={styles.gameLabel}>VELOOP GAME</span>
 
-              {game.playable ? (
-                hasEnoughTokens(game.cost) ? (
-                  <button
-                    type="button"
-                    className={styles.playNowBtn}
-                    onClick={handlePlayNow}
-                    disabled={isStarting}
-                    style={{
-                      background: `linear-gradient(135deg, ${accentColor}, ${accentColor}cc)`,
-                    }}
-                  >
-                    {isStarting ? "⟳ Starting..." : "▶ Play Now"}
-                  </button>
-                ) : (
-                  <button
-                    type="button"
-                    className={`${styles.playNowBtn} ${styles.insufficientBtn}`}
-                    onClick={() => setShowInsufficientModal(true)}
-                  >
-                    🎫 Need {game.cost} Tokens
-                  </button>
-                )
-              ) : (
-                <p className={styles.status}>
-                  🚧 This game is banner-only for this version
-                </p>
-              )}
+      <h1
+        className={styles.title}
+        style={{ color: accentColor }}
+      >
+        {game.name}
+      </h1>
 
-              {game.guide && (
-                <button
-                  type="button"
-                  className={styles.howToPlayLink}
-                  onClick={() => setShowGuide(true)}
-                >
-                  How to Play
-                </button>
-              )}
-            </>
-          )}
+      <p className={styles.tagline}>
+        {game.tagline}
+      </p>
+    </div>
+  </div>
 
-          {gameStarted && game.slug === "merge-master" && (
-            <MergeMasterGame onGameEnd={handleGameEnd} />
-          )}
+  {!gameStarted && (
+    <div className={styles.gamePanel}>
+      <div className={styles.entryInfo}>
+        <div className={styles.entryItem}>
+          <span className={styles.infoLabel}>ENTRY</span>
 
-          {gameStarted && game.slug === "wormzy" && (
-            <WormzyGame
-              onGameEnd={handleGameEnd}
-              onExit={() => setGameStarted(false)}
-              onGameOver={handleWormzyGameOver}
+          <span className={styles.entryValue}>
+            <img
+              src="/assets/icons/token-icon.png"
+              alt=""
+              className={styles.inlineIcon}
             />
-          )}
+            {game.cost} {game.currency}
+          </span>
+        </div>
 
-          {gameStarted &&
-            game.slug !== "merge-master" &&
-            game.slug !== "wormzy" && (
-              <div className={styles.gameStartedPlaceholder}>
-                <p>🎮 {game.name} gameplay coming in a later phase.</p>
-              </div>
-            )}
-        </main>
+        <div className={styles.divider} />
+
+        <div className={styles.entryItem}>
+          <span className={styles.infoLabel}>YOUR BALANCE</span>
+
+          <span className={styles.balanceValue}>
+            {tokenBalance}
+            <span> Tokens</span>
+          </span>
+        </div>
+      </div>
+
+      {game.playable ? (
+        hasEnoughTokens(game.cost) ? (
+          <button
+            type="button"
+            className={styles.playNowBtn}
+            onClick={handlePlayNow}
+            disabled={isStarting}
+            style={{
+              "--accent": accentColor,
+              background: `linear-gradient(
+                135deg,
+                ${accentColor},
+                ${accentColor}cc
+              )`,
+            }}
+          >
+            <span className={styles.playIcon}>
+              {isStarting ? "⟳" : "▶"}
+            </span>
+
+            {isStarting ? "Starting..." : "Play Now"}
+          </button>
+        ) : (
+          <button
+            type="button"
+            className={`${styles.playNowBtn} ${styles.insufficientBtn}`}
+            onClick={() => setShowInsufficientModal(true)}
+          >
+            <span className={styles.playIcon}>🎫</span>
+            Need {game.cost} Tokens
+          </button>
+        )
+      ) : (
+        <p className={styles.status}>
+          🚧 This game is banner-only for this version
+        </p>
+      )}
+
+      {game.guide && (
+        <button
+          type="button"
+          className={styles.howToPlayLink}
+          onClick={() => setShowGuide(true)}
+        >
+          <span>ⓘ</span>
+          How to Play
+        </button>
+      )}
+    </div>
+  )}
+
+  {gameStarted && game.slug === "merge-master" && (
+    <MergeMasterGame onGameEnd={handleGameEnd} />
+  )}
+
+  {gameStarted && game.slug === "wormzy" && (
+    <WormzyGame
+      onGameEnd={handleGameEnd}
+      onExit={() => setGameStarted(false)}
+      onGameOver={handleWormzyGameOver}
+    />
+  )}
+
+  {gameStarted &&
+    game.slug !== "merge-master" &&
+    game.slug !== "wormzy" && (
+      <div className={styles.gameStartedPlaceholder}>
+        <p>
+          🎮 {game.name} gameplay coming in a later phase.
+        </p>
+      </div>
+    )}
+</main>
 
         {showGuide && (
           <GameGuide guide={game.guide} onClose={handleGuideClose} />

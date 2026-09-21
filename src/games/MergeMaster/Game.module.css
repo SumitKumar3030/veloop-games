@@ -126,6 +126,116 @@
   justify-content: space-between;
 }
 
+/* =========================================
+   FULLSCREEN CONTROL
+========================================= */
+
+.fullscreenButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+
+  min-height: 38px;
+  padding: 8px 12px;
+
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+
+  background: rgba(255, 255, 255, 0.055);
+  color: rgba(255, 255, 255, 0.9);
+
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+
+  transition:
+    transform 0.18s ease,
+    background 0.18s ease,
+    border-color 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.fullscreenButton:hover {
+  background: rgba(240, 185, 11, 0.12);
+  border-color: rgba(240, 185, 11, 0.38);
+
+  box-shadow:
+    0 0 18px rgba(240, 185, 11, 0.12);
+
+  transform: translateY(-1px);
+}
+
+.fullscreenButton:active {
+  transform: scale(0.96);
+}
+
+.fullscreenButton:focus-visible {
+  outline: 2px solid #f0b90b;
+  outline-offset: 3px;
+}
+
+.fullscreenButton > span:first-child {
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.fullscreenLabel {
+  white-space: nowrap;
+}
+
+/* =========================================
+   FULLSCREEN LAYOUT
+========================================= */
+
+.gameContainer:fullscreen {
+  width: 100vw;
+  height: 100dvh;
+  min-height: 100dvh;
+
+  padding:
+    max(20px, env(safe-area-inset-top))
+    max(20px, env(safe-area-inset-right))
+    max(20px, env(safe-area-inset-bottom))
+    max(20px, env(safe-area-inset-left));
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  overflow: hidden;
+}
+
+.gameContainer:fullscreen .game {
+  width: min(100%, 440px);
+  max-height: 100%;
+}
+
+@media (max-width: 500px) {
+  .fullscreenButton {
+    min-height: 36px;
+    padding: 7px 10px;
+    border-radius: 10px;
+  }
+
+  .fullscreenLabel {
+    display: none;
+  }
+
+  .gameContainer:fullscreen {
+    padding:
+      max(10px, env(safe-area-inset-top))
+      max(10px, env(safe-area-inset-right))
+      max(10px, env(safe-area-inset-bottom))
+      max(10px, env(safe-area-inset-left));
+  }
+}
+
 .title {
   margin: 0;
   font-size: clamp(28px, 7vw, 42px);

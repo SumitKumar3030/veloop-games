@@ -36,6 +36,7 @@ function MergeMasterGame({ onGameEnd }) {
   const [countdown, setCountdown] = useState(COUNTDOWN_SECONDS);
 
   const [showHowToPlay, setShowHowToPlay] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   // --------------------------------------------------
   // VISUAL EFFECT STATE
@@ -100,6 +101,30 @@ function MergeMasterGame({ onGameEnd }) {
   }, [phase, countdown]);
 
   // --------------------------------------------------
+  // FULLSCREEN STATE
+  // --------------------------------------------------
+
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(
+        document.fullscreenElement === gameRef.current,
+      );
+    };
+
+    document.addEventListener(
+      "fullscreenchange",
+      handleFullscreenChange,
+    );
+
+    return () => {
+      document.removeEventListener(
+        "fullscreenchange",
+        handleFullscreenChange,
+      );
+    };
+  }, []);
+
+  // --------------------------------------------------
   // CLEANUP
   // --------------------------------------------------
 
@@ -115,15 +140,18 @@ function MergeMasterGame({ onGameEnd }) {
   // FULLSCREEN
   // --------------------------------------------------
 
-  const enterFullscreen = useCallback(async () => {
+  const toggleFullscreen = useCallback(async () => {
     try {
-      if (
-        !document.fullscreenElement &&
-        gameRef.current &&
-        document.fullscreenEnabled
-      ) {
-        await gameRef.current.requestFullscreen();
+      if (!document.fullscreenEnabled || !gameRef.current) {
+        return;
       }
+
+      if (document.fullscreenElement) {
+        await document.exitFullscreen();
+        return;
+      }
+
+      await gameRef.current.requestFullscreen();
     } catch (error) {
       console.error("Fullscreen failed:", error);
     }
@@ -134,8 +162,6 @@ function MergeMasterGame({ onGameEnd }) {
   // --------------------------------------------------
 
   const handlePlay = () => {
-    enterFullscreen();
-
     const newGrid = createInitialGrid();
 
     gridRef.current = newGrid;
@@ -163,7 +189,6 @@ function MergeMasterGame({ onGameEnd }) {
   // --------------------------------------------------
 
   const handleHowToPlay = () => {
-    enterFullscreen();
     setShowHowToPlay(true);
   };
 
@@ -553,6 +578,7 @@ function MergeMasterGame({ onGameEnd }) {
       }`}
     >
       <div className={styles.game}>
+
         {/* =========================================
             HEADER
         ========================================= */}
@@ -567,6 +593,36 @@ function MergeMasterGame({ onGameEnd }) {
               Merge. Explode. Master.
             </p>
           </div>
+
+          {/* FULLSCREEN */}
+
+          {document.fullscreenEnabled && (
+            <button
+              type="button"
+              className={styles.fullscreenButton}
+              onClick={toggleFullscreen}
+              aria-label={
+                isFullscreen
+                  ? "Exit fullscreen"
+                  : "Enter fullscreen"
+              }
+              title={
+                isFullscreen
+                  ? "Exit fullscreen"
+                  : "Fullscreen"
+              }
+            >
+              <span aria-hidden="true">
+                {isFullscreen ? "⤢" : "⛶"}
+              </span>
+
+              <span className={styles.fullscreenLabel}>
+                {isFullscreen
+                  ? "Exit"
+                  : "Fullscreen"}
+              </span>
+            </button>
+          )}
         </div>
 
         {/* =========================================
@@ -676,59 +732,16 @@ function MergeMasterGame({ onGameEnd }) {
                   className={`${styles.mergeEffect} ${styles[effect.level]}`}
                   style={positionStyle}
                 >
-                  <span
-                    className={
-                      styles.mergeRing
-                    }
-                  />
+                  <span className={styles.mergeRing} />
+                  <span className={styles.mergeBurst} />
+                  <span className={styles.mergeCore} />
 
-                  <span
-                    className={
-                      styles.mergeBurst
-                    }
-                  />
-
-                  <span
-                    className={
-                      styles.mergeCore
-                    }
-                  />
-
-                  <span
-                    className={
-                      styles.mergeSpark
-                    }
-                  />
-
-                  <span
-                    className={
-                      styles.mergeSpark
-                    }
-                  />
-
-                  <span
-                    className={
-                      styles.mergeSpark
-                    }
-                  />
-
-                  <span
-                    className={
-                      styles.mergeSpark
-                    }
-                  />
-
-                  <span
-                    className={
-                      styles.mergeSpark
-                    }
-                  />
-
-                  <span
-                    className={
-                      styles.mergeSpark
-                    }
-                  />
+                  <span className={styles.mergeSpark} />
+                  <span className={styles.mergeSpark} />
+                  <span className={styles.mergeSpark} />
+                  <span className={styles.mergeSpark} />
+                  <span className={styles.mergeSpark} />
+                  <span className={styles.mergeSpark} />
                 </div>
               );
             })}
@@ -744,9 +757,7 @@ function MergeMasterGame({ onGameEnd }) {
               return (
                 <div
                   key={effect.id}
-                  className={
-                    styles.floatingScore
-                  }
+                  className={styles.floatingScore}
                   style={positionStyle}
                 >
                   +{effect.value}
@@ -765,46 +776,15 @@ function MergeMasterGame({ onGameEnd }) {
               return (
                 <div
                   key={effect.id}
-                  className={
-                    styles.explosionEffect
-                  }
+                  className={styles.explosionEffect}
                   style={positionStyle}
                 >
-                  <span
-                    className={
-                      styles.explosionRing
-                    }
-                  />
-
-                  <span
-                    className={
-                      styles.explosionCore
-                    }
-                  />
-
-                  <span
-                    className={
-                      styles.explosionParticle
-                    }
-                  />
-
-                  <span
-                    className={
-                      styles.explosionParticle
-                    }
-                  />
-
-                  <span
-                    className={
-                      styles.explosionParticle
-                    }
-                  />
-
-                  <span
-                    className={
-                      styles.explosionParticle
-                    }
-                  />
+                  <span className={styles.explosionRing} />
+                  <span className={styles.explosionCore} />
+                  <span className={styles.explosionParticle} />
+                  <span className={styles.explosionParticle} />
+                  <span className={styles.explosionParticle} />
+                  <span className={styles.explosionParticle} />
                 </div>
               );
             })}
@@ -815,51 +795,27 @@ function MergeMasterGame({ onGameEnd }) {
 
             {phase !== "playing" &&
               !showHowToPlay && (
-                <div
-                  className={
-                    styles.overlay
-                  }
-                >
+                <div className={styles.overlay}>
                   {phase === "idle" && (
                     <>
-                      <div
-                        className={
-                          styles.overlayLogo
-                        }
-                      >
+                      <div className={styles.overlayLogo}>
                         🔥
                       </div>
 
-                      <h2
-                        className={
-                          styles.overlayTitle
-                        }
-                      >
+                      <h2 className={styles.overlayTitle}>
                         MERGE MASTER
                       </h2>
 
-                      <p
-                        className={
-                          styles.overlayText
-                        }
-                      >
+                      <p className={styles.overlayText}>
                         Match tiles, create combos
                         and reach 2048.
                       </p>
 
-                      <div
-                        className={
-                          styles.overlayButtons
-                        }
-                      >
+                      <div className={styles.overlayButtons}>
                         <button
                           type="button"
-                          className={
-                            styles.playBtn
-                          }
-                          onClick={
-                            handlePlay
-                          }
+                          className={styles.playBtn}
+                          onClick={handlePlay}
                         >
                           <span>▶</span>
                           Play Now
@@ -867,12 +823,8 @@ function MergeMasterGame({ onGameEnd }) {
 
                         <button
                           type="button"
-                          className={
-                            styles.secondaryButton
-                          }
-                          onClick={
-                            handleHowToPlay
-                          }
+                          className={styles.secondaryButton}
+                          onClick={handleHowToPlay}
                         >
                           How to Play
                         </button>
@@ -882,9 +834,7 @@ function MergeMasterGame({ onGameEnd }) {
 
                   {phase === "counting" && (
                     <div
-                      className={
-                        styles.countdown
-                      }
+                      className={styles.countdown}
                       key={countdown}
                     >
                       {countdown === 0
@@ -900,29 +850,13 @@ function MergeMasterGame({ onGameEnd }) {
             ===================================== */}
 
             {showHowToPlay && (
-              <div
-                className={
-                  styles.overlay
-                }
-              >
-                <div
-                  className={
-                    styles.howToPlay
-                  }
-                >
-                  <h2
-                    className={
-                      styles.overlayTitle
-                    }
-                  >
+              <div className={styles.overlay}>
+                <div className={styles.howToPlay}>
+                  <h2 className={styles.overlayTitle}>
                     How to Play
                   </h2>
 
-                  <div
-                    className={
-                      styles.instructions
-                    }
-                  >
+                  <div className={styles.instructions}>
                     <div>
                       <span>👆</span>
                       <p>
@@ -966,9 +900,7 @@ function MergeMasterGame({ onGameEnd }) {
 
                   <button
                     type="button"
-                    className={
-                      styles.playBtn
-                    }
+                    className={styles.playBtn}
                     onClick={() => {
                       setShowHowToPlay(false);
                       handlePlay();
@@ -980,9 +912,7 @@ function MergeMasterGame({ onGameEnd }) {
 
                   <button
                     type="button"
-                    className={
-                      styles.closeButton
-                    }
+                    className={styles.closeButton}
                     onClick={() =>
                       setShowHowToPlay(false)
                     }
@@ -997,11 +927,7 @@ function MergeMasterGame({ onGameEnd }) {
           {/* BONUS FLASH */}
 
           {bonusFlash !== null && (
-            <div
-              className={
-                styles.bonusFlash
-              }
-            >
+            <div className={styles.bonusFlash}>
               {typeof bonusFlash === "number"
                 ? `+${bonusFlash}`
                 : bonusFlash}
@@ -1015,70 +941,40 @@ function MergeMasterGame({ onGameEnd }) {
 
         <div className={styles.powerups}>
           <button
-            className={
-              styles.powerupButton
-            }
+            className={styles.powerupButton}
             type="button"
           >
-            <span
-              className={
-                styles.powerupIcon
-              }
-            >
+            <span className={styles.powerupIcon}>
               💣
             </span>
 
-            <span
-              className={
-                styles.powerupText
-              }
-            >
+            <span className={styles.powerupText}>
               Bomb
             </span>
           </button>
 
           <button
-            className={
-              styles.powerupButton
-            }
+            className={styles.powerupButton}
             type="button"
           >
-            <span
-              className={
-                styles.powerupIcon
-              }
-            >
+            <span className={styles.powerupIcon}>
               ⚡
             </span>
 
-            <span
-              className={
-                styles.powerupText
-              }
-            >
+            <span className={styles.powerupText}>
               2× Score
             </span>
           </button>
 
           <button
-            className={
-              styles.powerupButton
-            }
+            className={styles.powerupButton}
             type="button"
           >
-            <span
-              className={
-                styles.powerupIcon
-              }
-            >
+            <span className={styles.powerupIcon}>
               ↩
             </span>
 
-            <span
-              className={
-                styles.powerupText
-              }
-            >
+            <span className={styles.powerupText}>
               Undo
             </span>
           </button>
