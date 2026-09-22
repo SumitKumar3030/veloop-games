@@ -263,7 +263,9 @@
   position: relative;
   display: grid;
   width: 100%;
-  aspect-ratio: 10 / 8;
+  /* COLS / ROWS from logic.js is 10 / 9 — was hardcoded to 10 / 8, which
+     stretched every cell taller than it should be. */
+  aspect-ratio: 10 / 9;
   overflow: hidden;
   border: 3px solid #315b31;
   border-radius: 17px;
@@ -408,11 +410,6 @@
   height: 78%;
   font-size: clamp(21px, 4vw, 34px);
   filter: drop-shadow(0 4px 2px rgba(48, 44, 25, 0.4));
-}
-
-.stone {
-  width: 78%;
-  height: 78%;
   border-radius: 40% 45% 42% 48%;
   background:
     radial-gradient(circle at 30% 25%, rgba(255, 255, 255, 0.35), transparent 45%),
@@ -759,6 +756,16 @@
   }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 @media (max-width: 600px) {
   .gameContainer {
     min-height: 100svh;
@@ -869,25 +876,30 @@
   }
 }
 
-.cellsky {
+.cell.cellsky {
   background: transparent;
   border: none;
 }
 
-.cellplatform {
+.cell.cellplatform {
   background:
     radial-gradient(circle at 30% 25%, rgba(255, 255, 255, 0.15), transparent 40%),
     linear-gradient(180deg, #8a5a34, #5e3c22);
   box-shadow: inset 0 3px 0 rgba(255, 220, 160, 0.3);
 }
 
-.cellspike {
+.cell.cellspike {
   background: #3a2418;
 }
 
 .spikeIcon {
   font-size: clamp(16px, 3vw, 26px);
   filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.5));
+}
+
+.cell.cellwormHead,
+.cell.cellwormBody {
+  border-color: transparent;
 }
 
 .headerActions {
@@ -926,16 +938,6 @@
 .fullscreenButton:active,
 .exitButton:active {
   transform: translateY(1px);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    scroll-behavior: auto !important;
-  }
 }
 
 /* =========================================================
@@ -1024,10 +1026,11 @@
   }
 
   .board {
-  width: min(100%, 560px);
-  aspect-ratio: 1 / 0.72;
-  height: auto;
-}
+    width: min(100%, 560px);
+    /* was 1 / 0.72, which doesn't match the 10-col x 9-row grid either */
+    aspect-ratio: 10 / 9;
+    height: auto;
+  }
 
   .mobileControls {
     display: none;

@@ -15,13 +15,24 @@ import {
   moveWorm,
 } from "./logic";
 
+import {
+  initSound,
+  setMuted,
+  playEat,
+  playPush,
+  playInvalid,
+  playSpikeHit,
+  playFall,
+  playLevelComplete,
+  playAllComplete,
+  startAmbience,
+  stopAmbience,
+} from "./sound";
+
 import styles from "./Game.module.css";
 
 const COUNTDOWN_SECONDS = 3;
 
-// Converts total accumulated score (across every completed level this
-// session) into a Game Coin reward — same style of conversion as
-// Merge Master, so both games' rewards feel comparable.
 function calculateCoinReward(totalScore) {
   return Math.max(5, Math.round(totalScore / 15));
 }
@@ -29,12 +40,12 @@ function calculateCoinReward(totalScore) {
 function WormzyGame({ onGameEnd, onExit, onGameOver }) {
   const gameRef = useRef(null);
   const touchStartRef = useRef(null);
-  const totalScoreRef = useRef(0); // running total across all completed levels this session
+  const totalScoreRef = useRef(0);
 
   const [levelIndex, setLevelIndex] = useState(0);
   const [gameState, setGameState] = useState(() => createLevelState(0));
 
-  const [phase, setPhase] = useState("idle"); // idle | counting | playing | complete | failed | finished
+  const [phase, setPhase] = useState("idle");
   const [countdown, setCountdown] = useState(COUNTDOWN_SECONDS);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [showHowToPlay, setShowHowToPlay] = useState(false);
@@ -42,6 +53,7 @@ function WormzyGame({ onGameEnd, onExit, onGameOver }) {
   const [finalReward, setFinalReward] = useState(0);
   const [fallRetryUsed, setFallRetryUsed] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [muted, setMutedState] = useState(false);
 
   const totalLevels = getTotalLevels();
 
@@ -85,17 +97,40 @@ function WormzyGame({ onGameEnd, onExit, onGameOver }) {
   }, []);
 
   const startLevel = useCallback(
-  (nextLevelIndex = levelIndex) => {
-    setLevelIndex(nextLevelIndex);
-    setGameState(createLevelState(nextLevelIndex));
-    setElapsedSeconds(0);
-    setCountdown(COUNTDOWN_SECONDS);
-    setPhase("counting");
-    setShowHowToPlay(false);
-    setScreenShake(false);
-  },
-  [levelIndex],
-);
+    (nextLevelIndex = levelIndex) => {
+      // Browsers only allow audio to start from a user gesture — every
+      // startLevel() call happens from a button click, so this is a safe,
+      // reliable place to unlock the AudioContext and kick off the ambience.
+      initSound();
+      startAmbience();
+
+      setLevelIndex(nextLevelIndex);
+      setGameState(createLevelState(nextLevelIndex));
+      setElapsedSeconds(0);
+      setCountdown(COUNTDOWN_SECONDS);
+      setPhase("counting");
+      setShowHowToPlay(false);
+      setScreenShake(false);
+      // Every fresh attempt (new level OR retrying the same one) gets its
+      // own free fall-retry. Previously this only reset on mount, so a
+      // player who'd used their retry on level 2 would go straight to
+      // "Game Over" on their very first fall on level 3.
+      setFallRetryUsed(false);
+    },
+    [levelIndex],
+  );
+
+  // Stop the ambient loop if the player navigates away without going
+  // through handleExit/handleCollectReward (e.g. the parent unmounts us).
+  useEffect(() => {
+    return () => stopAmbience();
+  }, []);
+
+  const handleMuteToggle = () => {
+    const next = !muted;
+    setMutedState(next);
+    setMuted(next);
+  };
 
   useEffect(() => {
     if (phase !== "counting") return undefined;
@@ -121,24 +156,36 @@ function WormzyGame({ onGameEnd, onExit, onGameOver }) {
         return;
 
       const next = moveWorm(gameState, direction);
+      const ateApple = next.apples.length < gameState.apples.length;
+      const stoneMoved = next.stones.some((s, i) => {
+        const prev = gameState.stones[i];
+        return !prev || s.row !== prev.row || s.col !== prev.col;
+      });
       setGameState(next);
 
       if (next.invalidMove) {
+        playInvalid();
         setScreenShake(true);
         setTimeout(() => setScreenShake(false), 180);
       } else if (next.completed) {
+        playLevelComplete();
         setPhase("complete");
       } else if (next.failed) {
         if (next.failReason === "fell") {
+          playFall();
           if (!fallRetryUsed) {
             setFallRetryUsed(true);
-            setPhase("failed"); // first fall — free retry, same as before
+            setPhase("failed"); // first fall this attempt — free retry
           } else {
-            setPhase("gameover"); // second fall this session — real consequence
+            setPhase("gameover"); // fell again after the free retry
           }
         } else {
+          playSpikeHit();
           setPhase("failed"); // spikes stay unlimited free retries
         }
+      } else {
+        if (stoneMoved) playPush();
+        if (ateApple) playEat();
       }
     },
     [phase, gameState, fallRetryUsed],
@@ -176,7 +223,6 @@ function WormzyGame({ onGameEnd, onExit, onGameOver }) {
     touchStartRef.current = null;
   };
 
-  // Retry the SAME level after a spike/fall failure — not sent back to level 1
   const handleRetryAfterFail = () => {
     startLevel(levelIndex);
   };
@@ -191,6 +237,7 @@ function WormzyGame({ onGameEnd, onExit, onGameOver }) {
 
     const nextLevel = levelIndex + 1;
     if (nextLevel >= totalLevels) {
+      playAllComplete();
       setFinalReward(calculateCoinReward(newTotal));
       setPhase("finished");
       return;
@@ -198,16 +245,14 @@ function WormzyGame({ onGameEnd, onExit, onGameOver }) {
     startLevel(nextLevel);
   };
 
-  // Only called when the player explicitly collects their reward on the
-  // final "all levels complete" screen — this is what actually pays out.
   const handleCollectReward = async () => {
+    stopAmbience();
     await exitFullscreen();
     if (onGameEnd) onGameEnd(finalReward);
   };
 
-  // Bail out mid-game — no reward, tokens already spent stay spent
-  // (same as walking away from any paid attempt).
   const handleExit = async () => {
+    stopAmbience();
     await exitFullscreen();
     if (onExit) onExit();
   };
@@ -218,6 +263,7 @@ function WormzyGame({ onGameEnd, onExit, onGameOver }) {
   };
 
   const handleGameOverGoBack = async () => {
+    stopAmbience();
     await exitFullscreen();
     if (onGameOver) onGameOver(false);
   };
@@ -294,6 +340,16 @@ function WormzyGame({ onGameEnd, onExit, onGameOver }) {
           </div>
 
           <div className={styles.headerActions}>
+            <button
+              type="button"
+              className={styles.fullscreenButton}
+              onClick={handleMuteToggle}
+              aria-label={muted ? "Unmute sound" : "Mute sound"}
+              title={muted ? "Unmute" : "Mute"}
+            >
+              {muted ? "🔇" : "🔊"}
+            </button>
+
             <button
               type="button"
               className={styles.fullscreenButton}

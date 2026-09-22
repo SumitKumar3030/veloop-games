@@ -18,12 +18,6 @@ export const KEY_TO_DIRECTION = {
 };
 
 // ---------- Level data ----------
-// platforms: solid ground the snake/stones rest ON TOP of
-// spikes: instant level restart on contact
-// stones: pushable blocks (fall through gaps like everything else)
-// targets: glowing spots stones must land on
-// apples: exactly 2 per level
-// hole: exit — position + optional requiresLength (min snake length to safely cross the gap beneath it)
 const LEVELS = [
   {
     name: "First Steps",
@@ -46,12 +40,11 @@ const LEVELS = [
     worm: [{ row: 3, col: 1 }, { row: 3, col: 0 }],
     platforms: [
       { row: 4, col: 0 }, { row: 4, col: 1 }, { row: 4, col: 2 }, { row: 4, col: 3 },
-      // gap at col 4 — nothing at row 4 there
       { row: 4, col: 5 }, { row: 4, col: 6 }, { row: 4, col: 7 }, { row: 4, col: 8 }, { row: 4, col: 9 },
     ],
     spikes: [],
-    stones: [{ row: 3, col: 3 }], // player pushes this right, into the gap at col 4
-    targets: [{ row: 4, col: 4 }], // glowing target sits IN the gap — filling it makes it walkable
+    stones: [{ row: 3, col: 3 }],
+    targets: [{ row: 4, col: 4 }],
     apples: [{ row: 3, col: 2 }, { row: 3, col: 8 }],
     hole: { row: 3, col: 9 },
   },
@@ -61,9 +54,7 @@ const LEVELS = [
     worm: [{ row: 4, col: 1 }, { row: 4, col: 0 }],
     platforms: [
       { row: 5, col: 0 }, { row: 5, col: 1 }, { row: 5, col: 2 },
-      // gap at col 3
       { row: 5, col: 4 }, { row: 5, col: 5 },
-      // gap at col 6
       { row: 5, col: 7 }, { row: 5, col: 8 }, { row: 5, col: 9 },
     ],
     spikes: [],
@@ -78,9 +69,7 @@ const LEVELS = [
     worm: [{ row: 2, col: 1 }, { row: 2, col: 0 }],
     platforms: [
       { row: 3, col: 0 }, { row: 3, col: 1 }, { row: 3, col: 2 },
-      // gap at col 3 — first drop
       { row: 6, col: 3 }, { row: 6, col: 4 },
-      // gap at col 5 — second drop
       { row: 8, col: 5 }, { row: 8, col: 6 }, { row: 8, col: 7 }, { row: 8, col: 8 }, { row: 8, col: 9 },
     ],
     spikes: [],
@@ -96,7 +85,6 @@ const LEVELS = [
     platforms: [
       { row: 5, col: 0 }, { row: 5, col: 1 }, { row: 5, col: 2 }, { row: 5, col: 3 },
       { row: 5, col: 4 }, { row: 5, col: 5 }, { row: 5, col: 6 }, { row: 5, col: 7 }, { row: 5, col: 8 },
-      // no platform at col 9 — the hole sits over open air
     ],
     spikes: [],
     stones: [],
@@ -125,7 +113,6 @@ const LEVELS = [
     worm: [{ row: 2, col: 1 }, { row: 2, col: 0 }],
     platforms: [
       { row: 3, col: 0 }, { row: 3, col: 1 },
-      // gap at col 2 — the drop below happens before the spike column
       { row: 6, col: 2 }, { row: 6, col: 3 }, { row: 6, col: 4 },
       { row: 6, col: 5 }, { row: 6, col: 6 }, { row: 6, col: 7 }, { row: 6, col: 8 }, { row: 6, col: 9 },
     ],
@@ -158,12 +145,16 @@ const LEVELS = [
     platforms: [
       { row: 3, col: 0 }, { row: 3, col: 1 }, { row: 3, col: 2 },
       { row: 3, col: 3 }, { row: 3, col: 4 }, { row: 3, col: 5 }, { row: 3, col: 6 },
+      // was missing col 7 and 8 — the platform stopped 3 cells short of the
+      // hole, so the snake fell into that gap before ever reaching it. Only
+      // the final cell (the hole itself) should be the length-gated gap.
+      { row: 3, col: 7 }, { row: 3, col: 8 },
     ],
     spikes: [],
     stones: [],
     targets: [],
     apples: [{ row: 2, col: 2 }, { row: 2, col: 4 }],
-    hole: { row: 2, col: 9, requiresLength: 5 },
+    hole: { row: 2, col: 9, requiresLength: 4 }, // was 5 — impossible: only 2 apples exist, so max length is 4
   },
   {
     name: "Double Drop II",
@@ -186,13 +177,18 @@ const LEVELS = [
     worm: [{ row: 2, col: 1 }, { row: 2, col: 0 }],
     platforms: [
       { row: 3, col: 0 }, { row: 3, col: 1 },
-      // gap at col 2, bridged by pushed stone
+      // was a 2-wide gap (col 2 AND col 3) with only one stone/target to
+      // bridge it — added col 3 as solid ground so the single stone/target
+      // at col 2 is actually enough to cross.
+      { row: 3, col: 3 },
       { row: 3, col: 4 }, { row: 3, col: 5 }, { row: 3, col: 6 }, { row: 3, col: 7 }, { row: 3, col: 8 },
     ],
     spikes: [{ row: 3, col: 6 }],
     stones: [{ row: 2, col: 1 }],
     targets: [{ row: 3, col: 2 }],
-    apples: [{ row: 2, col: 0 }, { row: 2, col: 4 }],
+    // was { row: 2, col: 0 } — that's the snake's own starting tail cell,
+    // which (correctly) can never be re-entered, so that apple was uneatable.
+    apples: [{ row: 2, col: 4 }, { row: 2, col: 7 }],
     hole: { row: 3, col: 9, requiresLength: 3 },
   },
   {
@@ -218,7 +214,10 @@ const LEVELS = [
     platforms: [
       { row: 3, col: 0 }, { row: 3, col: 1 },
       { row: 3, col: 3 }, { row: 3, col: 5 }, { row: 3, col: 7 },
-      { row: 3, col: 9 },
+      // the { row: 3, col: 9 } platform used to duplicate the hole's own
+      // coordinate — since ANY platform tile permanently blocks movement
+      // onto it, that made the hole itself unenterable. The hole already
+      // counts as solid ground on its own, so no platform entry is needed here.
     ],
     spikes: [],
     stones: [{ row: 2, col: 1 }, { row: 2, col: 3 }, { row: 2, col: 5 }, { row: 2, col: 7 }],
@@ -232,12 +231,23 @@ const LEVELS = [
     worm: [{ row: 1, col: 1 }, { row: 1, col: 0 }],
     platforms: [
       { row: 2, col: 0 }, { row: 2, col: 1 }, { row: 2, col: 2 },
+      // extended col 6–8 so there's continuous ground all the way up to the
+      // hole (previously stopped at col 5, so the snake fell into the gap
+      // 3 cells before reaching the hole — only the hole cell itself should
+      // be the length-gated gap).
       { row: 7, col: 2 }, { row: 7, col: 3 }, { row: 7, col: 4 }, { row: 7, col: 5 },
+      { row: 7, col: 6 }, { row: 7, col: 7 }, { row: 7, col: 8 },
     ],
     spikes: [],
     stones: [],
     targets: [],
-    apples: [{ row: 1, col: 1 }, { row: 6, col: 3 }],
+    // Apple 1 was on the snake's own starting head cell (uneatable — see
+    // "Stone and Spike" note). Apple 2 was at (6,3), which is exactly where
+    // the snake lands after its big fall — landing on a cell doesn't count
+    // as eating it (only a deliberate step onto it does), and the corridor
+    // is too narrow to double back without hitting its own body. Moved it
+    // further along the ledge so it's picked up by a normal step instead.
+    apples: [{ row: 1, col: 2 }, { row: 6, col: 6 }],
     hole: { row: 6, col: 9, requiresLength: 4 },
   },
   {
@@ -245,14 +255,25 @@ const LEVELS = [
     description: "Every mechanic, one last time. Good luck.",
     worm: [{ row: 1, col: 1 }, { row: 1, col: 0 }],
     platforms: [
-      { row: 2, col: 0 }, { row: 2, col: 1 },
-      { row: 4, col: 1 }, { row: 4, col: 3 },
+      { row: 2, col: 0 }, { row: 2, col: 1 }, { row: 2, col: 2 },
+      { row: 4, col: 3 },
+      // extended col 7–8 so the ledge is continuous right up to the hole.
       { row: 7, col: 3 }, { row: 7, col: 4 }, { row: 7, col: 5 }, { row: 7, col: 6 },
+      { row: 7, col: 7 }, { row: 7, col: 8 },
     ],
+    // The old layout had no legal path down to the stone at all: the only
+    // column off the starting ledge that wasn't supported dropped straight
+    // off the bottom of the board. Redesigned so col 3 carries the snake
+    // down onto the stone, which now bridges a real gap (col 4/row 4) on
+    // its way to the target.
     spikes: [{ row: 7, col: 6 }],
-    stones: [{ row: 3, col: 1 }],
-    targets: [{ row: 4, col: 2 }],
-    apples: [{ row: 1, col: 1 }, { row: 6, col: 4 }],
+    stones: [{ row: 3, col: 4 }],
+    targets: [{ row: 4, col: 5 }],
+    // Apple 1 was on the snake's own starting head cell (uneatable). Apple 2
+    // was at the exact spot the snake lands after falling — same
+    // landing-doesn't-count issue as "Deep Reach" — moved further along the
+    // ledge so it's picked up with a normal step.
+    apples: [{ row: 1, col: 2 }, { row: 6, col: 7 }],
     hole: { row: 6, col: 9, requiresLength: 4 },
   },
 ];
@@ -283,10 +304,6 @@ export function getLevelInfo(index) {
   return getLevel(index);
 }
 
-// A cell counts as "solid ground to stand on" if it's a platform,
-// a settled stone, or the hole itself (you can stand at the hole's
-// mouth before stepping in — it only completes the level once both
-// apples are eaten).
 function isSolidGround(state, pos) {
   if (findIn(state.platforms, pos) !== -1) return true;
   if (findIn(state.stones, pos) !== -1) return true;
@@ -302,9 +319,6 @@ function isTarget(state, pos) {
   return findIn(state.targets, pos) !== -1;
 }
 
-// Stones behave slightly differently from the worm when falling: they
-// stop the moment they reach a target cell (the target marks the floor
-// of a gap), rather than needing an actual platform directly beneath.
 function dropStoneUntilSupported(state, startPos) {
   let pos = clone(startPos);
 
@@ -326,15 +340,10 @@ function dropStoneUntilSupported(state, startPos) {
     pos = below;
   }
 }
-// Drops a single position straight down until it lands on solid ground,
-// hits a spike (returns hitSpike:true), or falls off the board bottom
-// (returns fellOff:true). Used for the ONE-TIME initial settle of
-// apples/stones when a level loads, and for the snake's fall-check
-// after every move.
+
 function dropUntilSupported(state, startPos) {
   let pos = clone(startPos);
 
-  // Already resting on something? No fall needed.
   const below = { row: pos.row + 1, col: pos.col };
   if (!inBounds(below) || isSolidGround(state, below)) {
     return { pos, hitSpike: isSpike(state, pos), fellOff: false };
@@ -369,9 +378,6 @@ export function createLevelState(levelIndex = 0) {
     worm: level.worm.map(clone),
   };
 
-  // Settle stones to their resting position ONCE at level start
-  // (this is what makes an apple/stone "fall into place" when the
-  // level loads, per the reference — not on every move).
   const settledStones = level.stones.map((s) => dropStoneUntilSupported(rawState, s).pos);
   rawState.stones = settledStones;
 
@@ -392,8 +398,8 @@ export function createLevelState(levelIndex = 0) {
     requiresLength: level.hole.requiresLength || 0,
     moves: 0,
     completed: false,
-    failed: false, // spike hit or fell off — level needs restart
-    failReason: null, // "spike" | "fell"
+    failed: false,
+    failReason: null,
     invalidMove: false,
     lastDirection: null,
   };
@@ -410,47 +416,52 @@ export function moveWorm(state, directionName) {
   const nextHead = { row: head.row + direction.row, col: head.col + direction.col };
 
   if (!inBounds(nextHead)) {
-  return { ...state, invalidMove: true };
-}
-
- if (findIn(state.platforms, nextHead) !== -1) {
     return { ...state, invalidMove: true };
   }
+
+  if (findIn(state.platforms, nextHead) !== -1) {
+    return { ...state, invalidMove: true };
+  }
+
+  // Figure out apple-eating up front, since it changes whether the tail
+  // is safe to move into (see body-collision check below) and whether a
+  // stone can be pushed onto an apple tile.
+  const appleIdx = findIn(state.apples, nextHead);
+  const ateApple = appleIdx !== -1;
 
   // Pushing a stone
   let nextStones = state.stones.map(clone);
   const stoneIdx = findIn(state.stones, nextHead);
   if (stoneIdx !== -1) {
-  const pushedTo = { row: nextHead.row + direction.row, col: nextHead.col + direction.col };
-  const blocked =
-    !inBounds(pushedTo) ||
-    findIn(state.stones, pushedTo) !== -1 ||
-    findIn(state.worm, pushedTo) !== -1 ||
-    same(state.hole, pushedTo);
-  if (blocked) return { ...state, invalidMove: true };
+    const pushedTo = { row: nextHead.row + direction.row, col: nextHead.col + direction.col };
+    const pushBodyToCheck = ateApple ? state.worm : state.worm.slice(0, -1);
+    const blocked =
+      !inBounds(pushedTo) ||
+      findIn(state.stones, pushedTo) !== -1 ||
+      findIn(pushBodyToCheck, pushedTo) !== -1 ||
+      findIn(state.apples, pushedTo) !== -1 ||
+      same(state.hole, pushedTo);
+    if (blocked) return { ...state, invalidMove: true };
 
-  // Let the pushed stone fall into place (settles on the target if it's
-  // pushed over a gap, otherwise rests on whatever's directly below it)
-  const stonesWithoutThisOne = state.stones.filter((_, i) => i !== stoneIdx);
-  const tempState = { ...state, stones: stonesWithoutThisOne };
-  const settled = dropStoneUntilSupported(tempState, pushedTo);
+    const stonesWithoutThisOne = state.stones.filter((_, i) => i !== stoneIdx);
+    const tempState = { ...state, stones: stonesWithoutThisOne };
+    const settled = dropStoneUntilSupported(tempState, pushedTo);
 
-  if (settled.fellOff || settled.hitSpike) {
-    return { ...state, invalidMove: true }; // pushing it here would be a bad move — block it
+    if (settled.fellOff || settled.hitSpike) {
+      return { ...state, invalidMove: true };
+    }
+
+    nextStones[stoneIdx] = settled.pos;
   }
 
-  nextStones[stoneIdx] = settled.pos;
-}
-
-  // Can't move into own body (ignore current tail — it moves away)
-  const bodyWithoutTail = state.worm.slice(0, -1);
-  if (findIn(bodyWithoutTail, nextHead) !== -1) {
+  // Can't move into own body. The tail is only safe to step into when it's
+  // about to vacate that cell this move — which is every move EXCEPT when
+  // the snake just ate an apple (growing keeps the tail segment in place).
+  const bodyToCheck = ateApple ? state.worm : state.worm.slice(0, -1);
+  if (findIn(bodyToCheck, nextHead) !== -1) {
     return { ...state, invalidMove: true };
   }
 
-  // Eating an apple
-  const appleIdx = findIn(state.apples, nextHead);
-  const ateApple = appleIdx !== -1;
   let nextApples = state.apples;
   let nextWorm;
 
@@ -472,14 +483,10 @@ export function moveWorm(state, directionName) {
     lastDirection: directionName,
   };
 
-  // Spike check on the new head position
   if (isSpike(workingState, nextHead)) {
     return { ...workingState, failed: true, failReason: "spike" };
   }
 
-  // Gravity: does the snake's head have support beneath it now?
-  // Special case — the gap right under the hole is crossable if the
-  // snake has grown long enough (simplified length-gate, no physics sim).
   const belowHead = { row: nextHead.row + 1, col: nextHead.col };
   const standingOverHoleGap =
     same(nextHead, workingState.hole) && workingState.worm.length >= workingState.requiresLength;
@@ -494,7 +501,6 @@ export function moveWorm(state, directionName) {
     if (fallResult.hitSpike) {
       return { ...workingState, failed: true, failReason: "spike" };
     }
-    // Shift the whole snake down by however far the head fell
     const dropAmount = fallResult.pos.row - nextHead.row;
     workingState = {
       ...workingState,
@@ -553,7 +559,7 @@ export function getCellType(state, row, col) {
   if (isTarget(state, pos)) return "target";
   if (findIn(state.platforms, pos) !== -1) return "platform";
 
-  return "sky"; // open air — this is what makes it fall-through
+  return "sky";
 }
 
 export function getCellKey(row, col) {
