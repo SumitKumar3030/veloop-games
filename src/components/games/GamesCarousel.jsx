@@ -285,15 +285,15 @@ const handleTouchEnd = useCallback(() => {
   // Active dot sync
   // --------------------------------------------------
   const handleScroll = useCallback(() => {
-    const nearest = getNearestIndex();
+  if (!gamesData.length) return;
 
-    if (!gamesData.length) return;
+  const nearest = getNearestIndex();
+  const normalizedIndex = nearest % gamesData.length;
 
-    const normalizedIndex =
-      nearest % gamesData.length;
-
-    setActiveIndex(normalizedIndex);
-  }, [getNearestIndex]);
+  setActiveIndex((prev) =>
+    prev === normalizedIndex ? prev : normalizedIndex,
+  );
+}, [getNearestIndex]);
 
   // --------------------------------------------------
   // Dot navigation

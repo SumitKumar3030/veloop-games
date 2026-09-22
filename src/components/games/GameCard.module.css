@@ -170,8 +170,6 @@
   transition: transform 0.45s ease;
 }
 
-/* Very subtle artwork depth on desktop.
-   Does not alter or cover the supplied artwork. */
 
 
 /* --------------------------------------------------
@@ -214,8 +212,8 @@
 }
 
 .tokenIcon {
-  width: 22px;
-  height: 22px;
+  width: 27px;
+  height: 27px;
 
   flex: 0 0 auto;
 
