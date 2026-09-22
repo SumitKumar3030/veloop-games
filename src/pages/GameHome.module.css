@@ -74,6 +74,14 @@
   object-fit: contain;
 }
 
+.gameModeContent {
+  width: 100%;
+  max-width: none;
+  min-height: 100svh;
+  padding: 0;
+  margin: 0;
+}
+
 /* =========================================
    BACKGROUND
    ========================================= */

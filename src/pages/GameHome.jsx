@@ -138,7 +138,13 @@ function GameHome() {
           </div>
         )}
 
-        <main className={styles.content}>
+      <main
+  className={`${styles.content} ${
+    gameStarted ? styles.gameModeContent : ""
+  }`}
+>
+
+  {!gameStarted && (
   <div className={styles.gameHero}>
     <div className={styles.artworkFrame}>
       <img
@@ -164,6 +170,7 @@ function GameHome() {
       </p>
     </div>
   </div>
+  )}
 
   {!gameStarted && (
     <div className={styles.gamePanel}>
@@ -290,7 +297,7 @@ function GameHome() {
             </div>
           </div>
         )}
-        <BottomNav />
+        {!gameStarted && <BottomNav />}
       </div>
     </GameArtworkPreloader>
   );

@@ -410,6 +410,10 @@ export function moveWorm(state, directionName) {
   const nextHead = { row: head.row + direction.row, col: head.col + direction.col };
 
   if (!inBounds(nextHead)) {
+  return { ...state, invalidMove: true };
+}
+
+ if (findIn(state.platforms, nextHead) !== -1) {
     return { ...state, invalidMove: true };
   }
 

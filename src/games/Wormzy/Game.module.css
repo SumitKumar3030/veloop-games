@@ -8,21 +8,35 @@
   --gold: #f6c84c;
 
   position: relative;
-  min-height: 100vh;
+
+  width: 100%;
+  min-width: 100%;
+  min-height: 100svh;
+
   overflow: hidden;
+
   background:
-    radial-gradient(circle at 20% 10%, #b9e77f 0%, transparent 25%),
-    linear-gradient(180deg, #9dd96b 0%, #4e9b50 48%, #245c3b 100%);
+    radial-gradient(
+      circle at 20% 20%,
+      rgba(255, 255, 255, 0.18),
+      transparent 28%
+    ),
+    radial-gradient(
+      circle at 80% 80%,
+      rgba(127, 189, 92, 0.2),
+      transparent 30%
+    ),
+    linear-gradient(
+      135deg,
+      var(--forest-dark),
+      var(--forest-mid)
+    );
+
   color: var(--cream);
-  font-family:
-    Inter,
-    ui-sans-serif,
-    system-ui,
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    sans-serif;
+  font-family: Inter, system-ui, sans-serif;
+
   padding: 24px 14px;
+
   isolation: isolate;
 }
 
@@ -876,10 +890,18 @@
   filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.5));
 }
 
-.exitButton {
+.headerActions {
   position: absolute;
   top: 0;
   right: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.fullscreenButton,
+.exitButton {
+  position: static;
   width: 36px;
   height: 36px;
   border: 2px solid rgba(78, 45, 27, 0.6);
@@ -889,10 +911,21 @@
   font-weight: 900;
   font-size: 16px;
   cursor: pointer;
+  transition:
+    transform 0.15s ease,
+    background 0.15s ease,
+    filter 0.15s ease;
 }
 
+.fullscreenButton:hover,
 .exitButton:hover {
   background: #fff;
+  transform: translateY(-2px);
+}
+
+.fullscreenButton:active,
+.exitButton:active {
+  transform: translateY(1px);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -902,5 +935,115 @@
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     scroll-behavior: auto !important;
+  }
+}
+
+/* =========================================================
+   DESKTOP / LAPTOP — FIT WHOLE GAME IN ONE VIEWPORT
+   ========================================================= */
+
+@media (min-width: 769px) {
+  .gameContainer {
+    min-height: 100svh;
+    height: 100svh;
+    padding: 12px 14px;
+    overflow: hidden;
+  }
+
+  .game {
+    width: min(100%, 620px);
+    height: 100%;
+    max-height: calc(100svh - 24px);
+
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .header {
+    flex: 0 0 auto;
+    min-height: 70px;
+  }
+
+  .title {
+    font-size: clamp(36px, 4vw, 54px);
+    line-height: 0.9;
+  }
+
+  .subtitle {
+    font-size: 11px;
+  }
+
+  .eyebrow {
+    font-size: 9px;
+  }
+
+  .stats {
+    flex: 0 0 auto;
+    gap: 8px;
+  }
+
+  .statBox {
+    min-height: 52px;
+    padding: 7px 10px;
+  }
+
+  .statLabel {
+    font-size: 8px;
+  }
+
+  .statBox strong {
+    font-size: 18px;
+  }
+
+  .levelInfo {
+    flex: 0 0 auto;
+    min-height: 52px;
+    padding: 8px 12px;
+  }
+
+  .levelTitle {
+    font-size: 14px;
+  }
+
+  .levelDescription {
+    font-size: 10px;
+  }
+
+  .objective {
+    font-size: 18px;
+  }
+
+  .boardSection {
+    flex: 1 1 auto;
+    min-height: 0;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .board {
+  width: min(100%, 560px);
+  aspect-ratio: 1 / 0.72;
+  height: auto;
+}
+
+  .mobileControls {
+    display: none;
+  }
+
+  .footer {
+    flex: 0 0 auto;
+    min-height: 24px;
+    padding: 2px 0;
+  }
+
+  .footer p {
+    font-size: 9px;
+  }
+
+  .footerButton {
+    font-size: 9px;
   }
 }

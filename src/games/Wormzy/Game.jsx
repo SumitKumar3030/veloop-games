@@ -41,6 +41,7 @@ function WormzyGame({ onGameEnd, onExit, onGameOver }) {
   const [screenShake, setScreenShake] = useState(false);
   const [finalReward, setFinalReward] = useState(0);
   const [fallRetryUsed, setFallRetryUsed] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   const totalLevels = getTotalLevels();
 
@@ -71,19 +72,30 @@ function WormzyGame({ onGameEnd, onExit, onGameOver }) {
     }
   }, []);
 
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(Boolean(document.fullscreenElement));
+    };
+
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+
+    return () => {
+      document.removeEventListener("fullscreenchange", handleFullscreenChange);
+    };
+  }, []);
+
   const startLevel = useCallback(
-    async (nextLevelIndex = levelIndex) => {
-      await enterFullscreen();
-      setLevelIndex(nextLevelIndex);
-      setGameState(createLevelState(nextLevelIndex));
-      setElapsedSeconds(0);
-      setCountdown(COUNTDOWN_SECONDS);
-      setPhase("counting");
-      setShowHowToPlay(false);
-      setScreenShake(false);
-    },
-    [enterFullscreen, levelIndex],
-  );
+  (nextLevelIndex = levelIndex) => {
+    setLevelIndex(nextLevelIndex);
+    setGameState(createLevelState(nextLevelIndex));
+    setElapsedSeconds(0);
+    setCountdown(COUNTDOWN_SECONDS);
+    setPhase("counting");
+    setShowHowToPlay(false);
+    setScreenShake(false);
+  },
+  [levelIndex],
+);
 
   useEffect(() => {
     if (phase !== "counting") return undefined;
@@ -210,6 +222,14 @@ function WormzyGame({ onGameEnd, onExit, onGameOver }) {
     if (onGameOver) onGameOver(false);
   };
 
+  const handleFullscreenToggle = async () => {
+    if (document.fullscreenElement) {
+      await exitFullscreen();
+    } else {
+      await enterFullscreen();
+    }
+  };
+
   const renderCellContent = (cellType) => {
     switch (cellType) {
       case "wormHead":
@@ -273,14 +293,27 @@ function WormzyGame({ onGameEnd, onExit, onGameOver }) {
             <p className={styles.subtitle}>Eat. Push. Escape.</p>
           </div>
 
-          <button
-            type="button"
-            className={styles.exitButton}
-            onClick={handleExit}
-            aria-label="Exit game"
-          >
-            ✕
-          </button>
+          <div className={styles.headerActions}>
+            <button
+              type="button"
+              className={styles.fullscreenButton}
+              onClick={handleFullscreenToggle}
+              aria-label={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
+              title={isFullscreen ? "Exit fullscreen" : "Fullscreen"}
+            >
+              {isFullscreen ? "⛶" : "⛶"}
+            </button>
+
+            <button
+              type="button"
+              className={styles.exitButton}
+              onClick={handleExit}
+              aria-label="Exit game"
+              title="Exit game"
+            >
+              ✕
+            </button>
+          </div>
 
           <div className={styles.levelBadge}>
             <span>LEVEL</span>

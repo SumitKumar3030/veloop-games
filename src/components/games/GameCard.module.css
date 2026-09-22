@@ -1,6 +1,6 @@
 .card {
   position: relative;
-  width: 250px;
+  width: 260px;
   height: auto;
   flex: 0 0 auto;
 
@@ -151,7 +151,7 @@
   position: relative;
 
   width: 100%;
-  aspect-ratio: 3 / 4;
+  aspect-ratio: 10 / 11;
 
   overflow: hidden;
 
