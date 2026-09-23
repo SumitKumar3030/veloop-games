@@ -14,8 +14,28 @@ import {
 
 import GameOver from "../../components/games/GameOver";
 import styles from "./Game.module.css";
+import {
+  initSound,
+  setMuted,
+  playMerge,
+  playComboBoost,
+  playSpawn,
+  playInvalidMove,
+  playBombExplosion,
+  playBonus,
+  playRevive,
+  playGameOver,
+  startBackgroundMusic,
+  stopBackgroundMusic,
+} from "./sound";
 
 const COUNTDOWN_SECONDS = 3;
+
+// Put your own track at this path inside your project's /public folder
+// (e.g. public/sounds/background.mp3) — served at the root, so the path
+// here stays "/sounds/background.mp3" regardless of file format.
+const BACKGROUND_MUSIC_SRC = "/sounds/background.mp3";
+const BACKGROUND_MUSIC_VOLUME = 0.22;
 
 function MergeMasterGame({ onGameEnd }) {
   // --------------------------------------------------
@@ -37,6 +57,7 @@ function MergeMasterGame({ onGameEnd }) {
 
   const [showHowToPlay, setShowHowToPlay] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [muted, setMutedState] = useState(false);
 
   // --------------------------------------------------
   // VISUAL EFFECT STATE
@@ -161,7 +182,25 @@ function MergeMasterGame({ onGameEnd }) {
   // START GAME
   // --------------------------------------------------
 
+  const handleMuteToggle = () => {
+    const next = !muted;
+    setMutedState(next);
+    setMuted(next);
+  };
+
+  // Stop the background track if the player navigates away without going
+  // through handleNoThanks (e.g. the parent component unmounts us).
+  useEffect(() => {
+    return () => stopBackgroundMusic();
+  }, []);
+
   const handlePlay = () => {
+    // Browsers only allow audio to start from a user gesture — handlePlay()
+    // only ever runs from a button click, so this is a safe place to
+    // unlock the AudioContext and kick off the background track.
+    initSound();
+    startBackgroundMusic(BACKGROUND_MUSIC_SRC, BACKGROUND_MUSIC_VOLUME);
+
     const newGrid = createInitialGrid();
 
     gridRef.current = newGrid;
@@ -339,6 +378,7 @@ function MergeMasterGame({ onGameEnd }) {
       const result = move(previousGrid, direction);
 
       if (!result.moved) {
+        playInvalidMove();
         return;
       }
 
@@ -361,6 +401,10 @@ function MergeMasterGame({ onGameEnd }) {
 
       if (result.merges.length > 0) {
         triggerMergeEffects(result.merges);
+        result.merges.forEach((merge, i) => playMerge(merge.value, i));
+        playComboBoost(result.merges.length);
+      } else {
+        playSpawn();
       }
 
       triggerSpawnEffect(nextGrid, result.grid);
@@ -368,6 +412,7 @@ function MergeMasterGame({ onGameEnd }) {
       if (isGameOver(nextGrid)) {
         setTimeout(() => {
           setGameOver(true);
+          playGameOver();
         }, 250);
       }
     },
@@ -496,12 +541,16 @@ function MergeMasterGame({ onGameEnd }) {
       setExplosionEffects([]);
     }, 700);
 
+    playBombExplosion();
+
     gridRef.current = newGrid;
     setGrid(newGrid);
 
     setScore(
       (currentScore) => currentScore + bonus,
     );
+
+    setTimeout(() => playBonus(), 250);
 
     setBonusFlash(bonus);
 
@@ -521,6 +570,8 @@ function MergeMasterGame({ onGameEnd }) {
   // --------------------------------------------------
 
   const handleRevive = () => {
+    playRevive();
+
     const revivedGrid = reviveGrid(
       gridRef.current,
     );
@@ -543,6 +594,8 @@ function MergeMasterGame({ onGameEnd }) {
   // --------------------------------------------------
 
   const handleNoThanks = () => {
+    stopBackgroundMusic();
+
     const reward = calculateReward(score);
 
     onGameEnd(reward);
@@ -594,7 +647,18 @@ function MergeMasterGame({ onGameEnd }) {
             </p>
           </div>
 
-          {/* FULLSCREEN */}
+          {/* SOUND + FULLSCREEN */}
+
+          <div className={styles.headerActions}>
+            <button
+              type="button"
+              className={styles.fullscreenButton}
+              onClick={handleMuteToggle}
+              aria-label={muted ? "Unmute sound" : "Mute sound"}
+              title={muted ? "Unmute" : "Mute"}
+            >
+              <span aria-hidden="true">{muted ? "🔇" : "🔊"}</span>
+            </button>
 
           {document.fullscreenEnabled && (
             <button
@@ -623,6 +687,7 @@ function MergeMasterGame({ onGameEnd }) {
               </span>
             </button>
           )}
+          </div>
         </div>
 
         {/* =========================================
