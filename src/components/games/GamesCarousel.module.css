@@ -1,7 +1,10 @@
 .wrapper {
+  position: relative;
+
   width: 100%;
   max-width: 1600px;
   margin: 0 auto;
+
   padding: var(--veloop-space-lg) 0;
 }
 
@@ -12,17 +15,21 @@
 
 .eyebrow {
   color: var(--veloop-gold);
+
   font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+
   margin: 0 0 4px;
 }
 
 .title {
   color: var(--veloop-text-primary);
+
   font-size: 1.4rem;
   font-weight: 700;
+
   margin: 0;
 }
 
@@ -32,45 +39,86 @@
 
 .track {
   position: relative;
+
   display: flex;
   gap: 16px;
 
   overflow-x: auto;
+
   padding: 18px var(--veloop-space-lg) 20px;
 
   scrollbar-width: none;
   -ms-overflow-style: none;
 
   cursor: grab;
+
   touch-action: pan-x;
 
-  scroll-behavior: auto;
-
-   scroll-snap-type: x proximity;
+  /*
+   * Important:
+   * Do not use scroll-snap here.
+   *
+   * The carousel already performs its own
+   * card positioning from JavaScript.
+   */
+  scroll-snap-type: none;
 
   /*
-    Fade the outer edges while keeping
-    the center fully visible.
-  */
-  mask-image: linear-gradient(
-    to right,
-    transparent 0%,
-    black 7%,
-    black 93%,
-    transparent 100%
-  );
-
-  -webkit-mask-image: linear-gradient(
-    to right,
-    transparent 0%,
-    black 7%,
-    black 93%,
-    transparent 100%
-  );
+   * Keep the scrolling layer simple.
+   * No mask/filter/clip effect here.
+   */
 }
 
 .track::-webkit-scrollbar {
   display: none;
+}
+
+/* =========================================
+   EDGE FADE
+========================================= */
+
+/*
+ * The fade is now on the wrapper instead of the
+ * scrolling element.
+ *
+ * This prevents the browser from masking the
+ * entire moving scroll layer on every frame.
+ */
+
+.wrapper::before,
+.wrapper::after {
+  content: "";
+
+  position: absolute;
+
+  top: 90px;
+  bottom: 60px;
+
+  width: 42px;
+
+  z-index: 5;
+
+  pointer-events: none;
+}
+
+.wrapper::before {
+  left: 0;
+
+  background: linear-gradient(
+    to right,
+    var(--veloop-bg-primary, #0b1020),
+    transparent
+  );
+}
+
+.wrapper::after {
+  right: 0;
+
+  background: linear-gradient(
+    to left,
+    var(--veloop-bg-primary, #0b1020),
+    transparent
+  );
 }
 
 /* =========================================
@@ -79,23 +127,32 @@
 
 .cardWrapper {
   flex: 0 0 auto;
-  transform: scale(0.95);
-  opacity: 0.9;
 
-  scroll-snap-align: start;
-
-  transition:
-    transform 0.4s ease,
-    opacity 0.4s ease;
+  /*
+   * No transform/opacity animation while the
+   * carousel is continuously moving.
+   *
+   * This is intentionally static.
+   */
+  transform: none;
+  opacity: 1;
 }
 
-/*
-  Hover gives the interacted card
-  slightly more emphasis.
-*/
-.cardWrapper:hover {
-  transform: scale(1);
-  opacity: 1;
+/* =========================================
+   DESKTOP HOVER
+========================================= */
+
+@media (hover: hover) and (pointer: fine) {
+  .cardWrapper {
+    transition:
+      transform 180ms ease,
+      opacity 180ms ease;
+  }
+
+  .cardWrapper:hover {
+    transform: translateY(-3px) scale(1.015);
+    opacity: 1;
+  }
 }
 
 /* =========================================
@@ -108,10 +165,7 @@
 
 .dragging .cardWrapper {
   transition: none;
-}
-
-.dragging .cardWrapper:hover {
-  transform: scale(0.95);
+  transform: none;
 }
 
 /* =========================================
@@ -120,10 +174,12 @@
 
 .dots {
   display: flex;
+
   justify-content: center;
   align-items: center;
 
   gap: 8px;
+
   margin-top: var(--veloop-space-md);
 }
 
@@ -132,6 +188,7 @@
   height: 8px;
 
   padding: 0;
+
   border: none;
   border-radius: 50%;
 
@@ -140,9 +197,9 @@
   cursor: pointer;
 
   transition:
-    background 0.25s ease,
-    width 0.25s ease,
-    transform 0.25s ease;
+    background 180ms ease,
+    width 180ms ease,
+    transform 180ms ease;
 }
 
 .dot:hover {
@@ -172,32 +229,32 @@
 
     padding-left: 20px;
     padding-right: 20px;
-
-    mask-image: linear-gradient(
-      to right,
-      transparent 0%,
-      black 5%,
-      black 95%,
-      transparent 100%
-    );
-
-    -webkit-mask-image: linear-gradient(
-      to right,
-      transparent 0%,
-      black 5%,
-      black 95%,
-      transparent 100%
-    );
   }
 
+  .wrapper::before,
+  .wrapper::after {
+    width: 24px;
+  }
+
+  .wrapper::before {
+    top: 90px;
+  }
+
+  .wrapper::after {
+    top: 90px;
+  }
+
+  /*
+   * No scaling during scrolling.
+   * Native touch scrolling stays completely simple.
+   */
   .cardWrapper {
-    transform: scale(0.97);
-    opacity: 0.92;
+    transform: none;
+    opacity: 1;
   }
 
   .cardWrapper:hover {
-    transform: scale(1);
-    opacity: 1;
+    transform: none;
   }
 }
 
@@ -206,10 +263,6 @@
 ========================================= */
 
 @media (prefers-reduced-motion: reduce) {
-  .track {
-    scroll-behavior: auto;
-  }
-
   .cardWrapper,
   .dot {
     transition: none;

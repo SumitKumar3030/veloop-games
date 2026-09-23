@@ -18,6 +18,9 @@ function GamesCarousel({ onPlay }) {
   const intervalRef = useRef(null);
   const snapTimeoutRef = useRef(null);
 
+  // Cached card positions
+  const cardPositionsRef = useRef([]);
+
   // Drag state
   const isDraggingRef = useRef(false);
   const startXRef = useRef(0);
@@ -27,6 +30,9 @@ function GamesCarousel({ onPlay }) {
   // Touch state
   const isTouchingRef = useRef(false);
 
+  // Scroll frame
+  const scrollFrameRef = useRef(null);
+
   // --------------------------------------------------
   // Reduced motion
   // --------------------------------------------------
@@ -34,27 +40,44 @@ function GamesCarousel({ onPlay }) {
     window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   // --------------------------------------------------
-  // Get card + gap width
+  // Cache actual card positions
   // --------------------------------------------------
+  const updateCardPositions = useCallback(() => {
+    const track = trackRef.current;
+
+    if (!track) return;
+
+    cardPositionsRef.current = Array.from(track.children).map(
+      (card) => card.offsetLeft,
+    );
+  }, []);
 
   // --------------------------------------------------
-  // Get nearest card based on actual card positions
+  // Get nearest card using cached positions
   // --------------------------------------------------
   const getNearestIndex = useCallback(() => {
     const track = trackRef.current;
 
     if (!track) return 0;
 
-    const cards = Array.from(track.children);
+    const positions = cardPositionsRef.current;
 
-    if (!cards.length) return 0;
+    if (!positions.length) {
+      updateCardPositions();
+
+      if (!cardPositionsRef.current.length) {
+        return 0;
+      }
+    }
+
+    const currentScrollLeft = track.scrollLeft;
 
     let nearestIndex = 0;
     let smallestDistance = Infinity;
 
-    cards.forEach((card, index) => {
+    cardPositionsRef.current.forEach((position, index) => {
       const distance = Math.abs(
-        track.scrollLeft - card.offsetLeft,
+        currentScrollLeft - position,
       );
 
       if (distance < smallestDistance) {
@@ -64,7 +87,24 @@ function GamesCarousel({ onPlay }) {
     });
 
     return nearestIndex;
-  }, []);
+  }, [updateCardPositions]);
+
+  // --------------------------------------------------
+  // Keep cached positions correct after layout changes
+  // --------------------------------------------------
+  useEffect(() => {
+    updateCardPositions();
+
+    const handleResize = () => {
+      updateCardPositions();
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [updateCardPositions]);
 
   // --------------------------------------------------
   // Smoothly move to a specific card
@@ -75,16 +115,22 @@ function GamesCarousel({ onPlay }) {
 
       if (!track) return;
 
-      const card = track.children[index];
+      const positions = cardPositionsRef.current;
 
-      if (!card) return;
+      if (!positions.length) {
+        updateCardPositions();
+      }
+
+      const cardPosition = cardPositionsRef.current[index];
+
+      if (cardPosition == null) return;
 
       track.scrollTo({
-        left: card.offsetLeft,
+        left: cardPosition,
         behavior: prefersReducedMotion() ? "auto" : behavior,
       });
     },
-    [],
+    [updateCardPositions],
   );
 
   // --------------------------------------------------
@@ -104,10 +150,11 @@ function GamesCarousel({ onPlay }) {
     // We are inside the duplicated second set.
     if (nearest >= total) {
       const originalIndex = nearest - total;
-      const originalCard = track.children[originalIndex];
+      const originalPosition =
+        cardPositionsRef.current[originalIndex];
 
-      if (originalCard) {
-        track.scrollLeft = originalCard.offsetLeft;
+      if (originalPosition != null) {
+        track.scrollLeft = originalPosition;
       }
     }
   }, [getNearestIndex]);
@@ -123,7 +170,11 @@ function GamesCarousel({ onPlay }) {
     intervalRef.current = setInterval(() => {
       if (prefersReducedMotion()) return;
 
-      if (isPaused || isDraggingRef.current || isTouchingRef.current) {
+      if (
+        isPaused ||
+        isDraggingRef.current ||
+        isTouchingRef.current
+      ) {
         return;
       }
 
@@ -210,7 +261,8 @@ function GamesCarousel({ onPlay }) {
 
     dragDistanceRef.current = Math.abs(distance);
 
-    track.scrollLeft = startScrollLeftRef.current - distance;
+    track.scrollLeft =
+      startScrollLeftRef.current - distance;
   }, []);
 
   // --------------------------------------------------
@@ -263,37 +315,61 @@ function GamesCarousel({ onPlay }) {
   // Touch start
   // --------------------------------------------------
   const handleTouchStart = useCallback(() => {
-  isTouchingRef.current = true;
-  dragDistanceRef.current = 0;
-  setIsPaused(true);
-}, []);
+    isTouchingRef.current = true;
+    dragDistanceRef.current = 0;
+    setIsPaused(true);
+  }, []);
 
-const handleTouchEnd = useCallback(() => {
-  isTouchingRef.current = false;
+  // --------------------------------------------------
+  // Touch end
+  // --------------------------------------------------
+  const handleTouchEnd = useCallback(() => {
+    isTouchingRef.current = false;
 
-  /*
-   * Do NOT call scrollTo() here.
-   *
-   * The browser's native touch momentum should finish
-   * the swipe naturally. Calling scrollTo() on touchend
-   * causes the small forward/backward correction.
-   */
-  setIsPaused(false);
-}, []);
+    /*
+     * Do NOT call scrollTo() here.
+     *
+     * The browser's native touch momentum should finish
+     * the swipe naturally.
+     */
+    setIsPaused(false);
+  }, []);
 
   // --------------------------------------------------
   // Active dot sync
   // --------------------------------------------------
   const handleScroll = useCallback(() => {
-  if (!gamesData.length) return;
+    if (scrollFrameRef.current) return;
 
-  const nearest = getNearestIndex();
-  const normalizedIndex = nearest % gamesData.length;
+    scrollFrameRef.current = requestAnimationFrame(() => {
+      scrollFrameRef.current = null;
 
-  setActiveIndex((prev) =>
-    prev === normalizedIndex ? prev : normalizedIndex,
-  );
-}, [getNearestIndex]);
+      if (!gamesData.length) return;
+
+      const nearest = getNearestIndex();
+      const normalizedIndex =
+        nearest % gamesData.length;
+
+      setActiveIndex((prev) =>
+        prev === normalizedIndex
+          ? prev
+          : normalizedIndex,
+      );
+    });
+  }, [getNearestIndex]);
+
+  // --------------------------------------------------
+  // Clean scroll frame
+  // --------------------------------------------------
+  useEffect(() => {
+    return () => {
+      if (scrollFrameRef.current) {
+        cancelAnimationFrame(
+          scrollFrameRef.current,
+        );
+      }
+    };
+  }, []);
 
   // --------------------------------------------------
   // Dot navigation
@@ -313,9 +389,6 @@ const handleTouchEnd = useCallback(() => {
       /*
        * Choose whichever duplicate of the target
        * is closest to the currently visible position.
-       *
-       * This prevents dots from unnecessarily jumping
-       * from the second set back to the first set.
        */
       const candidates = [
         index,
@@ -326,9 +399,10 @@ const handleTouchEnd = useCallback(() => {
       let smallestDistance = Infinity;
 
       candidates.forEach((candidate) => {
-        const card = track.children[candidate];
+        const position =
+          cardPositionsRef.current[candidate];
 
-        if (!card) return;
+        if (position == null) return;
 
         const distance = Math.abs(
           current - candidate,
@@ -362,12 +436,14 @@ const handleTouchEnd = useCallback(() => {
   // Prevent accidental click after dragging
   // --------------------------------------------------
   const handleClickCapture = useCallback((e) => {
-    if (dragDistanceRef.current > DRAG_CLICK_THRESHOLD) {
+    if (
+      dragDistanceRef.current >
+      DRAG_CLICK_THRESHOLD
+    ) {
       e.stopPropagation();
       e.preventDefault();
     }
 
-    // Reset after the interaction.
     dragDistanceRef.current = 0;
   }, []);
 
@@ -375,17 +451,7 @@ const handleTouchEnd = useCallback(() => {
   // Keyboard focus
   // --------------------------------------------------
   const handleFocus = useCallback(() => {
-    // Pause auto-scroll while keyboard navigation is active.
     setIsPaused(true);
-
-    /*
-     * IMPORTANT:
-     * Do NOT call scrollIntoView().
-     *
-     * The browser can naturally keep the focused button
-     * visible. Calling scrollIntoView here was causing
-     * unnecessary carousel jumps.
-     */
   }, []);
 
   // --------------------------------------------------
