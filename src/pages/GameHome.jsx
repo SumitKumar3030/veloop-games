@@ -105,11 +105,7 @@ function GameHome() {
       >
         {!gameStarted && (
           <header className={styles.header}>
-            <Link
-              to="/"
-              className={styles.backLink}
-              aria-label="Back to Games"
-            >
+            <Link to="/" className={styles.backLink} aria-label="Back to Games">
               ← Games
             </Link>
 
@@ -176,163 +172,170 @@ function GameHome() {
           {!gameStarted && (
             <>
               {/* =========================
-                  GAME ARTWORK
-                  ========================= */}
-              <section className={styles.gameHero}>
-                <div
-                  className={styles.artworkFrame}
-                  style={{ "--accent": accentColor }}
-                >
-                  <div className={styles.artworkGlow} />
-
-                  <img
-                    src={game.image}
-                    alt={game.name}
-                    className={styles.artwork}
-                  />
-
-                  <div className={styles.artworkShine} />
-                </div>
-
-                <div className={styles.gameHeading}>
-                  <span className={styles.gameLabel}>
-                    {game.category || "VELOOP GAME"}
-                  </span>
-
-                  <h1
-                    className={styles.title}
+    GAME HOME LAYOUT
+    ========================= */}
+              <div className={styles.gameHomeLayout}>
+                {/* =========================
+      LEFT — GAME ARTWORK
+      ========================= */}
+                <section className={styles.gameHero}>
+                  <div
+                    className={styles.artworkFrame}
                     style={{ "--accent": accentColor }}
                   >
-                    {game.name}
-                  </h1>
+                    <div className={styles.artworkGlow} />
 
-                  <p className={styles.tagline}>{game.tagline}</p>
+                    <img
+                      src={game.image}
+                      alt={game.name}
+                      className={styles.artwork}
+                    />
 
-                  {game.description && (
-                    <p className={styles.description}>
-                      {game.description}
-                    </p>
-                  )}
-                </div>
-              </section>
-
-              {/* =========================
-                  ENTRY / PLAY
-                  ========================= */}
-              <section className={styles.gamePanel}>
-                <div className={styles.entryInfo}>
-                  <div className={styles.entryItem}>
-                    <span className={styles.infoLabel}>ENTRY FEE</span>
-
-                    <span className={styles.entryValue}>
-                      <img
-                        src="/assets/icons/token-icon.png"
-                        alt=""
-                        className={styles.inlineIcon}
-                      />
-                      {game.cost} {game.currency}
-                    </span>
+                    <div className={styles.artworkShine} />
                   </div>
-
-                  <div className={styles.divider} />
-
-                  <div className={styles.entryItem}>
-                    <span className={styles.infoLabel}>YOUR BALANCE</span>
-
-                    <span className={styles.balanceValue}>
-                      {tokenBalance}
-                      <span> Tokens</span>
-                    </span>
-                  </div>
-                </div>
-
-                {game.playable ? (
-                  hasEnoughTokens(game.cost) ? (
-                    <button
-                      type="button"
-                      className={styles.playNowBtn}
-                      onClick={handlePlayNow}
-                      disabled={isStarting}
-                      style={{
-                        "--accent": accentColor,
-                      }}
-                    >
-                      <span className={styles.playButtonShine} />
-
-                      <span className={styles.playIcon}>
-                        {isStarting ? "⟳" : "▶"}
-                      </span>
-
-                      <span>
-                        {isStarting ? "Starting..." : "Play Now"}
-                      </span>
-                    </button>
-                  ) : (
-                    <button
-                      type="button"
-                      className={`${styles.playNowBtn} ${styles.insufficientBtn}`}
-                      onClick={() => setShowInsufficientModal(true)}
-                    >
-                      <span className={styles.playIcon}>🎫</span>
-                      Need {game.cost} Tokens
-                    </button>
-                  )
-                ) : (
-                  <div className={styles.comingSoon}>
-                    <span>🎮</span>
-                    <div>
-                      <strong>Coming Soon</strong>
-                      <p>This game is not playable yet.</p>
-                    </div>
-                  </div>
-                )}
-              </section>
-
-              {/* =========================
-                  HOW TO PLAY
-                  ========================= */}
-              {game.guide && (
-                <section className={styles.infoSection}>
-                  <button
-                    type="button"
-                    className={styles.infoSectionHeader}
-                    onClick={() => setShowGuide(true)}
-                  >
-                    <span className={styles.infoSectionIcon}>?</span>
-
-                    <span className={styles.infoSectionText}>
-                      <strong>How to Play</strong>
-                      <small>Learn the basics before you start</small>
-                    </span>
-
-                    <span className={styles.infoArrow}>→</span>
-                  </button>
                 </section>
-              )}
 
-              {/* =========================
-                  REWARDS
-                  ========================= */}
-              <section className={styles.infoSection}>
-                <div className={styles.rewardsContent}>
-                  <div className={styles.rewardsIcon}>🏆</div>
+                {/* =========================
+      RIGHT — GAME DETAILS
+      ========================= */}
+                <div className={styles.gameDetails}>
+                  <div className={styles.gameHeading}>
+                    <span className={styles.gameLabel}>
+                      {game.category || "VELOOP GAME"}
+                    </span>
 
-                  <div className={styles.rewardsText}>
-                    <strong>Rewards</strong>
+                    <h1
+                      className={styles.title}
+                      style={{ "--accent": accentColor }}
+                    >
+                      {game.name}
+                    </h1>
 
-                    <p>
-                      Complete the game and earn Game Coins based on
-                      your performance.
-                    </p>
+                    <p className={styles.tagline}>{game.tagline}</p>
+
+                    {game.description && (
+                      <p className={styles.description}>{game.description}</p>
+                    )}
                   </div>
 
-                  <img
-                    src="/assets/icons/game-coin-icon.png"
-                    alt=""
-                    className={styles.rewardCoinIcon}
-                  />
+                  {/* =========================
+        ENTRY / PLAY
+        ========================= */}
+                  <section className={styles.gamePanel}>
+                    <div className={styles.entryInfo}>
+                      <div className={styles.entryItem}>
+                        <span className={styles.infoLabel}>ENTRY FEE</span>
+
+                        <span className={styles.entryValue}>
+                          <img
+                            src="/assets/icons/token-icon.png"
+                            alt=""
+                            className={styles.inlineIcon}
+                          />
+                          {game.cost} {game.currency}
+                        </span>
+                      </div>
+
+                      <div className={styles.divider} />
+
+                      <div className={styles.entryItem}>
+                        <span className={styles.infoLabel}>YOUR BALANCE</span>
+
+                        <span className={styles.balanceValue}>
+                          {tokenBalance}
+                          <span> Tokens</span>
+                        </span>
+                      </div>
+                    </div>
+
+                    {game.playable ? (
+                      hasEnoughTokens(game.cost) ? (
+                        <button
+                          type="button"
+                          className={styles.playNowBtn}
+                          onClick={handlePlayNow}
+                          disabled={isStarting}
+                          style={{
+                            "--accent": accentColor,
+                          }}
+                        >
+                          <span className={styles.playButtonShine} />
+
+                          <span className={styles.playIcon}>
+                            {isStarting ? "⟳" : "▶"}
+                          </span>
+
+                          <span>{isStarting ? "Starting..." : "Play Now"}</span>
+                        </button>
+                      ) : (
+                        <button
+                          type="button"
+                          className={`${styles.playNowBtn} ${styles.insufficientBtn}`}
+                          onClick={() => setShowInsufficientModal(true)}
+                        >
+                          <span className={styles.playIcon}>🎫</span>
+                          Need {game.cost} Tokens
+                        </button>
+                      )
+                    ) : (
+                      <div className={styles.comingSoon}>
+                        <span>🎮</span>
+
+                        <div>
+                          <strong>Coming Soon</strong>
+                          <p>This game is not playable yet.</p>
+                        </div>
+                      </div>
+                    )}
+                  </section>
+
+                  {/* =========================
+        HOW TO PLAY
+        ========================= */}
+                  {game.guide && (
+                    <section className={styles.infoSection}>
+                      <button
+                        type="button"
+                        className={styles.infoSectionHeader}
+                        onClick={() => setShowGuide(true)}
+                      >
+                        <span className={styles.infoSectionIcon}>?</span>
+
+                        <span className={styles.infoSectionText}>
+                          <strong>How to Play</strong>
+                          <small>Learn the basics before you start</small>
+                        </span>
+
+                        <span className={styles.infoArrow}>→</span>
+                      </button>
+                    </section>
+                  )}
+
+                  {/* =========================
+        REWARDS
+        ========================= */}
+                  <section className={styles.infoSection}>
+                    <div className={styles.rewardsContent}>
+                      <div className={styles.rewardsIcon}>🏆</div>
+
+                      <div className={styles.rewardsText}>
+                        <strong>Rewards</strong>
+
+                        <p>
+                          Complete the game and earn Game Coins based on your
+                          performance.
+                        </p>
+                      </div>
+
+                      <img
+                        src="/assets/icons/game-coin-icon.png"
+                        alt=""
+                        className={styles.rewardCoinIcon}
+                      />
+                    </div>
+                  </section>
                 </div>
-              </section>
+              </div>
             </>
           )}
 
@@ -352,26 +355,19 @@ function GameHome() {
             game.slug !== "merge-master" &&
             game.slug !== "wormzy" && (
               <div className={styles.gameStartedPlaceholder}>
-                <p>
-                  🎮 {game.name} gameplay coming in a later phase.
-                </p>
+                <p>🎮 {game.name} gameplay coming in a later phase.</p>
               </div>
             )}
         </main>
 
         {showGuide && (
-          <GameGuide
-            guide={game.guide}
-            onClose={handleGuideClose}
-          />
+          <GameGuide guide={game.guide} onClose={handleGuideClose} />
         )}
 
         {showInsufficientModal && (
           <div className={styles.overlay}>
             <div className={styles.insufficientModal}>
-              <p className={styles.insufficientTitle}>
-                Not Enough Tokens
-              </p>
+              <p className={styles.insufficientTitle}>Not Enough Tokens</p>
 
               <p>
                 You need {game.cost} Tokens to play.

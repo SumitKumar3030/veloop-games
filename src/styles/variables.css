@@ -1,37 +1,97 @@
 :root {
-  /* App background (from task brief) */
-  --veloop-bg: #161827;
-  --veloop-bg-elevated: #1e2138;
-  --veloop-bg-card: #1c1f33;
+  /* =========================================
+     VELOOP — CORE
+     ========================================= */
 
-  /* Premium palette — navy / charcoal / gold / silver / soft purple */
-  --veloop-navy: #232640;
-  --veloop-charcoal: #2a2d3e;
+  --veloop-bg: #161827;
+
+  --veloop-surface: #1e2030;
+  --veloop-surface-2: #25283a;
+  --veloop-surface-3: #2b2e42;
+
+  /* =========================================
+     TEXT
+     ========================================= */
+
+  --veloop-text: #f5f5f7;
+  --veloop-text-secondary: #b5b7c5;
+  --veloop-text-muted: #85889a;
+  --veloop-text-disabled: #5f6273;
+
+  /* =========================================
+     BRAND / GOLD
+     ========================================= */
+
   --veloop-gold: #f0b90b;
   --veloop-gold-light: #ffd75e;
-  --veloop-silver: #c9ced9;
-  --veloop-purple: #8b7cf6;
-  --veloop-white: #f5f6fa;
+  --veloop-gold-soft: rgba(240, 185, 11, 0.12);
 
-  /* Text */
-  --veloop-text-primary: #f5f6fa;
-  --veloop-text-secondary: #9a9db3;
-  --veloop-text-muted: #6b6e85;
+  /* =========================================
+     GAME ACCENTS
+     ========================================= */
 
-  /* Play Now button */
-  --veloop-btn-bg: linear-gradient(135deg, #f0b90b, #ffd75e);
-  --veloop-btn-text: #161827;
-  --veloop-btn-shadow: 0 4px 14px rgba(240, 185, 11, 0.35);
+  --veloop-purple: #8b6cff;
+  --veloop-green: #4f9c63;
+  --veloop-orange: #f59563;
+  --veloop-red: #e05252;
 
-  /* Card */
-  --veloop-card-radius: 16px;
-  --veloop-card-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
-  --veloop-card-border: 1px solid rgba(255, 255, 255, 0.06);
+  /* =========================================
+     BORDERS
+     ========================================= */
 
-  /* Spacing */
+  --veloop-border: rgba(255, 255, 255, 0.08);
+  --veloop-border-strong: rgba(255, 255, 255, 0.14);
+
+  /* =========================================
+     RADIUS
+     ========================================= */
+
+  --veloop-radius-sm: 10px;
+  --veloop-radius-md: 16px;
+  --veloop-radius-lg: 22px;
+  --veloop-radius-xl: 28px;
+
+  /* =========================================
+     SHADOWS
+     ========================================= */
+
+  --veloop-shadow-sm:
+    0 6px 18px rgba(0, 0, 0, 0.2);
+
+  --veloop-shadow-md:
+    0 14px 35px rgba(0, 0, 0, 0.28);
+
+  --veloop-shadow-lg:
+    0 24px 60px rgba(0, 0, 0, 0.38);
+
+  /* =========================================
+     SPACING
+     ========================================= */
+
   --veloop-space-xs: 4px;
   --veloop-space-sm: 8px;
   --veloop-space-md: 16px;
   --veloop-space-lg: 24px;
   --veloop-space-xl: 32px;
+}
+
+/* =========================================
+   LEGACY COMPONENT COMPATIBILITY
+   Existing components still use these tokens
+   ========================================= */
+
+:root {
+  --veloop-card-radius: var(--veloop-radius-lg);
+
+  --veloop-bg-card: var(--veloop-surface);
+
+  --veloop-bg-elevated: var(--veloop-surface-2);
+
+  --veloop-card-border: 1px solid var(--veloop-border);
+
+  --veloop-card-shadow: var(--veloop-shadow-md);
+
+  --veloop-navy: var(--veloop-bg);
+
+  --veloop-silver: var(--veloop-text-secondary);
 }
