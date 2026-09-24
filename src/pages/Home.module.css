@@ -975,6 +975,407 @@
     display: none;
   }
 }
+
+.howWorks {
+  position: relative;
+  z-index: 2;
+
+  width: min(1180px, calc(100% - 40px));
+  margin: 30px auto 0;
+  padding: 80px 0 100px;
+
+  text-align: center;
+}
+
+/* =========================
+   SECTION HEADER
+========================= */
+
+.howWorksHeader {
+  position: relative;
+  margin-bottom: 48px;
+}
+
+.sectionEyebrow {
+  display: inline-block;
+
+  margin-bottom: 12px;
+
+  color: var(--veloop-gold);
+
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+
+  text-shadow:
+    0 0 14px rgba(240, 185, 11, 0.3);
+
+  animation: howEyebrowPulse 3s ease-in-out infinite;
+}
+
+.howWorksTitle {
+  margin: 0;
+
+  color: var(--veloop-text);
+
+  font-size: clamp(2rem, 5vw, 3.4rem);
+  line-height: 1;
+  font-weight: 850;
+  letter-spacing: -0.045em;
+}
+
+.howWorksTitle span {
+  color: var(--veloop-gold);
+
+  text-shadow:
+    0 0 22px rgba(240, 185, 11, 0.2);
+}
+
+.howWorksSubtitle {
+  margin: 16px 0 0;
+
+  color: var(--veloop-text-secondary);
+
+  font-size: 0.98rem;
+}
+
+/* =========================
+   STEP CARDS
+========================= */
+
+.steps {
+  position: relative;
+
+  display: grid;
+  grid-template-columns: 1fr auto 1fr auto 1fr;
+
+  align-items: stretch;
+  gap: 18px;
+}
+
+.stepCard {
+  position: relative;
+
+  min-height: 245px;
+
+  padding: 28px 24px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  overflow: hidden;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255,255,255,0.045),
+      rgba(255,255,255,0.015)
+    );
+
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: var(--veloop-radius-lg);
+
+  box-shadow:
+    0 18px 45px rgba(0,0,0,0.22);
+
+  backdrop-filter: blur(14px);
+
+  transition:
+    transform 300ms ease,
+    border-color 300ms ease,
+    box-shadow 300ms ease;
+}
+
+.stepCard::before {
+  content: "";
+
+  position: absolute;
+
+  width: 180px;
+  height: 180px;
+
+  top: -90px;
+  right: -90px;
+
+  border-radius: 50%;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(240,185,11,0.12),
+      transparent 68%
+    );
+
+  pointer-events: none;
+}
+
+.stepCard:hover {
+  transform: translateY(-7px);
+
+  border-color: rgba(240,185,11,0.28);
+
+  box-shadow:
+    0 24px 55px rgba(0,0,0,0.3),
+    0 0 25px rgba(240,185,11,0.06);
+}
+
+/* =========================
+   NUMBER
+========================= */
+
+.stepNumber {
+  position: absolute;
+
+  top: 16px;
+  right: 18px;
+
+  color: rgba(255,255,255,0.18);
+
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+}
+
+/* =========================
+   ICON
+========================= */
+
+.stepIcon {
+  width: 70px;
+  height: 70px;
+
+  margin-bottom: 20px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 20px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(240,185,11,0.15),
+      rgba(240,185,11,0.045)
+    );
+
+  border: 1px solid rgba(240,185,11,0.18);
+
+  box-shadow:
+    inset 0 0 20px rgba(240,185,11,0.04),
+    0 8px 25px rgba(0,0,0,0.2);
+
+  transition:
+    transform 300ms ease,
+    box-shadow 300ms ease;
+}
+
+.stepCard:hover .stepIcon {
+  transform: translateY(-3px) scale(1.05);
+
+  box-shadow:
+    0 0 25px rgba(240,185,11,0.15);
+}
+
+.stepIcon span {
+  font-size: 2rem;
+
+  filter:
+    drop-shadow(0 0 8px rgba(240,185,11,0.18));
+}
+
+.stepIcon img {
+  width: 39px;
+  height: 39px;
+
+  object-fit: contain;
+
+  filter:
+    drop-shadow(0 0 9px rgba(240,185,11,0.4));
+
+  animation: stepCoinFloat 3s ease-in-out infinite;
+}
+
+/* =========================
+   CONTENT
+========================= */
+
+.stepContent h3 {
+  margin: 0 0 9px;
+
+  color: var(--veloop-text);
+
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+}
+
+.stepContent p {
+  max-width: 230px;
+
+  margin: 0;
+
+  color: var(--veloop-text-muted);
+
+  font-size: 0.86rem;
+  line-height: 1.6;
+}
+
+/* =========================
+   CONNECTORS
+========================= */
+
+.stepConnector {
+  align-self: center;
+
+  width: 42px;
+  height: 1px;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(240,185,11,0.5),
+      transparent
+    );
+
+  position: relative;
+}
+
+.stepConnector::after {
+  content: "›";
+
+  position: absolute;
+
+  left: 50%;
+  top: 50%;
+
+  transform: translate(-50%, -54%);
+
+  color: rgba(240,185,11,0.65);
+
+  font-size: 1rem;
+
+  text-shadow:
+    0 0 10px rgba(240,185,11,0.35);
+}
+
+/* =========================
+   ANIMATION
+========================= */
+
+@keyframes howEyebrowPulse {
+  0%, 100% {
+    opacity: 0.65;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes stepCoinFloat {
+  0%, 100% {
+    transform: translateY(0) rotate(-3deg);
+  }
+
+  50% {
+    transform: translateY(-5px) rotate(3deg);
+  }
+}
+
+/* =========================
+   TABLET
+========================= */
+
+@media (max-width: 850px) {
+  .steps {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .stepConnector {
+    width: 1px;
+    height: 28px;
+
+    justify-self: center;
+  }
+
+  .stepConnector::after {
+    content: "↓";
+  }
+
+  .stepCard {
+    min-height: 190px;
+  }
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 600px) {
+  .howWorks {
+    width: min(100% - 28px, 500px);
+
+    margin-top: 15px;
+    padding: 60px 0 85px;
+  }
+
+  .howWorksHeader {
+    margin-bottom: 32px;
+  }
+
+  .howWorksTitle {
+    font-size: 2rem;
+  }
+
+  .howWorksSubtitle {
+    font-size: 0.88rem;
+  }
+
+  .stepCard {
+    min-height: 175px;
+    padding: 25px 20px;
+  }
+
+  .stepIcon {
+    width: 62px;
+    height: 62px;
+    margin-bottom: 15px;
+  }
+
+  .stepIcon span {
+    font-size: 1.7rem;
+  }
+
+  .stepIcon img {
+    width: 34px;
+    height: 34px;
+  }
+}
+
+/* =========================
+   REDUCED MOTION
+========================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .sectionEyebrow,
+  .stepIcon img {
+    animation: none;
+  }
+
+  .stepCard {
+    transition: none;
+  }
+
+  .stepCard:hover {
+    transform: none;
+  }
+}
 /* =========================================
    FLOATING COINS
 ========================================= */

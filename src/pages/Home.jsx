@@ -135,6 +135,13 @@ function Home() {
         </div>
 
         <div className={styles.heroContent}>
+          <div className={styles.titleGlow} />
+
+          <h1 className={styles.heroTitle}>
+            <span className={styles.titleMain}>GAMES</span>
+            <span className={styles.titleShine}>GAMES</span>
+          </h1>
+
           <span className={styles.heroEyebrow}>
             <span>PLAY</span>
             <i>•</i>
@@ -142,13 +149,6 @@ function Home() {
             <i>•</i>
             <span>REDEEM</span>
           </span>
-
-          <div className={styles.titleGlow} />
-
-          <h1 className={styles.heroTitle}>
-            <span className={styles.titleMain}>GAMES</span>
-            <span className={styles.titleShine}>GAMES</span>
-          </h1>
 
           <p className={styles.heroSubtitle}>
             <span>Explore Games</span>
@@ -166,6 +166,69 @@ function Home() {
           EXISTING GAME CAROUSEL
       ========================================= */}
       <GamesCarousel onPlay={handlePlay} />
+
+      {/* =========================================
+          HOW VELOOP WORKS
+      ========================================= */}
+
+      <section className={styles.howWorks}>
+        <div className={styles.howWorksHeader}>
+          <span className={styles.sectionEyebrow}>HOW VELOOP WORKS</span>
+
+          <h2 className={styles.howWorksTitle}>
+            Play. Earn. <span>Redeem.</span>
+          </h2>
+
+          <p className={styles.howWorksSubtitle}>
+            Turn your gaming time into rewards.
+          </p>
+        </div>
+
+        <div className={styles.steps}>
+          <article className={styles.stepCard}>
+            <div className={styles.stepNumber}>01</div>
+
+            <div className={styles.stepIcon}>
+              <span>🎮</span>
+            </div>
+
+            <div className={styles.stepContent}>
+              <h3>PLAY</h3>
+              <p>Choose a game and put your skills to the test.</p>
+            </div>
+          </article>
+
+          <div className={styles.stepConnector} />
+
+          <article className={styles.stepCard}>
+            <div className={styles.stepNumber}>02</div>
+
+            <div className={styles.stepIcon}>
+              <img src="/assets/icons/game-coin-icon.png" alt="" />
+            </div>
+
+            <div className={styles.stepContent}>
+              <h3>EARN</h3>
+              <p>Complete challenges and collect Game Coins.</p>
+            </div>
+          </article>
+
+          <div className={styles.stepConnector} />
+
+          <article className={styles.stepCard}>
+            <div className={styles.stepNumber}>03</div>
+
+            <div className={styles.stepIcon}>
+              <span>🎁</span>
+            </div>
+
+            <div className={styles.stepContent}>
+              <h3>REDEEM</h3>
+              <p>Exchange your rewards for exciting benefits.</p>
+            </div>
+          </article>
+        </div>
+      </section>
 
       {/* =========================================
           NAVIGATION
