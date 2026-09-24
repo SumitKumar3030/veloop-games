@@ -37,12 +37,14 @@ function GamesCarousel({ onPlay }) {
   // --------------------------------------------------
   // Reduced motion
   // --------------------------------------------------
+
   const prefersReducedMotion = () =>
     window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   // --------------------------------------------------
   // Cache actual card positions
   // --------------------------------------------------
+
   const updateCardPositions = useCallback(() => {
     const track = trackRef.current;
 
@@ -54,43 +56,72 @@ function GamesCarousel({ onPlay }) {
   }, []);
 
   // --------------------------------------------------
-  // Get nearest card using cached positions
+  // Get card scroll position
+  //
+  // This positions the card around the visual center
+  // of the carousel instead of aligning it to the left.
   // --------------------------------------------------
-  const getNearestIndex = useCallback(() => {
+
+  const getCardScrollPosition = useCallback(
+    (index) => {
+      const track = trackRef.current;
+
+      if (!track) return null;
+
+      const card = track.children[index];
+
+      if (!card) return null;
+
+      const target =
+        card.offsetLeft -
+        (track.clientWidth - card.offsetWidth) / 2;
+
+      const maxScrollLeft =
+        track.scrollWidth - track.clientWidth;
+
+      return Math.max(0, Math.min(target, maxScrollLeft));
+    },
+    [],
+  );
+
+  // --------------------------------------------------
+  // Get card closest to visual center
+  // --------------------------------------------------
+
+  const getCenteredIndex = useCallback(() => {
     const track = trackRef.current;
 
     if (!track) return 0;
 
-    const positions = cardPositionsRef.current;
+    if (!track.children.length) return 0;
 
-    if (!positions.length) {
-      updateCardPositions();
+    const viewportCenter =
+      track.scrollLeft + track.clientWidth / 2;
 
-      if (!cardPositionsRef.current.length) {
-        return 0;
-      }
-    }
-
-    const currentScrollLeft = track.scrollLeft;
-
-    let nearestIndex = 0;
+    let closestIndex = 0;
     let smallestDistance = Infinity;
 
-    cardPositionsRef.current.forEach((position, index) => {
-      const distance = Math.abs(currentScrollLeft - position);
+    Array.from(track.children).forEach((card, index) => {
+      const cardCenter =
+        card.offsetLeft + card.offsetWidth / 2;
+
+      const distance = Math.abs(
+        viewportCenter - cardCenter,
+      );
 
       if (distance < smallestDistance) {
         smallestDistance = distance;
-        nearestIndex = index;
+        closestIndex = index;
       }
     });
 
-    return nearestIndex;
-  }, [updateCardPositions]);
+    return closestIndex;
+  }, []);
 
   // --------------------------------------------------
   // Keep cached positions correct after layout changes
   // --------------------------------------------------
+
   useEffect(() => {
     updateCardPositions();
 
@@ -108,33 +139,31 @@ function GamesCarousel({ onPlay }) {
   // --------------------------------------------------
   // Smoothly move to a specific card
   // --------------------------------------------------
+
   const scrollToCard = useCallback(
     (index, behavior = "smooth") => {
       const track = trackRef.current;
 
       if (!track) return;
 
-      const positions = cardPositionsRef.current;
+      const position = getCardScrollPosition(index);
 
-      if (!positions.length) {
-        updateCardPositions();
-      }
-
-      const cardPosition = cardPositionsRef.current[index];
-
-      if (cardPosition == null) return;
+      if (position == null) return;
 
       track.scrollTo({
-        left: cardPosition,
-        behavior: prefersReducedMotion() ? "auto" : behavior,
+        left: position,
+        behavior: prefersReducedMotion()
+          ? "auto"
+          : behavior,
       });
     },
-    [updateCardPositions],
+    [getCardScrollPosition],
   );
 
   // --------------------------------------------------
   // Normalize duplicated cards
   // --------------------------------------------------
+
   const normalizeLoopPosition = useCallback(() => {
     const track = trackRef.current;
 
@@ -144,22 +173,23 @@ function GamesCarousel({ onPlay }) {
 
     if (!total) return;
 
-    const nearest = getNearestIndex();
+    const centered = getCenteredIndex();
 
-    // We are inside the duplicated second set.
-    if (nearest >= total) {
-      const originalIndex = nearest - total;
-      const originalPosition = cardPositionsRef.current[originalIndex];
+    if (centered >= total) {
+      const originalIndex = centered - total;
+      const originalPosition =
+        getCardScrollPosition(originalIndex);
 
       if (originalPosition != null) {
         track.scrollLeft = originalPosition;
       }
     }
-  }, [getNearestIndex]);
+  }, [getCenteredIndex, getCardScrollPosition]);
 
   // --------------------------------------------------
   // Auto advance
   // --------------------------------------------------
+
   useEffect(() => {
     const track = trackRef.current;
 
@@ -168,22 +198,22 @@ function GamesCarousel({ onPlay }) {
     intervalRef.current = setInterval(() => {
       if (prefersReducedMotion()) return;
 
-      if (isPaused || isDraggingRef.current || isTouchingRef.current) {
+      if (
+        isPaused ||
+        isDraggingRef.current ||
+        isTouchingRef.current
+      ) {
         return;
       }
 
-      const current = getNearestIndex();
+      const current = getCenteredIndex();
       const nextIndex = current + 1;
 
-      // Move normally to next card.
       if (nextIndex < track.children.length) {
         scrollToCard(nextIndex);
 
         clearTimeout(snapTimeoutRef.current);
 
-        // When entering the duplicated set,
-        // silently jump back to the original set
-        // after the animation finishes.
         if (nextIndex >= gamesData.length) {
           snapTimeoutRef.current = setTimeout(() => {
             normalizeLoopPosition();
@@ -196,11 +226,17 @@ function GamesCarousel({ onPlay }) {
       clearInterval(intervalRef.current);
       clearTimeout(snapTimeoutRef.current);
     };
-  }, [isPaused, getNearestIndex, scrollToCard, normalizeLoopPosition]);
+  }, [
+    isPaused,
+    getCenteredIndex,
+    scrollToCard,
+    normalizeLoopPosition,
+  ]);
 
   // --------------------------------------------------
   // Mouse wheel
   // --------------------------------------------------
+
   const handleWheel = useCallback((e) => {
     const track = trackRef.current;
 
@@ -208,6 +244,7 @@ function GamesCarousel({ onPlay }) {
 
     if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
       e.preventDefault();
+
       track.scrollLeft += e.deltaY;
     }
   }, []);
@@ -215,6 +252,7 @@ function GamesCarousel({ onPlay }) {
   // --------------------------------------------------
   // Mouse drag start
   // --------------------------------------------------
+
   const handleMouseDown = useCallback((e) => {
     if (e.button !== 0) return;
 
@@ -225,8 +263,11 @@ function GamesCarousel({ onPlay }) {
     isDraggingRef.current = true;
     dragDistanceRef.current = 0;
 
-    startXRef.current = e.pageX - track.offsetLeft;
-    startScrollLeftRef.current = track.scrollLeft;
+    startXRef.current =
+      e.pageX - track.offsetLeft;
+
+    startScrollLeftRef.current =
+      track.scrollLeft;
 
     track.classList.add(styles.dragging);
 
@@ -236,6 +277,7 @@ function GamesCarousel({ onPlay }) {
   // --------------------------------------------------
   // Mouse dragging
   // --------------------------------------------------
+
   const handleMouseMove = useCallback((e) => {
     if (!isDraggingRef.current) return;
 
@@ -245,17 +287,23 @@ function GamesCarousel({ onPlay }) {
 
     e.preventDefault();
 
-    const x = e.pageX - track.offsetLeft;
-    const distance = (x - startXRef.current) * 1.25;
+    const x =
+      e.pageX - track.offsetLeft;
 
-    dragDistanceRef.current = Math.abs(distance);
+    const distance =
+      (x - startXRef.current) * 1.25;
 
-    track.scrollLeft = startScrollLeftRef.current - distance;
+    dragDistanceRef.current =
+      Math.abs(distance);
+
+    track.scrollLeft =
+      startScrollLeftRef.current - distance;
   }, []);
 
   // --------------------------------------------------
   // Mouse drag end
   // --------------------------------------------------
+
   const handleMouseUp = useCallback(() => {
     if (!isDraggingRef.current) return;
 
@@ -266,12 +314,11 @@ function GamesCarousel({ onPlay }) {
     if (track) {
       track.classList.remove(styles.dragging);
 
-      const nearest = getNearestIndex();
+      const centered =
+        getCenteredIndex();
 
-      // Snap exactly once after dragging.
-      scrollToCard(nearest);
+      scrollToCard(centered);
 
-      // Normalize only if necessary.
       clearTimeout(snapTimeoutRef.current);
 
       snapTimeoutRef.current = setTimeout(() => {
@@ -280,73 +327,111 @@ function GamesCarousel({ onPlay }) {
     }
 
     setIsPaused(false);
-  }, [getNearestIndex, scrollToCard, normalizeLoopPosition]);
+  }, [
+    getCenteredIndex,
+    scrollToCard,
+    normalizeLoopPosition,
+  ]);
 
   // --------------------------------------------------
   // Global mouse move/up
   // --------------------------------------------------
+
   useEffect(() => {
-    window.addEventListener("mousemove", handleMouseMove);
-    window.addEventListener("mouseup", handleMouseUp);
+    window.addEventListener(
+      "mousemove",
+      handleMouseMove,
+    );
+
+    window.addEventListener(
+      "mouseup",
+      handleMouseUp,
+    );
 
     return () => {
-      window.removeEventListener("mousemove", handleMouseMove);
-      window.removeEventListener("mouseup", handleMouseUp);
+      window.removeEventListener(
+        "mousemove",
+        handleMouseMove,
+      );
+
+      window.removeEventListener(
+        "mouseup",
+        handleMouseUp,
+      );
     };
   }, [handleMouseMove, handleMouseUp]);
 
   // --------------------------------------------------
   // Touch start
   // --------------------------------------------------
+
   const handleTouchStart = useCallback(() => {
     isTouchingRef.current = true;
     dragDistanceRef.current = 0;
+
     setIsPaused(true);
   }, []);
 
   // --------------------------------------------------
   // Touch end
   // --------------------------------------------------
+
   const handleTouchEnd = useCallback(() => {
     isTouchingRef.current = false;
 
     /*
-     * Do NOT call scrollTo() here.
-     *
-     * The browser's native touch momentum should finish
-     * the swipe naturally.
+     * Keep native touch momentum.
+     * Do not force scrollToCard here.
      */
+
     setIsPaused(false);
   }, []);
 
   // --------------------------------------------------
-  // Active dot sync
+  // Active card + dot sync
   // --------------------------------------------------
+
   const handleScroll = useCallback(() => {
     if (scrollFrameRef.current) return;
 
-    scrollFrameRef.current = requestAnimationFrame(() => {
-      scrollFrameRef.current = null;
+    scrollFrameRef.current =
+      requestAnimationFrame(() => {
+        scrollFrameRef.current = null;
 
-      if (!gamesData.length) return;
+        if (!gamesData.length) return;
 
-      const nearest = getNearestIndex();
-      setCenteredCardIndex(nearest);
-      const normalizedIndex = nearest % gamesData.length;
+        const centered =
+          getCenteredIndex();
 
-      setActiveIndex((prev) =>
-        prev === normalizedIndex ? prev : normalizedIndex,
-      );
-    });
-  }, [getNearestIndex]);
+        // Physical duplicated-card index
+        setCenteredCardIndex((prev) =>
+          prev === centered
+            ? prev
+            : centered,
+        );
+
+        // Logical game index
+        const normalizedIndex =
+          centered % gamesData.length;
+
+        setActiveIndex((prev) =>
+          prev === normalizedIndex
+            ? prev
+            : normalizedIndex,
+        );
+      });
+  }, [getCenteredIndex]);
 
   // --------------------------------------------------
   // Clean scroll frame
   // --------------------------------------------------
+
   useEffect(() => {
     return () => {
       if (scrollFrameRef.current) {
-        cancelAnimationFrame(scrollFrameRef.current);
+        cancelAnimationFrame(
+          scrollFrameRef.current,
+        );
       }
     };
   }, []);
@@ -354,6 +439,7 @@ function GamesCarousel({ onPlay }) {
   // --------------------------------------------------
   // Dot navigation
   // --------------------------------------------------
+
   const scrollToIndex = useCallback(
     (index) => {
       const track = trackRef.current;
@@ -364,23 +450,20 @@ function GamesCarousel({ onPlay }) {
 
       if (!total) return;
 
-      const current = getNearestIndex();
+      const current =
+        getCenteredIndex();
 
-      /*
-       * Choose whichever duplicate of the target
-       * is closest to the currently visible position.
-       */
-      const candidates = [index, index + total];
+      const candidates = [
+        index,
+        index + total,
+      ];
 
       let closest = candidates[0];
       let smallestDistance = Infinity;
 
       candidates.forEach((candidate) => {
-        const position = cardPositionsRef.current[candidate];
-
-        if (position == null) return;
-
-        const distance = Math.abs(current - candidate);
+        const distance =
+          Math.abs(current - candidate);
 
         if (distance < smallestDistance) {
           smallestDistance = distance;
@@ -394,19 +477,28 @@ function GamesCarousel({ onPlay }) {
 
       clearTimeout(snapTimeoutRef.current);
 
-      snapTimeoutRef.current = setTimeout(() => {
-        normalizeLoopPosition();
-        setIsPaused(false);
-      }, 700);
+      snapTimeoutRef.current =
+        setTimeout(() => {
+          normalizeLoopPosition();
+          setIsPaused(false);
+        }, 700);
     },
-    [getNearestIndex, scrollToCard, normalizeLoopPosition],
+    [
+      getCenteredIndex,
+      scrollToCard,
+      normalizeLoopPosition,
+    ],
   );
 
   // --------------------------------------------------
   // Prevent accidental click after dragging
   // --------------------------------------------------
+
   const handleClickCapture = useCallback((e) => {
-    if (dragDistanceRef.current > DRAG_CLICK_THRESHOLD) {
+    if (
+      dragDistanceRef.current >
+      DRAG_CLICK_THRESHOLD
+    ) {
       e.stopPropagation();
       e.preventDefault();
     }
@@ -417,6 +509,7 @@ function GamesCarousel({ onPlay }) {
   // --------------------------------------------------
   // Keyboard focus
   // --------------------------------------------------
+
   const handleFocus = useCallback(() => {
     setIsPaused(true);
   }, []);
@@ -424,6 +517,7 @@ function GamesCarousel({ onPlay }) {
   // --------------------------------------------------
   // Keyboard focus leaves carousel
   // --------------------------------------------------
+
   const handleBlur = useCallback((e) => {
     const track = trackRef.current;
 
@@ -434,12 +528,20 @@ function GamesCarousel({ onPlay }) {
     }
   }, []);
 
+  // --------------------------------------------------
+  // Render
+  // --------------------------------------------------
+
   return (
     <section className={styles.wrapper}>
       <div className={styles.heading}>
-        <p className={styles.eyebrow}>Games</p>
+        <p className={styles.eyebrow}>
+          Games
+        </p>
 
-        <h2 className={styles.title}>Explore Games & Earn Rewards</h2>
+        <h2 className={styles.title}>
+          Explore Games & Earn Rewards
+        </h2>
       </div>
 
       <div
@@ -451,7 +553,9 @@ function GamesCarousel({ onPlay }) {
         onClickCapture={handleClickCapture}
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
-        onMouseEnter={() => setIsPaused(true)}
+        onMouseEnter={() =>
+          setIsPaused(true)
+        }
         onMouseLeave={() => {
           if (!isDraggingRef.current) {
             setIsPaused(false);
@@ -465,11 +569,16 @@ function GamesCarousel({ onPlay }) {
         {loopedGames.map((game, i) => (
           <div
             className={`${styles.cardWrapper} ${
-              i === centeredCardIndex ? styles.activeCard : ""
+              i === centeredCardIndex
+                ? styles.activeCard
+                : ""
             }`}
             key={`${game.id}-${i}`}
           >
-            <GameCard game={game} onPlay={onPlay} />
+            <GameCard
+              game={game}
+              onPlay={onPlay}
+            />
           </div>
         ))}
       </div>

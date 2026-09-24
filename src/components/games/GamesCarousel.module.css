@@ -36,7 +36,7 @@
 }
 
 /* =========================================
-   CAROUSEL
+   CAROUSEL TRACK
 ========================================= */
 
 .track {
@@ -50,30 +50,21 @@
   overflow-x: auto;
   overflow-y: hidden;
 
-  padding: 18px var(--veloop-space-lg) 20px;
+  padding: 24px var(--veloop-space-lg) 28px;
 
   scrollbar-width: none;
   -ms-overflow-style: none;
 
   cursor: grab;
 
-  /*
-   * Allow horizontal touch scrolling.
-   * Vertical page scrolling remains handled
-   * by the browser outside the carousel.
-   */
   touch-action: pan-x;
 
-  /*
-   * Do not use CSS scroll snap.
-   * Card positioning is controlled by JavaScript.
-   */
   scroll-snap-type: none;
 
   /*
-   * Keep the scrolling layer lightweight.
-   * Avoid masks / filters / expensive effects here.
+   * Gives the transformed cards enough visual room.
    */
+  perspective: 1200px;
 }
 
 .track::-webkit-scrollbar {
@@ -91,9 +82,9 @@
   position: absolute;
 
   top: 90px;
-  bottom: 60px;
+  bottom: 68px;
 
-  width: 42px;
+  width: 48px;
 
   z-index: 5;
 
@@ -128,11 +119,72 @@
   flex: 0 0 auto;
 
   /*
-   * Keep cards static during normal scrolling.
-   * This prevents unnecessary animation work.
+   * Non-focused cards are intentionally quieter.
    */
-  transform: none;
+  transform: scale(0.94);
+  opacity: 0.68;
+
+  filter:
+    saturate(0.82)
+    brightness(0.82);
+
+  transform-origin: center center;
+
+  transition:
+    transform 280ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 280ms ease,
+    filter 280ms ease;
+
+  will-change:
+    transform,
+    opacity;
+}
+
+/* =========================================
+   CENTER / FOCUSED CARD
+========================================= */
+
+.activeCard {
+  transform:
+    translateY(-3px)
+    scale(1.04);
+
   opacity: 1;
+
+  filter:
+    saturate(1)
+    brightness(1);
+
+  z-index: 3;
+}
+
+/*
+ * Premium gold aura behind the focused card.
+ */
+
+.activeCard::before {
+  content: "";
+
+  position: absolute;
+
+  inset: -7px;
+
+  border-radius: calc(
+    var(--veloop-radius-lg) + 7px
+  );
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(240, 185, 11, 0.16),
+      transparent 68%
+    );
+
+  opacity: 0.9;
+
+  pointer-events: none;
+
+  z-index: -1;
 }
 
 /* =========================================
@@ -140,15 +192,32 @@
 ========================================= */
 
 @media (hover: hover) and (pointer: fine) {
-  .cardWrapper {
-    transition:
-      transform 180ms ease,
-      opacity 180ms ease;
+  .cardWrapper:hover {
+    transform:
+      translateY(-3px)
+      scale(0.97);
+
+    opacity: 0.9;
+
+    filter:
+      saturate(0.95)
+      brightness(0.95);
+
+    z-index: 2;
   }
 
-  .cardWrapper:hover {
-    transform: translateY(-3px) scale(1.015);
+  .activeCard:hover {
+    transform:
+      translateY(-6px)
+      scale(1.055);
+
     opacity: 1;
+
+    filter:
+      saturate(1)
+      brightness(1.03);
+
+    z-index: 4;
   }
 }
 
@@ -162,7 +231,24 @@
 
 .dragging .cardWrapper {
   transition: none;
+
+  /*
+   * Remove scaling while physically dragging.
+   * This keeps the drag layer stable and smooth.
+   */
   transform: none;
+
+  opacity: 0.9;
+
+  filter: none;
+}
+
+.dragging .activeCard {
+  transform: none;
+
+  opacity: 1;
+
+  filter: none;
 }
 
 /* =========================================
@@ -209,6 +295,10 @@
   background: var(--veloop-gold);
 
   border-radius: 4px;
+
+  box-shadow:
+    0 0 10px
+    rgba(240, 185, 11, 0.35);
 }
 
 .dot:focus-visible {
@@ -226,30 +316,53 @@
 
     padding-left: 20px;
     padding-right: 20px;
+
+    padding-top: 20px;
+    padding-bottom: 24px;
   }
 
   .wrapper::before,
   .wrapper::after {
     width: 24px;
-  }
 
-  .wrapper::before,
-  .wrapper::after {
     top: 90px;
     bottom: 60px;
   }
 
   /*
-   * Keep mobile scrolling completely native.
-   * No scaling or opacity changes while swiping.
+   * Slightly softer focus on smaller screens.
    */
+
   .cardWrapper {
-    transform: none;
+    transform: scale(0.96);
+
+    opacity: 0.76;
+
+    filter:
+      saturate(0.88)
+      brightness(0.88);
+  }
+
+  .activeCard {
+    transform:
+      translateY(-2px)
+      scale(1.025);
+
     opacity: 1;
+
+    filter:
+      saturate(1)
+      brightness(1);
   }
 
   .cardWrapper:hover {
     transform: none;
+  }
+
+  .activeCard:hover {
+    transform:
+      translateY(-2px)
+      scale(1.025);
   }
 }
 
@@ -277,13 +390,26 @@
 
     padding-left: 16px;
     padding-right: 16px;
-    padding-top: 14px;
-    padding-bottom: 18px;
+
+    padding-top: 16px;
+    padding-bottom: 20px;
   }
 
   .wrapper::before,
   .wrapper::after {
     width: 18px;
+  }
+
+  .cardWrapper {
+    transform: scale(0.97);
+
+    opacity: 0.8;
+  }
+
+  .activeCard {
+    transform: scale(1.02);
+
+    opacity: 1;
   }
 }
 
@@ -297,7 +423,10 @@
     transition: none;
   }
 
-  .cardWrapper:hover {
+  .cardWrapper,
+  .activeCard,
+  .cardWrapper:hover,
+  .activeCard:hover {
     transform: none;
   }
 }
