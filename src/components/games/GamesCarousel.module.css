@@ -61,9 +61,6 @@
 
   scroll-snap-type: none;
 
-  /*
-   * Gives the transformed cards enough visual room.
-   */
   perspective: 1200px;
 }
 
@@ -116,28 +113,25 @@
 ========================================= */
 
 .cardWrapper {
+  position: relative;
+
   flex: 0 0 auto;
 
   /*
-   * Non-focused cards are intentionally quieter.
+   * Slightly smaller than the focused card,
+   * but still completely crisp.
    */
-  transform: scale(0.94);
-  opacity: 0.68;
+  transform: scale(0.98);
 
-  filter:
-    saturate(0.82)
-    brightness(0.82);
+  opacity: 0.92;
 
   transform-origin: center center;
 
   transition:
     transform 280ms cubic-bezier(0.22, 1, 0.36, 1),
-    opacity 280ms ease,
-    filter 280ms ease;
+    opacity 280ms ease;
 
-  will-change:
-    transform,
-    opacity;
+  will-change: transform, opacity;
 }
 
 /* =========================================
@@ -151,16 +145,12 @@
 
   opacity: 1;
 
-  filter:
-    saturate(1)
-    brightness(1);
-
   z-index: 3;
 }
 
-/*
- * Premium gold aura behind the focused card.
- */
+/* =========================================
+   FOCUS GLOW
+========================================= */
 
 .activeCard::before {
   content: "";
@@ -173,12 +163,11 @@
     var(--veloop-radius-lg) + 7px
   );
 
-  background:
-    radial-gradient(
-      circle,
-      rgba(240, 185, 11, 0.16),
-      transparent 68%
-    );
+  background: radial-gradient(
+    circle,
+    rgba(240, 185, 11, 0.16),
+    transparent 68%
+  );
 
   opacity: 0.9;
 
@@ -192,30 +181,30 @@
 ========================================= */
 
 @media (hover: hover) and (pointer: fine) {
+  /*
+   * Hovering a normal card should NOT make it
+   * blurry or dull.
+   */
   .cardWrapper:hover {
     transform:
       translateY(-3px)
-      scale(0.97);
+      scale(1.015);
 
-    opacity: 0.9;
-
-    filter:
-      saturate(0.95)
-      brightness(0.95);
+    opacity: 1;
 
     z-index: 2;
   }
 
+  /*
+   * Hovering the already-focused card gives
+   * a slightly stronger lift.
+   */
   .activeCard:hover {
     transform:
       translateY(-6px)
       scale(1.055);
 
     opacity: 1;
-
-    filter:
-      saturate(1)
-      brightness(1.03);
 
     z-index: 4;
   }
@@ -233,22 +222,17 @@
   transition: none;
 
   /*
-   * Remove scaling while physically dragging.
-   * This keeps the drag layer stable and smooth.
+   * Keep cards stable while dragging.
    */
   transform: none;
 
-  opacity: 0.9;
-
-  filter: none;
+  opacity: 0.95;
 }
 
 .dragging .activeCard {
   transform: none;
 
   opacity: 1;
-
-  filter: none;
 }
 
 /* =========================================
@@ -297,8 +281,7 @@
   border-radius: 4px;
 
   box-shadow:
-    0 0 10px
-    rgba(240, 185, 11, 0.35);
+    0 0 10px rgba(240, 185, 11, 0.35);
 }
 
 .dot:focus-visible {
@@ -330,17 +313,12 @@
   }
 
   /*
-   * Slightly softer focus on smaller screens.
+   * Mobile cards remain crisp.
    */
-
   .cardWrapper {
     transform: scale(0.96);
 
-    opacity: 0.76;
-
-    filter:
-      saturate(0.88)
-      brightness(0.88);
+    opacity: 0.9;
   }
 
   .activeCard {
@@ -349,10 +327,6 @@
       scale(1.025);
 
     opacity: 1;
-
-    filter:
-      saturate(1)
-      brightness(1);
   }
 
   .cardWrapper:hover {
@@ -402,13 +376,11 @@
 
   .cardWrapper {
     transform: scale(0.97);
-
-    opacity: 0.8;
+    opacity: 0.92;
   }
 
   .activeCard {
     transform: scale(1.02);
-
     opacity: 1;
   }
 }
