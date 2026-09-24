@@ -1,5 +1,1233 @@
 .page {
+  position: relative;
   min-height: 100vh;
-  background: var(--veloop-bg);
-  padding-bottom: 70px;
+  overflow: hidden;
+
+  background:
+    radial-gradient(
+      circle at 50% 18%,
+      rgba(240, 185, 11, 0.07),
+      transparent 30%
+    ),
+    var(--veloop-bg);
+
+  padding-bottom: 90px;
+}
+
+/* =================================
+   PAGE-WIDE FLOATING COINS
+================================= */
+
+.pageCoins {
+  position: absolute;
+  inset: 0;
+
+  z-index: 1;
+
+  overflow: hidden;
+
+  pointer-events: none;
+}
+
+.pageCoin {
+  position: absolute;
+
+  width: 20px;
+  height: 20px;
+
+  object-fit: contain;
+
+  opacity: 0.16;
+
+  filter:
+    drop-shadow(0 0 8px rgba(240, 185, 11, 0.28));
+
+  will-change: transform;
+
+  animation:
+    pageCoinFloat
+    var(--coin-duration, 12s)
+    ease-in-out
+    var(--coin-delay, 0s)
+    infinite;
+}
+
+/* Different positions */
+
+.pageCoin1 {
+  left: 7%;
+  top: 18%;
+
+  width: 18px;
+
+  --coin-duration: 13s;
+  --coin-delay: -2s;
+}
+
+.pageCoin2 {
+  left: 18%;
+  top: 48%;
+
+  width: 27px;
+
+  opacity: 0.12;
+
+  --coin-duration: 16s;
+  --coin-delay: -8s;
+}
+
+.pageCoin3 {
+  left: 31%;
+  top: 72%;
+
+  width: 15px;
+
+  opacity: 0.2;
+
+  --coin-duration: 11s;
+  --coin-delay: -4s;
+}
+
+.pageCoin4 {
+  left: 44%;
+  top: 38%;
+
+  width: 22px;
+
+  opacity: 0.1;
+
+  --coin-duration: 15s;
+  --coin-delay: -10s;
+}
+
+.pageCoin5 {
+  left: 56%;
+  top: 78%;
+
+  width: 18px;
+
+  opacity: 0.14;
+
+  --coin-duration: 14s;
+  --coin-delay: -5s;
+}
+
+.pageCoin6 {
+  left: 68%;
+  top: 24%;
+
+  width: 29px;
+
+  opacity: 0.13;
+
+  --coin-duration: 17s;
+  --coin-delay: -12s;
+}
+
+.pageCoin7 {
+  left: 79%;
+  top: 52%;
+
+  width: 16px;
+
+  opacity: 0.18;
+
+  --coin-duration: 12s;
+  --coin-delay: -7s;
+}
+
+.pageCoin8 {
+  left: 91%;
+  top: 76%;
+
+  width: 24px;
+
+  opacity: 0.1;
+
+  --coin-duration: 18s;
+  --coin-delay: -14s;
+}
+
+.pageCoin9 {
+  left: 12%;
+  top: 84%;
+
+  width: 14px;
+
+  opacity: 0.13;
+
+  --coin-duration: 15s;
+  --coin-delay: -9s;
+}
+
+.pageCoin10 {
+  left: 37%;
+  top: 20%;
+
+  width: 12px;
+
+  opacity: 0.16;
+
+  --coin-duration: 10s;
+  --coin-delay: -3s;
+}
+
+.pageCoin11 {
+  left: 73%;
+  top: 70%;
+
+  width: 20px;
+
+  opacity: 0.12;
+
+  --coin-duration: 16s;
+  --coin-delay: -11s;
+}
+
+.pageCoin12 {
+  left: 86%;
+  top: 14%;
+
+  width: 13px;
+
+  opacity: 0.18;
+
+  --coin-duration: 11s;
+  --coin-delay: -6s;
+}
+
+@keyframes pageCoinFloat {
+  0% {
+    transform:
+      translate3d(0, 18px, 0)
+      rotate(-8deg)
+      scale(0.9);
+  }
+
+  25% {
+    transform:
+      translate3d(12px, -18px, 0)
+      rotate(5deg)
+      scale(1);
+  }
+
+  50% {
+    transform:
+      translate3d(-8px, -36px, 0)
+      rotate(14deg)
+      scale(1.05);
+  }
+
+  75% {
+    transform:
+      translate3d(-18px, -12px, 0)
+      rotate(4deg)
+      scale(0.96);
+  }
+
+  100% {
+    transform:
+      translate3d(0, 18px, 0)
+      rotate(-8deg)
+      scale(0.9);
+  }
+}
+
+/* =========================================
+   HERO
+========================================= */
+
+.hero {
+  position: relative;
+
+  min-height: 280px;
+
+  display: flex;
+  flex-direction: column;
+
+  overflow: hidden;
+
+  padding:
+    22px
+    clamp(18px, 4vw, 56px)
+    34px;
+
+  isolation: isolate;
+}
+
+/* =========================================
+   HERO AMBIENT GLOW
+========================================= */
+
+.heroGlow {
+  position: absolute;
+
+  width: 520px;
+  height: 320px;
+
+  left: 50%;
+  top: -180px;
+
+  transform: translateX(-50%);
+
+  border-radius: 50%;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(240, 185, 11, 0.13),
+      rgba(240, 185, 11, 0.035) 42%,
+      transparent 72%
+    );
+
+  filter: blur(12px);
+
+  pointer-events: none;
+
+  z-index: -2;
+}
+
+/* =========================================
+   BRAND ROW
+========================================= */
+
+.brandRow {
+  position: relative;
+  z-index: 5;
+
+  width: 100%;
+  max-width: 1600px;
+
+  margin: 0 auto;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 20px;
+}
+
+/* =========================================
+   BRAND
+========================================= */
+
+.brand {
+  display: flex;
+  align-items: center;
+
+  gap: 9px;
+
+  user-select: none;
+}
+
+.brandMark {
+  width: 30px;
+  height: 30px;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 9px;
+
+  color: #161827;
+
+  background:
+    linear-gradient(
+      145deg,
+      var(--veloop-gold-light),
+      var(--veloop-gold)
+    );
+
+  font-size: 0.95rem;
+  font-weight: 900;
+
+  box-shadow:
+    0 0 18px rgba(240, 185, 11, 0.18);
+}
+
+.brandName {
+  color: var(--veloop-text);
+
+  font-size: 0.95rem;
+  font-weight: 800;
+
+  letter-spacing: 0.16em;
+}
+
+/* =========================================
+   WALLET BUTTON
+========================================= */
+
+.walletButton {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+
+  gap: 7px;
+
+  min-height: 38px;
+
+  padding: 6px 10px;
+
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 13px;
+
+  color: var(--veloop-text-secondary);
+
+  background: rgba(255, 255, 255, 0.045);
+
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.16);
+
+  cursor: pointer;
+
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    background 0.2s ease,
+    box-shadow 0.2s ease;
+
+  -webkit-tap-highlight-color: transparent;
+}
+
+.walletButton:hover {
+  transform: translateY(-1px);
+
+  border-color: rgba(240, 185, 11, 0.24);
+
+  background: rgba(240, 185, 11, 0.07);
+
+  box-shadow:
+    0 10px 28px rgba(0, 0, 0, 0.22),
+    0 0 18px rgba(240, 185, 11, 0.06);
+}
+
+.walletButton:active {
+  transform: scale(0.96);
+}
+
+.walletButton:focus-visible {
+  outline: 2px solid var(--veloop-gold);
+  outline-offset: 3px;
+}
+
+.walletIcon {
+  width: 21px;
+  height: 21px;
+
+  object-fit: contain;
+
+  filter:
+    drop-shadow(0 0 4px rgba(240, 185, 11, 0.45));
+}
+
+.walletLabel {
+  font-size: 0.72rem;
+  font-weight: 700;
+
+  letter-spacing: 0.02em;
+}
+
+.walletArrow {
+  color: var(--veloop-gold);
+
+  font-size: 1.15rem;
+  line-height: 1;
+}
+
+/* =========================================
+   HERO CONTENT
+========================================= */
+
+.heroContent {
+  position: relative;
+  z-index: 5;
+  max-width: 850px;
+  margin: 0 auto;
+  text-align: center;
+  padding: 28px 20px 34px;
+}
+
+/* =========================
+   EYEBROW
+========================= */
+
+.heroEyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+
+  color: rgba(255, 255, 255, 0.62);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+
+  animation: eyebrowReveal 900ms cubic-bezier(.2,.8,.2,1) both;
+}
+
+.heroEyebrow span {
+  transition: color 300ms ease, text-shadow 300ms ease;
+}
+
+.heroEyebrow span:nth-child(1) {
+  animation: eyebrowPulse 3s ease-in-out infinite;
+}
+
+.heroEyebrow span:nth-child(3) {
+  animation: eyebrowPulse 3s ease-in-out 1s infinite;
+}
+
+.heroEyebrow span:nth-child(5) {
+  animation: eyebrowPulse 3s ease-in-out 2s infinite;
+}
+
+.heroEyebrow i {
+  color: var(--veloop-gold);
+  font-style: normal;
+  opacity: 0.8;
+  animation: dotPulse 1.8s ease-in-out infinite;
+}
+
+/* =========================
+   MAIN GAMES TITLE
+========================= */
+
+.heroTitle {
+  position: relative;
+  display: inline-block;
+
+  margin: 0;
+
+  font-size: clamp(4rem, 11vw, 8rem);
+  line-height: 0.88;
+  font-weight: 950;
+  letter-spacing: -0.075em;
+
+  transform: translateZ(0);
+
+  animation:
+    titleEnter 1s cubic-bezier(.16,1,.3,1) both,
+    titleFloat 5s ease-in-out 1s infinite;
+}
+
+.titleMain,
+.titleShine {
+  display: block;
+}
+
+.titleMain {
+  position: relative;
+  z-index: 2;
+
+  background:
+    linear-gradient(
+      180deg,
+      #fff8d7 0%,
+      #ffd75e 18%,
+      #f0b90b 48%,
+      #c98b00 78%,
+      #fff0a3 100%
+    );
+
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+
+  text-shadow:
+    0 0 20px rgba(240, 185, 11, 0.28),
+    0 0 55px rgba(240, 185, 11, 0.18);
+
+  background-size: 180% 180%;
+
+  animation: goldShift 4s ease-in-out infinite;
+}
+
+/* Moving light passing through GAMES */
+
+.titleShine {
+  position: absolute;
+  inset: 0;
+
+  z-index: 3;
+
+  color: transparent;
+
+  background:
+    linear-gradient(
+      105deg,
+      transparent 35%,
+      rgba(255,255,255,0.05) 43%,
+      rgba(255,255,255,0.95) 50%,
+      rgba(255,255,255,0.05) 57%,
+      transparent 65%
+    );
+
+  background-size: 250% 100%;
+  background-position: 180% 0;
+
+  -webkit-background-clip: text;
+  background-clip: text;
+
+  pointer-events: none;
+
+  animation: titleSweep 3.8s ease-in-out 1.2s infinite;
+}
+
+/* Glow sitting behind the word */
+
+.titleGlow {
+  position: absolute;
+
+  width: min(620px, 90vw);
+  height: 170px;
+
+  left: 50%;
+  top: 50%;
+
+  transform: translate(-50%, -40%);
+
+  background:
+    radial-gradient(
+      ellipse,
+      rgba(240, 185, 11, 0.20) 0%,
+      rgba(240, 185, 11, 0.09) 35%,
+      transparent 72%
+    );
+
+  filter: blur(28px);
+
+  pointer-events: none;
+
+  animation: glowBreath 3.5s ease-in-out infinite;
+}
+
+/* =========================
+   SUBTITLE
+========================= */
+
+.heroSubtitle {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+
+  margin: 22px 0 0;
+
+  color: rgba(255,255,255,0.78);
+
+  font-size: clamp(1rem, 2.2vw, 1.35rem);
+  font-weight: 500;
+  letter-spacing: 0.015em;
+
+  animation: subtitleReveal 1s cubic-bezier(.16,1,.3,1) 250ms both;
+}
+
+.heroSubtitle span {
+  position: relative;
+}
+
+.heroSubtitle span::after {
+  content: "";
+
+  position: absolute;
+  left: 0;
+  bottom: -5px;
+
+  width: 100%;
+  height: 1px;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(240,185,11,0.65),
+      transparent
+    );
+
+  transform: scaleX(0);
+  transform-origin: center;
+
+  animation: underlineReveal 1.4s ease 900ms forwards;
+}
+
+.heroSubtitle strong {
+  color: var(--veloop-gold);
+  font-weight: 800;
+
+  text-shadow:
+    0 0 10px rgba(240,185,11,0.65),
+    0 0 24px rgba(240,185,11,0.3);
+
+  animation: ampersandPulse 2s ease-in-out infinite;
+}
+
+/* =========================
+   ACCENT LINE
+========================= */
+
+.heroAccent {
+  position: relative;
+
+  width: 110px;
+  height: 2px;
+
+  margin: 25px auto 0;
+
+  overflow: hidden;
+
+  background: rgba(240,185,11,0.14);
+  border-radius: 999px;
+
+  box-shadow:
+    0 0 14px rgba(240,185,11,0.18);
+}
+
+.heroAccent span {
+  position: absolute;
+  inset: 0;
+
+  width: 35%;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      #fff5c4,
+      var(--veloop-gold),
+      transparent
+    );
+
+  filter: blur(0.2px);
+
+  animation: accentSweep 2.2s ease-in-out infinite;
+}
+
+/* =========================
+   PARTICLE FIELD
+========================= */
+
+.heroContent::before,
+.heroContent::after {
+  content: "";
+
+  position: absolute;
+
+  width: 4px;
+  height: 4px;
+
+  border-radius: 50%;
+
+  background: var(--veloop-gold);
+
+  box-shadow:
+    80px -35px 0 rgba(240,185,11,0.5),
+    -100px 20px 0 rgba(255,215,94,0.35),
+    150px 60px 0 rgba(240,185,11,0.25),
+    -170px -50px 0 rgba(255,215,94,0.3),
+    230px -10px 0 rgba(240,185,11,0.2);
+
+  opacity: 0;
+
+  pointer-events: none;
+}
+
+.heroContent::before {
+  animation: particlesOne 5s ease-in-out infinite;
+}
+
+.heroContent::after {
+  animation: particlesTwo 6s ease-in-out 1s infinite;
+}
+
+/* =========================
+   ANIMATIONS
+========================= */
+
+@keyframes eyebrowReveal {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+    letter-spacing: 0.4em;
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    letter-spacing: 0.24em;
+  }
+}
+
+@keyframes eyebrowPulse {
+  0%, 100% {
+    color: rgba(255,255,255,0.62);
+    text-shadow: none;
+  }
+
+  50% {
+    color: rgba(255,215,94,0.9);
+    text-shadow: 0 0 14px rgba(240,185,11,0.3);
+  }
+}
+
+@keyframes dotPulse {
+  0%, 100% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.35);
+  }
+}
+
+@keyframes titleEnter {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.92);
+    filter: blur(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+@keyframes titleFloat {
+  0%, 100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+@keyframes goldShift {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes titleSweep {
+  0%, 55% {
+    background-position: 180% 0;
+  }
+
+  75%, 100% {
+    background-position: -80% 0;
+  }
+}
+
+@keyframes glowBreath {
+  0%, 100% {
+    opacity: 0.65;
+    transform: translate(-50%, -40%) scale(0.95);
+  }
+
+  50% {
+    opacity: 1;
+    transform: translate(-50%, -40%) scale(1.08);
+  }
+}
+
+@keyframes subtitleReveal {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+    filter: blur(5px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+@keyframes underlineReveal {
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes ampersandPulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.18);
+  }
+}
+
+@keyframes accentSweep {
+  0% {
+    transform: translateX(-120%);
+  }
+
+  55%, 100% {
+    transform: translateX(330%);
+  }
+}
+
+@keyframes particlesOne {
+  0%, 100% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  30%, 70% {
+    opacity: 0.7;
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes particlesTwo {
+  0%, 100% {
+    opacity: 0;
+    transform: translateY(10px) scale(0.8);
+  }
+
+  40%, 70% {
+    opacity: 0.45;
+    transform: translateY(-12px) scale(1);
+  }
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 600px) {
+  .heroContent {
+    padding-top: 20px;
+    padding-bottom: 28px;
+  }
+
+  .heroEyebrow {
+    gap: 7px;
+    font-size: 0.62rem;
+    letter-spacing: 0.18em;
+  }
+
+  .heroTitle {
+    font-size: clamp(3.5rem, 20vw, 5.5rem);
+  }
+
+  .heroSubtitle {
+    font-size: 0.95rem;
+    gap: 7px;
+  }
+
+  .titleGlow {
+    width: 90vw;
+    height: 130px;
+  }
+}
+
+@media (max-width: 380px) {
+  .heroEyebrow {
+    font-size: 0.56rem;
+  }
+
+  .heroSubtitle {
+    font-size: 0.85rem;
+  }
+}
+
+/* =========================
+   REDUCED MOTION
+========================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .heroEyebrow,
+  .heroEyebrow span,
+  .heroEyebrow i,
+  .heroTitle,
+  .titleMain,
+  .titleShine,
+  .titleGlow,
+  .heroSubtitle,
+  .heroSubtitle span::after,
+  .heroSubtitle strong,
+  .heroAccent span,
+  .heroContent::before,
+  .heroContent::after {
+    animation: none;
+  }
+
+  .titleShine {
+    display: none;
+  }
+}
+/* =========================================
+   FLOATING COINS
+========================================= */
+
+.coinField {
+  position: absolute;
+
+  inset: 0;
+
+  pointer-events: none;
+
+  overflow: hidden;
+
+  z-index: 1;
+}
+
+.floatingCoin {
+  position: absolute;
+
+  width: 25px;
+  height: 25px;
+
+  object-fit: contain;
+
+  opacity: 0.18;
+
+  filter:
+    drop-shadow(0 0 5px rgba(240, 185, 11, 0.28));
+
+  will-change: transform, opacity;
+
+  animation:
+    coinFloat 6s ease-in-out infinite;
+}
+
+.coinOne {
+  left: 16%;
+  top: 42%;
+
+  width: 22px;
+  height: 22px;
+
+  animation-delay: -1s;
+}
+
+.coinTwo {
+  left: 29%;
+  top: 20%;
+
+  width: 17px;
+  height: 17px;
+
+  opacity: 0.11;
+
+  animation-delay: -3.5s;
+}
+
+.coinThree {
+  right: 19%;
+  top: 35%;
+
+  width: 29px;
+  height: 29px;
+
+  opacity: 0.16;
+
+  animation-delay: -2s;
+}
+
+.coinFour {
+  right: 31%;
+  top: 17%;
+
+  width: 15px;
+  height: 15px;
+
+  opacity: 0.1;
+
+  animation-delay: -4.5s;
+}
+
+.coinFive {
+  left: 48%;
+  top: 65%;
+
+  width: 19px;
+  height: 19px;
+
+  opacity: 0.09;
+
+  animation-delay: -5s;
+}
+
+/* =========================================
+   ANIMATIONS
+========================================= */
+
+@keyframes coinFloat {
+  0% {
+    transform:
+      translate3d(0, 16px, 0)
+      rotate(-8deg);
+
+    opacity: 0.05;
+  }
+
+  30% {
+    opacity: 0.18;
+  }
+
+  50% {
+    transform:
+      translate3d(10px, -12px, 0)
+      rotate(8deg);
+
+    opacity: 0.2;
+  }
+
+  75% {
+    opacity: 0.13;
+  }
+
+  100% {
+    transform:
+      translate3d(-5px, -32px, 0)
+      rotate(-5deg);
+
+    opacity: 0.03;
+  }
+}
+
+@keyframes titleGlow {
+  0%,
+  100% {
+    text-shadow:
+      0 0 20px rgba(240, 185, 11, 0.08),
+      0 5px 28px rgba(0, 0, 0, 0.42);
+  }
+
+  50% {
+    text-shadow:
+      0 0 26px rgba(240, 185, 11, 0.16),
+      0 5px 28px rgba(0, 0, 0, 0.42);
+  }
+}
+
+@keyframes accentPulse {
+  0%,
+  100% {
+    opacity: 0.45;
+    transform: scaleX(0.8);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scaleX(1.15);
+  }
+}
+
+/* =========================================
+   TABLET
+========================================= */
+
+@media (max-width: 768px) {
+  .hero {
+    min-height: 250px;
+
+    padding:
+      18px
+      20px
+      28px;
+  }
+
+  .brandMark {
+    width: 28px;
+    height: 28px;
+  }
+
+  .brandName {
+    font-size: 0.88rem;
+  }
+
+  .coinOne {
+    left: 8%;
+  }
+
+  .coinThree {
+    right: 8%;
+  }
+
+  .coinFive {
+    left: 48%;
+  }
+}
+
+/* =========================================
+   SMALL PHONES
+========================================= */
+
+@media (max-width: 380px) {
+  .hero {
+    min-height: 225px;
+
+    padding:
+      16px
+      16px
+      24px;
+  }
+
+  .walletButton {
+    min-height: 34px;
+
+    padding:
+      5px 8px;
+
+    gap: 5px;
+  }
+
+  .walletLabel {
+    display: none;
+  }
+
+  .walletArrow {
+    font-size: 1rem;
+  }
+
+  .heroTitle {
+    font-size: 2.25rem;
+  }
+
+  .heroSubtitle {
+    font-size: 0.82rem;
+  }
+
+  .floatingCoin {
+    opacity: 0.11;
+  }
+}
+
+/* =========================================
+   REDUCED MOTION
+========================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .floatingCoin,
+  .heroTitle,
+  .heroAccent {
+    animation: none;
+  }
+
+  .heroTitle {
+    text-shadow:
+      0 0 20px rgba(240, 185, 11, 0.1),
+      0 5px 28px rgba(0, 0, 0, 0.42);
+  }
 }
