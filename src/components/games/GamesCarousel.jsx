@@ -14,6 +14,7 @@ function GamesCarousel({ onPlay }) {
 
   const [activeIndex, setActiveIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+  const [centeredCardIndex, setCenteredCardIndex] = useState(0);
 
   const intervalRef = useRef(null);
   const snapTimeoutRef = useRef(null);
@@ -76,9 +77,7 @@ function GamesCarousel({ onPlay }) {
     let smallestDistance = Infinity;
 
     cardPositionsRef.current.forEach((position, index) => {
-      const distance = Math.abs(
-        currentScrollLeft - position,
-      );
+      const distance = Math.abs(currentScrollLeft - position);
 
       if (distance < smallestDistance) {
         smallestDistance = distance;
@@ -150,8 +149,7 @@ function GamesCarousel({ onPlay }) {
     // We are inside the duplicated second set.
     if (nearest >= total) {
       const originalIndex = nearest - total;
-      const originalPosition =
-        cardPositionsRef.current[originalIndex];
+      const originalPosition = cardPositionsRef.current[originalIndex];
 
       if (originalPosition != null) {
         track.scrollLeft = originalPosition;
@@ -170,11 +168,7 @@ function GamesCarousel({ onPlay }) {
     intervalRef.current = setInterval(() => {
       if (prefersReducedMotion()) return;
 
-      if (
-        isPaused ||
-        isDraggingRef.current ||
-        isTouchingRef.current
-      ) {
+      if (isPaused || isDraggingRef.current || isTouchingRef.current) {
         return;
       }
 
@@ -202,12 +196,7 @@ function GamesCarousel({ onPlay }) {
       clearInterval(intervalRef.current);
       clearTimeout(snapTimeoutRef.current);
     };
-  }, [
-    isPaused,
-    getNearestIndex,
-    scrollToCard,
-    normalizeLoopPosition,
-  ]);
+  }, [isPaused, getNearestIndex, scrollToCard, normalizeLoopPosition]);
 
   // --------------------------------------------------
   // Mouse wheel
@@ -261,8 +250,7 @@ function GamesCarousel({ onPlay }) {
 
     dragDistanceRef.current = Math.abs(distance);
 
-    track.scrollLeft =
-      startScrollLeftRef.current - distance;
+    track.scrollLeft = startScrollLeftRef.current - distance;
   }, []);
 
   // --------------------------------------------------
@@ -292,11 +280,7 @@ function GamesCarousel({ onPlay }) {
     }
 
     setIsPaused(false);
-  }, [
-    getNearestIndex,
-    scrollToCard,
-    normalizeLoopPosition,
-  ]);
+  }, [getNearestIndex, scrollToCard, normalizeLoopPosition]);
 
   // --------------------------------------------------
   // Global mouse move/up
@@ -347,13 +331,11 @@ function GamesCarousel({ onPlay }) {
       if (!gamesData.length) return;
 
       const nearest = getNearestIndex();
-      const normalizedIndex =
-        nearest % gamesData.length;
+      setCenteredCardIndex(nearest);
+      const normalizedIndex = nearest % gamesData.length;
 
       setActiveIndex((prev) =>
-        prev === normalizedIndex
-          ? prev
-          : normalizedIndex,
+        prev === normalizedIndex ? prev : normalizedIndex,
       );
     });
   }, [getNearestIndex]);
@@ -364,9 +346,7 @@ function GamesCarousel({ onPlay }) {
   useEffect(() => {
     return () => {
       if (scrollFrameRef.current) {
-        cancelAnimationFrame(
-          scrollFrameRef.current,
-        );
+        cancelAnimationFrame(scrollFrameRef.current);
       }
     };
   }, []);
@@ -390,23 +370,17 @@ function GamesCarousel({ onPlay }) {
        * Choose whichever duplicate of the target
        * is closest to the currently visible position.
        */
-      const candidates = [
-        index,
-        index + total,
-      ];
+      const candidates = [index, index + total];
 
       let closest = candidates[0];
       let smallestDistance = Infinity;
 
       candidates.forEach((candidate) => {
-        const position =
-          cardPositionsRef.current[candidate];
+        const position = cardPositionsRef.current[candidate];
 
         if (position == null) return;
 
-        const distance = Math.abs(
-          current - candidate,
-        );
+        const distance = Math.abs(current - candidate);
 
         if (distance < smallestDistance) {
           smallestDistance = distance;
@@ -425,21 +399,14 @@ function GamesCarousel({ onPlay }) {
         setIsPaused(false);
       }, 700);
     },
-    [
-      getNearestIndex,
-      scrollToCard,
-      normalizeLoopPosition,
-    ],
+    [getNearestIndex, scrollToCard, normalizeLoopPosition],
   );
 
   // --------------------------------------------------
   // Prevent accidental click after dragging
   // --------------------------------------------------
   const handleClickCapture = useCallback((e) => {
-    if (
-      dragDistanceRef.current >
-      DRAG_CLICK_THRESHOLD
-    ) {
+    if (dragDistanceRef.current > DRAG_CLICK_THRESHOLD) {
       e.stopPropagation();
       e.preventDefault();
     }
@@ -472,9 +439,7 @@ function GamesCarousel({ onPlay }) {
       <div className={styles.heading}>
         <p className={styles.eyebrow}>Games</p>
 
-        <h2 className={styles.title}>
-          Explore Games & Earn Rewards
-        </h2>
+        <h2 className={styles.title}>Explore Games & Earn Rewards</h2>
       </div>
 
       <div
@@ -499,13 +464,12 @@ function GamesCarousel({ onPlay }) {
       >
         {loopedGames.map((game, i) => (
           <div
-            className={styles.cardWrapper}
+            className={`${styles.cardWrapper} ${
+              i === centeredCardIndex ? styles.activeCard : ""
+            }`}
             key={`${game.id}-${i}`}
           >
-            <GameCard
-              game={game}
-              onPlay={onPlay}
-            />
+            <GameCard game={game} onPlay={onPlay} />
           </div>
         ))}
       </div>

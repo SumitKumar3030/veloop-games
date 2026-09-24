@@ -1,12 +1,18 @@
+/* =========================================
+   WRAPPER
+========================================= */
+
 .wrapper {
   position: relative;
-
   width: 100%;
   max-width: 1600px;
   margin: 0 auto;
-
   padding: var(--veloop-space-lg) 0;
 }
+
+/* =========================================
+   HEADING
+========================================= */
 
 .heading {
   padding: 0 var(--veloop-space-lg);
@@ -15,21 +21,17 @@
 
 .eyebrow {
   color: var(--veloop-gold);
-
   font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-
   margin: 0 0 4px;
 }
 
 .title {
-  color: var(--veloop-text-primary);
-
+  color: var(--veloop-text-primary, var(--veloop-text));
   font-size: 1.4rem;
   font-weight: 700;
-
   margin: 0;
 }
 
@@ -43,7 +45,10 @@
   display: flex;
   gap: 16px;
 
+  width: 100%;
+
   overflow-x: auto;
+  overflow-y: hidden;
 
   padding: 18px var(--veloop-space-lg) 20px;
 
@@ -52,20 +57,22 @@
 
   cursor: grab;
 
+  /*
+   * Allow horizontal touch scrolling.
+   * Vertical page scrolling remains handled
+   * by the browser outside the carousel.
+   */
   touch-action: pan-x;
 
   /*
-   * Important:
-   * Do not use scroll-snap here.
-   *
-   * The carousel already performs its own
-   * card positioning from JavaScript.
+   * Do not use CSS scroll snap.
+   * Card positioning is controlled by JavaScript.
    */
   scroll-snap-type: none;
 
   /*
-   * Keep the scrolling layer simple.
-   * No mask/filter/clip effect here.
+   * Keep the scrolling layer lightweight.
+   * Avoid masks / filters / expensive effects here.
    */
 }
 
@@ -76,14 +83,6 @@
 /* =========================================
    EDGE FADE
 ========================================= */
-
-/*
- * The fade is now on the wrapper instead of the
- * scrolling element.
- *
- * This prevents the browser from masking the
- * entire moving scroll layer on every frame.
- */
 
 .wrapper::before,
 .wrapper::after {
@@ -106,7 +105,7 @@
 
   background: linear-gradient(
     to right,
-    var(--veloop-bg-primary, #0b1020),
+    var(--veloop-bg-primary, var(--veloop-bg)),
     transparent
   );
 }
@@ -116,7 +115,7 @@
 
   background: linear-gradient(
     to left,
-    var(--veloop-bg-primary, #0b1020),
+    var(--veloop-bg-primary, var(--veloop-bg)),
     transparent
   );
 }
@@ -129,10 +128,8 @@
   flex: 0 0 auto;
 
   /*
-   * No transform/opacity animation while the
-   * carousel is continuously moving.
-   *
-   * This is intentionally static.
+   * Keep cards static during normal scrolling.
+   * This prevents unnecessary animation work.
    */
   transform: none;
   opacity: 1;
@@ -236,17 +233,15 @@
     width: 24px;
   }
 
-  .wrapper::before {
-    top: 90px;
-  }
-
+  .wrapper::before,
   .wrapper::after {
     top: 90px;
+    bottom: 60px;
   }
 
   /*
-   * No scaling during scrolling.
-   * Native touch scrolling stays completely simple.
+   * Keep mobile scrolling completely native.
+   * No scaling or opacity changes while swiping.
    */
   .cardWrapper {
     transform: none;
@@ -255,6 +250,40 @@
 
   .cardWrapper:hover {
     transform: none;
+  }
+}
+
+/* =========================================
+   SMALL MOBILE
+========================================= */
+
+@media (max-width: 480px) {
+  .wrapper {
+    padding-top: var(--veloop-space-md);
+    padding-bottom: var(--veloop-space-md);
+  }
+
+  .heading {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .title {
+    font-size: 1.2rem;
+  }
+
+  .track {
+    gap: 12px;
+
+    padding-left: 16px;
+    padding-right: 16px;
+    padding-top: 14px;
+    padding-bottom: 18px;
+  }
+
+  .wrapper::before,
+  .wrapper::after {
+    width: 18px;
   }
 }
 
