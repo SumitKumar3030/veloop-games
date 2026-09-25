@@ -1191,13 +1191,19 @@ function MergeMasterGame({ onGameEnd }) {
           )}
         </div>
 
+        {powerupMessage && (
+          <div className={styles.powerupMessage} aria-live="polite">
+            {powerupMessage}
+          </div>
+        )}
+
         {doubleScoreMoves > 0 && (
-  <div className={styles.multiplierStatus}>
-    <span>⚡</span>
-    2× SCORE ACTIVE
-    <strong>{doubleScoreMoves}</strong>
-  </div>
-)}
+          <div className={styles.multiplierStatus}>
+            <span>⚡</span>
+            2× SCORE ACTIVE
+            <strong>{doubleScoreMoves}</strong>
+          </div>
+        )}
 
         {/* =========================================
             GAME HINT
