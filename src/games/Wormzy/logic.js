@@ -487,11 +487,22 @@ export function moveWorm(state, directionName) {
     return { ...workingState, failed: true, failReason: "spike" };
   }
 
-  const belowHead = { row: nextHead.row + 1, col: nextHead.col };
   const standingOverHoleGap =
     same(nextHead, workingState.hole) && workingState.worm.length >= workingState.requiresLength;
 
-  const needsFall = inBounds(belowHead) && !isSolidGround(workingState, belowHead) && !standingOverHoleGap;
+  // The worm only falls once its ENTIRE body has left solid ground — as
+  // long as at least one segment anywhere along its length still has a
+  // platform/stone directly beneath it, the worm bridges the gap safely,
+  // with the rest of its body hanging in open air. It only drops the
+  // moment the last segment (the tail) also clears the edge. Previously
+  // this only checked the head, so the whole snake fell the instant the
+  // head stepped off a platform even with the tail still firmly anchored.
+  const anySegmentAnchored = workingState.worm.some((segment) => {
+    const below = { row: segment.row + 1, col: segment.col };
+    return inBounds(below) && isSolidGround(workingState, below);
+  });
+
+  const needsFall = !standingOverHoleGap && !anySegmentAnchored;
 
   if (needsFall) {
     const fallResult = dropUntilSupported(workingState, nextHead);
