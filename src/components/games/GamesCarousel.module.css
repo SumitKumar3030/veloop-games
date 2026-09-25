@@ -1,5 +1,5 @@
 /* =========================================
-   WRAPPER
+   WRAPPER & FADE
 ========================================= */
 
 .wrapper {
@@ -10,10 +10,6 @@
   padding: var(--veloop-space-lg) 0;
 }
 
-/* =========================================
-   HEADING
-========================================= */
-
 .heading {
   padding: 0 var(--veloop-space-lg);
   margin-bottom: var(--veloop-space-md);
@@ -21,76 +17,35 @@
 
 .eyebrow {
   color: var(--veloop-gold);
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  margin: 0 0 4px;
+  margin: 0 0 6px;
 }
 
 .title {
   color: var(--veloop-text-primary, var(--veloop-text));
-  font-size: 1.4rem;
-  font-weight: 700;
+  font-size: 1.5rem;
+  font-weight: 850;
+  letter-spacing: -0.02em;
   margin: 0;
 }
 
-/* =========================================
-   CAROUSEL TRACK
-========================================= */
-
-.track {
-  position: relative;
-
-  display: flex;
-  gap: 16px;
-
-  width: 100%;
-
-  overflow-x: auto;
-  overflow-y: hidden;
-
-  padding: 24px var(--veloop-space-lg) 28px;
-
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-
-  cursor: grab;
-
-  touch-action: pan-x;
-
-  scroll-snap-type: none;
-
-  perspective: 1200px;
-}
-
-.track::-webkit-scrollbar {
-  display: none;
-}
-
-/* =========================================
-   EDGE FADE
-========================================= */
-
+/* Edge Masking Fades */
 .wrapper::before,
 .wrapper::after {
   content: "";
-
   position: absolute;
-
   top: 90px;
   bottom: 68px;
-
-  width: 48px;
-
+  width: 64px;
   z-index: 5;
-
   pointer-events: none;
 }
 
 .wrapper::before {
   left: 0;
-
   background: linear-gradient(
     to right,
     var(--veloop-bg-primary, var(--veloop-bg)),
@@ -100,7 +55,6 @@
 
 .wrapper::after {
   right: 0;
-
   background: linear-gradient(
     to left,
     var(--veloop-bg-primary, var(--veloop-bg)),
@@ -109,296 +63,173 @@
 }
 
 /* =========================================
-   CARD WRAPPER
+   HARDWARE ACCELERATED TRACK
+========================================= */
+
+
+.track {
+  position: relative;
+  display: flex;
+  gap: 20px;
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 24px var(--veloop-space-lg) 28px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  cursor: grab;
+  touch-action: pan-x;
+
+  /* Use proximity to allow smooth programmatic left-to-right scrolling */
+  scroll-snap-type: x proximity;
+  scroll-behavior: smooth;
+
+  -webkit-font-smoothing: antialiased;
+  transform: translateZ(0);
+}
+
+.track::-webkit-scrollbar {
+  display: none;
+}
+
+.dragging {
+  cursor: grabbing;
+  scroll-snap-type: none;
+  scroll-behavior: auto;
+}
+
+/* =========================================
+   CRISP CARD WRAPPER (NO SCALE BLUR)
 ========================================= */
 
 .cardWrapper {
   position: relative;
-
   flex: 0 0 auto;
-
-  /*
-   * Slightly smaller than the focused card,
-   * but still completely crisp.
-   */
-  transform: scale(0.98);
-
-  opacity: 0.92;
-
-  transform-origin: center center;
-
+  scroll-snap-align: center;
+  scroll-snap-stop: normal;
+  
+  /* Hardware isolation */
+  transform: translate3d(0, 0, 0);
+  opacity: 0.75;
+  
   transition:
-    transform 280ms cubic-bezier(0.22, 1, 0.36, 1),
-    opacity 280ms ease;
-
+    transform 220ms cubic-bezier(0.16, 1, 0.3, 1),
+    cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 220ms ease,
+    border-color 220ms ease;
+    
   will-change: transform, opacity;
+  border-radius: var(--veloop-radius-lg, 18px);
 }
 
-/* =========================================
-   CENTER / FOCUSED CARD
-========================================= */
-
+/* Focused / Active Card */
 .activeCard {
-  transform:
-    translateY(-3px)
-    scale(1.04);
-
   opacity: 1;
-
   z-index: 3;
+  transform: translate3d(0, -6px, 0);
 }
 
-/* =========================================
-   FOCUS GLOW
-========================================= */
-
-.activeCard::before {
+/* Gold Accent Top Bar for Active Card */
+.activeCard::after {
   content: "";
-
   position: absolute;
-
-  inset: -7px;
-
-  border-radius: calc(
-    var(--veloop-radius-lg) + 7px
+  top: 0;
+  left: 15%;
+  right: 15%;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--veloop-gold),
+    transparent
   );
-
-  background: radial-gradient(
-    circle,
-    rgba(240, 185, 11, 0.16),
-    transparent 68%
-  );
-
-  opacity: 0.9;
-
+  box-shadow: 0 0 12px var(--veloop-gold);
+  border-radius: 999px;
   pointer-events: none;
-
-  z-index: -1;
 }
 
-/* =========================================
-   DESKTOP HOVER
-========================================= */
-
+/* Desktop Hover Effects */
 @media (hover: hover) and (pointer: fine) {
-  /*
-   * Hovering a normal card should NOT make it
-   * blurry or dull.
-   */
   .cardWrapper:hover {
-    transform:
-      translateY(-3px)
-      scale(1.015);
-
-    opacity: 1;
-
-    z-index: 2;
+    opacity: 0.95;
+    transform: translate3d(0, -3px, 0);
   }
 
-  /*
-   * Hovering the already-focused card gives
-   * a slightly stronger lift.
-   */
   .activeCard:hover {
-    transform:
-      translateY(-6px)
-      scale(1.055);
-
     opacity: 1;
-
-    z-index: 4;
+    transform: translate3d(0, -8px, 0);
   }
-}
-
-/* =========================================
-   DRAGGING
-========================================= */
-
-.dragging {
-  cursor: grabbing;
 }
 
 .dragging .cardWrapper {
-  transition: none;
-
-  /*
-   * Keep cards stable while dragging.
-   */
-  transform: none;
-
-  opacity: 0.95;
-}
-
-.dragging .activeCard {
-  transform: none;
-
-  opacity: 1;
+  transition: none !important;
+  transform: translate3d(0, 0, 0) !important;
 }
 
 /* =========================================
-   DOTS
+   DOTS NAVIGATION
 ========================================= */
 
 .dots {
   display: flex;
-
   justify-content: center;
   align-items: center;
-
   gap: 8px;
-
   margin-top: var(--veloop-space-md);
 }
 
 .dot {
   width: 8px;
   height: 8px;
-
   padding: 0;
-
   border: none;
   border-radius: 50%;
-
-  background: rgba(255, 255, 255, 0.2);
-
+  background: rgba(255, 255, 255, 0.18);
   cursor: pointer;
-
   transition:
-    background 180ms ease,
-    width 180ms ease,
-    transform 180ms ease;
+    background 200ms ease,
+    width 200ms ease,
+    transform 200ms ease;
 }
 
 .dot:hover {
-  transform: scale(1.2);
+  background: rgba(255, 255, 255, 0.4);
 }
 
 .dotActive {
-  width: 20px;
-
+  width: 24px;
   background: var(--veloop-gold);
-
   border-radius: 4px;
-
-  box-shadow:
-    0 0 10px rgba(240, 185, 11, 0.35);
-}
-
-.dot:focus-visible {
-  outline: 2px solid var(--veloop-gold);
-  outline-offset: 3px;
+  box-shadow: 0 0 12px rgba(240, 185, 11, 0.4);
 }
 
 /* =========================================
-   MOBILE
+   RESPONSIVE
 ========================================= */
 
 @media (max-width: 768px) {
   .track {
-    gap: 12px;
-
-    padding-left: 20px;
-    padding-right: 20px;
-
-    padding-top: 20px;
-    padding-bottom: 24px;
+    gap: 14px;
+    padding: 16px 20px 20px;
   }
 
   .wrapper::before,
   .wrapper::after {
     width: 24px;
-
-    top: 90px;
-    bottom: 60px;
-  }
-
-  /*
-   * Mobile cards remain crisp.
-   */
-  .cardWrapper {
-    transform: scale(0.96);
-
-    opacity: 0.9;
   }
 
   .activeCard {
-    transform:
-      translateY(-2px)
-      scale(1.025);
-
-    opacity: 1;
-  }
-
-  .cardWrapper:hover {
-    transform: none;
-  }
-
-  .activeCard:hover {
-    transform:
-      translateY(-2px)
-      scale(1.025);
+    transform: translate3d(0, -3px, 0);
   }
 }
-
-/* =========================================
-   SMALL MOBILE
-========================================= */
-
-@media (max-width: 480px) {
-  .wrapper {
-    padding-top: var(--veloop-space-md);
-    padding-bottom: var(--veloop-space-md);
-  }
-
-  .heading {
-    padding-left: 16px;
-    padding-right: 16px;
-  }
-
-  .title {
-    font-size: 1.2rem;
-  }
-
-  .track {
-    gap: 12px;
-
-    padding-left: 16px;
-    padding-right: 16px;
-
-    padding-top: 16px;
-    padding-bottom: 20px;
-  }
-
-  .wrapper::before,
-  .wrapper::after {
-    width: 18px;
-  }
-
-  .cardWrapper {
-    transform: scale(0.97);
-    opacity: 0.92;
-  }
-
-  .activeCard {
-    transform: scale(1.02);
-    opacity: 1;
-  }
-}
-
-/* =========================================
-   REDUCED MOTION
-========================================= */
 
 @media (prefers-reduced-motion: reduce) {
-  .cardWrapper,
-  .dot {
-    transition: none;
+  .track {
+    scroll-behavior: auto;
   }
 
-  .cardWrapper,
-  .activeCard,
-  .cardWrapper:hover,
-  .activeCard:hover {
-    transform: none;
+  .cardWrapper {
+    transition: none;
+    transform: none !important;
   }
 }
