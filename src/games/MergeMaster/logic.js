@@ -384,6 +384,7 @@ export function move(grid, direction) {
 // ---------------------------------------------------------
 
 export function isGameOver(grid) {
+  // Any empty cell means the player can still continue.
   if (getEmptyCells(grid).length > 0) {
     return false;
   }
@@ -392,22 +393,31 @@ export function isGameOver(grid) {
     for (let c = 0; c < GRID_SIZE; c++) {
       const value = grid[r][c];
 
+      // A bomb is always a possible action.
       if (value === BOMB) {
-        continue;
-      }
-
-      if (
-        c < GRID_SIZE - 1 &&
-        grid[r][c + 1] === value
-      ) {
         return false;
       }
 
-      if (
-        r < GRID_SIZE - 1 &&
-        grid[r + 1][c] === value
-      ) {
-        return false;
+      if (c < GRID_SIZE - 1) {
+        const right = grid[r][c + 1];
+
+        if (
+          right !== BOMB &&
+          right === value
+        ) {
+          return false;
+        }
+      }
+
+      if (r < GRID_SIZE - 1) {
+        const down = grid[r + 1][c];
+
+        if (
+          down !== BOMB &&
+          down === value
+        ) {
+          return false;
+        }
       }
     }
   }
