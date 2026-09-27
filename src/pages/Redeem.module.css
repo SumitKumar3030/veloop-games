@@ -1,416 +1,1781 @@
+/* =========================================================
+   VELOOP REDEEM — PREMIUM REWARD VAULT
+   ========================================================= */
+
 .page {
   min-height: 100vh;
-  background: var(--veloop-bg);
-  color: var(--veloop-text-primary);
+  overflow-x: hidden;
+  background:
+    radial-gradient(
+      circle at 50% 8%,
+      rgba(240, 185, 11, 0.09),
+      transparent 28%
+    ),
+    radial-gradient(
+      circle at 85% 48%,
+      rgba(139, 108, 255, 0.045),
+      transparent 24%
+    ),
+    var(--veloop-bg);
+  color: var(--veloop-text);
   padding-bottom: 90px;
 }
 
-/* ========================================
-   HEADER
-   ======================================== */
+/* =========================================================
+   HEADER / NAVBAR
+   ========================================================= */
 
 .header {
+  position: sticky;
+  top: 0;
+  z-index: 80;
+
+  width: 100%;
+
+  background: rgba(22, 24, 39, 0.86);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+.headerInner {
+  width: min(100% - 48px, 1240px);
+  min-height: 70px;
+  margin: 0 auto;
+
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 24px;
+}
+
+.brand {
+  justify-self: start;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+
+  color: var(--veloop-text);
+  text-decoration: none;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+}
+
+.brandMark {
+  width: 32px;
+  height: 32px;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 10px;
+
+  background:
+    linear-gradient(
+      145deg,
+      var(--veloop-gold-light),
+      var(--veloop-gold)
+    );
+
+  color: #17130a;
+
+  font-size: 0.9rem;
+  font-weight: 950;
+
+  box-shadow:
+    0 7px 20px rgba(240, 185, 11, 0.22),
+    inset 0 1px rgba(255, 255, 255, 0.55);
+}
+
+.brandText {
+  font-size: 0.92rem;
+}
+
+.desktopNav {
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 16px 20px;
-  background: var(--veloop-bg-elevated);
-  border-bottom: var(--veloop-card-border);
+  justify-content: center;
+  gap: 8px;
 }
 
-.backLink {
-  color: var(--veloop-text-primary);
+.navLink {
+  position: relative;
+
+  padding: 9px 15px;
+
+  color: var(--veloop-text-muted);
   text-decoration: none;
-  font-weight: 600;
-  white-space: nowrap;
-  transition: color 0.2s ease, transform 0.2s ease;
+
+  font-size: 0.82rem;
+  font-weight: 750;
+
+  border-radius: 999px;
+
+  transition:
+    color 0.2s ease,
+    background 0.2s ease;
 }
 
-.backLink:hover {
-  color: var(--veloop-gold);
-  transform: translateX(-2px);
+.navLink:hover {
+  color: var(--veloop-text);
+  background: rgba(255, 255, 255, 0.045);
 }
 
-.pageTitle {
-  font-size: 1.1rem;
-  font-weight: 800;
-  margin: 0;
+.navLinkActive {
+  color: var(--veloop-gold-light);
+  background: rgba(240, 185, 11, 0.08);
 }
 
-/* ========================================
-   GAME COIN BALANCE
-   ======================================== */
+.navCoinBalance {
+  justify-self: end;
 
-.balanceBanner {
-  width: min(100% - 40px, 760px);
-  margin: 24px auto 22px;
-  padding: 22px 24px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+
+  min-height: 38px;
+  padding: 6px 12px 6px 8px;
+
+  border: 1px solid rgba(240, 185, 11, 0.16);
+  border-radius: 999px;
+
+  background: rgba(240, 185, 11, 0.055);
+
+  color: var(--veloop-gold-light);
+
+  font-size: 0.82rem;
+  font-weight: 850;
+}
+
+.navCoinBalance img {
+  width: 25px;
+  height: 25px;
+  object-fit: contain;
+
+  filter:
+    drop-shadow(0 0 4px rgba(255, 211, 84, 0.75))
+    drop-shadow(0 0 9px rgba(240, 185, 11, 0.35));
+}
+
+/* =========================================================
+   HERO
+   ========================================================= */
+
+.hero {
+  position: relative;
+
+  min-height: 650px;
 
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+
+  overflow: hidden;
+
+  border-bottom: 1px solid rgba(255, 255, 255, 0.055);
+
+  background:
+    radial-gradient(
+      circle at 50% 52%,
+      rgba(240, 185, 11, 0.12),
+      transparent 21%
+    ),
+    radial-gradient(
+      circle at 50% 100%,
+      rgba(240, 185, 11, 0.055),
+      transparent 48%
+    );
+}
+
+.hero::before {
+  content: "";
+
+  position: absolute;
+  inset: 0;
+
+  pointer-events: none;
 
   background:
     linear-gradient(
-      135deg,
-      rgba(240, 185, 11, 0.08),
-      rgba(255, 255, 255, 0.025)
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.018),
+      transparent
     );
 
-  border: 1px solid rgba(240, 185, 11, 0.18);
-  border-radius: 18px;
-
-  box-shadow:
-    0 12px 30px rgba(0, 0, 0, 0.22),
-    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  opacity: 0.65;
 }
 
-.balanceIcon {
-  width: 34px;
-  height: 34px;
-  object-fit: contain;
-  flex: 0 0 auto;
+.heroGlow {
+  position: absolute;
 
-  filter:
-    drop-shadow(0 0 3px rgba(255, 196, 60, 0.95))
-    drop-shadow(0 0 10px rgba(255, 170, 20, 0.65));
+  width: 520px;
+  height: 520px;
+
+  left: 50%;
+  top: 50%;
+
+  transform: translate(-50%, -50%);
+
+  border-radius: 50%;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(240, 185, 11, 0.14),
+      rgba(240, 185, 11, 0.045) 35%,
+      transparent 70%
+    );
+
+  filter: blur(10px);
+
+  animation: heroGlowPulse 5s ease-in-out infinite;
 }
 
-.balanceValue {
-  font-size: 2rem;
-  line-height: 1;
-  font-weight: 800;
-  color: var(--veloop-gold);
-}
-
-.balanceLabel {
-  font-size: 0.9rem;
-  color: var(--veloop-text-secondary);
-  align-self: flex-end;
-  margin-bottom: 2px;
-}
-
-/* ========================================
-   SUCCESS TOAST
-   ======================================== */
-
-.successToast {
-  width: min(100% - 40px, 760px);
-  margin: 0 auto 18px;
-
-  text-align: center;
-  background: rgba(79, 156, 99, 0.12);
-  border: 1px solid rgba(126, 224, 160, 0.2);
-  color: #7ee0a0;
-
-  font-weight: 700;
-  padding: 11px 14px;
-  border-radius: 12px;
-}
-
-/* ========================================
-   REDEMPTION GRID
-   ======================================== */
-
-.grid {
-  width: min(100% - 40px, 1100px);
-  margin: 0 auto;
-
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 14px;
-}
-
-/* ========================================
-   REWARD CARD
-   ======================================== */
-
-.card {
+.heroContent {
   position: relative;
-  overflow: hidden;
+  z-index: 5;
+
+  width: min(100% - 40px, 760px);
 
   display: flex;
   flex-direction: column;
   align-items: center;
 
-  min-width: 0;
-  min-height: 250px;
-
-  background:
-    linear-gradient(
-      145deg,
-      rgba(255, 255, 255, 0.025),
-      rgba(255, 255, 255, 0)
-    ),
-    var(--veloop-bg-card);
-
-  border: var(--veloop-card-border);
-  border-radius: var(--veloop-card-radius);
-
-  padding: 22px 14px 16px;
   text-align: center;
-
-  box-shadow: var(--veloop-card-shadow);
-
-  transition:
-    transform 0.25s ease,
-    border-color 0.25s ease,
-    box-shadow 0.25s ease;
 }
 
-/* Subtle premium top highlight */
-.card::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 14%;
-  right: 14%;
+.heroEyebrow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  margin-bottom: 14px;
+
+  color: var(--veloop-gold-light);
+
+  font-size: 0.68rem;
+  font-weight: 850;
+  letter-spacing: 0.22em;
+}
+
+.heroEyebrow span {
+  width: 26px;
   height: 1px;
 
   background: linear-gradient(
     90deg,
     transparent,
-    rgba(255, 255, 255, 0.16),
+    var(--veloop-gold)
+  );
+}
+
+.heroEyebrow span:last-child {
+  background: linear-gradient(
+    90deg,
+    var(--veloop-gold),
     transparent
   );
+}
+
+.heroTitle {
+  margin: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  font-size: clamp(2.5rem, 6vw, 5rem);
+  line-height: 0.92;
+  letter-spacing: -0.055em;
+  font-weight: 950;
+
+  color: var(--veloop-text);
+
+  text-shadow:
+    0 10px 35px rgba(0, 0, 0, 0.38);
+}
+
+.heroTitle span {
+  color: var(--veloop-gold-light);
+
+  text-shadow:
+    0 0 35px rgba(240, 185, 11, 0.16);
+}
+
+.heroDescription {
+  width: min(100%, 520px);
+
+  margin: 20px 0 0;
+
+  color: var(--veloop-text-secondary);
+
+  font-size: 0.94rem;
+  line-height: 1.7;
+}
+
+/* =========================================================
+   HERO COIN
+   ========================================================= */
+
+.heroCoinStage {
+  position: relative;
+
+  width: clamp(210px, 30vw, 300px);
+  aspect-ratio: 1;
+
+  margin: 20px auto 2px;
+
+  display: grid;
+  place-items: center;
+}
+
+.coinAura {
+  position: absolute;
+  inset: 16%;
+
+  border-radius: 50%;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(255, 213, 88, 0.2),
+      rgba(240, 185, 11, 0.08) 42%,
+      transparent 70%
+    );
+
+  filter: blur(12px);
+
+  animation: coinAuraPulse 3.8s ease-in-out infinite;
+}
+
+.heroCoin {
+  position: relative;
+  z-index: 5;
+
+  width: clamp(135px, 20vw, 205px);
+  height: clamp(135px, 20vw, 205px);
+
+  object-fit: contain;
+
+  transform-style: preserve-3d;
+
+  filter:
+    drop-shadow(0 16px 18px rgba(0, 0, 0, 0.38))
+    drop-shadow(0 0 18px rgba(240, 185, 11, 0.42));
+
+  animation: coinFloat 4.8s ease-in-out infinite;
+}
+
+/*
+  The asset itself remains readable while a subtle
+  scale/rotation movement creates the premium coin motion.
+*/
+.heroCoinStage::after {
+  content: "";
+
+  position: absolute;
+  z-index: 6;
+
+  width: 145px;
+  height: 145px;
+
+  border-radius: 50%;
+
+  background:
+    linear-gradient(
+      125deg,
+      transparent 25%,
+      rgba(255, 255, 255, 0.22) 45%,
+      transparent 57%
+    );
+
+  opacity: 0.5;
+
+  mix-blend-mode: screen;
+
+  pointer-events: none;
+
+  animation: coinShine 5s ease-in-out infinite;
+}
+
+.coinOrbit {
+  position: absolute;
+
+  border: 1px solid rgba(240, 185, 11, 0.14);
+  border-radius: 50%;
 
   pointer-events: none;
 }
 
-@media (hover: hover) and (pointer: fine) {
-  .card:hover {
-    transform: translateY(-4px);
-    border-color: rgba(240, 185, 11, 0.24);
+.orbitOne {
+  width: 220px;
+  height: 100px;
 
-    box-shadow:
-      0 16px 34px rgba(0, 0, 0, 0.38),
-      0 0 20px rgba(240, 185, 11, 0.06);
-  }
+  transform: rotate(-20deg);
+
+  animation: orbitRotate 10s linear infinite;
 }
 
-/* ========================================
-   REWARD ICONS
-   ======================================== */
+.orbitTwo {
+  width: 250px;
+  height: 120px;
 
-.cardIcon {
-  width: 48px;
-  height: 48px;
+  transform: rotate(30deg);
+
+  border-color: rgba(255, 215, 94, 0.08);
+
+  animation: orbitRotateReverse 14s linear infinite;
+}
+
+.coinSpark {
+  position: absolute;
+  z-index: 8;
+
+  color: var(--veloop-gold-light);
+
+  font-size: 1rem;
+
+  text-shadow:
+    0 0 12px rgba(240, 185, 11, 0.8);
+
+  animation: sparkFloat 3s ease-in-out infinite;
+}
+
+.sparkOne {
+  top: 19%;
+  left: 17%;
+}
+
+.sparkTwo {
+  right: 15%;
+  top: 30%;
+
+  animation-delay: 0.8s;
+}
+
+.sparkThree {
+  left: 20%;
+  bottom: 23%;
+
+  animation-delay: 1.5s;
+}
+
+.sparkFour {
+  right: 21%;
+  bottom: 17%;
+
+  animation-delay: 2.1s;
+}
+
+/* =========================================================
+   FLOATING COINS
+   ========================================================= */
+
+.floatingCoins {
+  position: absolute;
+  inset: 0;
+
+  pointer-events: none;
+}
+
+.floatingCoin {
+  position: absolute;
+
+  width: 36px;
+  height: 36px;
+
   object-fit: contain;
-  flex: 0 0 auto;
+
+  opacity: 0.18;
 
   filter:
-    drop-shadow(0 0 3px rgba(255, 255, 255, 0.25))
-    drop-shadow(0 0 9px rgba(255, 196, 60, 0.25));
+    drop-shadow(0 0 8px rgba(240, 185, 11, 0.35));
 
-  transition: filter 0.25s ease;
+  animation:
+    floatingCoinMove
+    6s
+    ease-in-out
+    infinite;
 }
 
-@media (hover: hover) and (pointer: fine) {
-  .card:hover .cardIcon {
-    filter:
-      drop-shadow(0 0 4px rgba(255, 255, 255, 0.35))
-      drop-shadow(0 0 13px rgba(255, 196, 60, 0.38));
-  }
+.floatingCoinOne {
+  left: 13%;
+  top: 30%;
 }
 
-/* VEs */
-.card:nth-child(1) .cardIcon {
-  filter:
-    drop-shadow(0 0 4px rgba(255, 215, 80, 0.9))
-    drop-shadow(0 0 12px rgba(255, 180, 30, 0.65))
-    drop-shadow(0 0 22px rgba(255, 160, 0, 0.28));
+.floatingCoinTwo {
+  right: 15%;
+  top: 25%;
+
+  width: 46px;
+  height: 46px;
+
+  animation-delay: 1.1s;
 }
 
-/* SVEs */
-.card:nth-child(2) .cardIcon {
-  filter:
-    drop-shadow(0 0 4px rgba(190, 100, 255, 0.85))
-    drop-shadow(0 0 12px rgba(160, 50, 255, 0.6))
-    drop-shadow(0 0 22px rgba(140, 0, 255, 0.25));
+.floatingCoinThree {
+  left: 22%;
+  bottom: 18%;
+
+  width: 28px;
+  height: 28px;
+
+  animation-delay: 2.2s;
 }
 
-/* Gems */
-.card:nth-child(3) .cardIcon {
-  filter:
-    drop-shadow(0 0 4px rgba(80, 210, 255, 0.9))
-    drop-shadow(0 0 12px rgba(0, 150, 255, 0.6))
-    drop-shadow(0 0 22px rgba(0, 100, 255, 0.25));
+.floatingCoinFour {
+  right: 23%;
+  bottom: 17%;
+
+  width: 32px;
+  height: 32px;
+
+  animation-delay: 3.1s;
 }
 
-/* Tokens */
-.card:nth-child(4) .cardIcon {
-  filter:
-    drop-shadow(0 0 4px rgba(110, 255, 130, 0.9))
-    drop-shadow(0 0 12px rgba(40, 220, 80, 0.6))
-    drop-shadow(0 0 22px rgba(0, 200, 60, 0.25));
+/* =========================================================
+   HERO BALANCE
+   ========================================================= */
+
+.heroBalance {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  margin-top: -4px;
 }
 
-/* Spins */
-.card:nth-child(5) .cardIcon {
-  filter:
-    drop-shadow(0 0 4px rgba(255, 130, 255, 0.9))
-    drop-shadow(0 0 12px rgba(220, 50, 255, 0.6))
-    drop-shadow(0 0 22px rgba(180, 0, 255, 0.25));
+.heroBalanceLabel {
+  color: var(--veloop-text-muted);
+
+  font-size: 0.64rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
 }
 
-/* ========================================
-   CARD TEXT
-   ======================================== */
-
-.cardTitle {
+.heroBalanceValue {
   display: flex;
   align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
+  gap: 8px;
 
-  font-weight: 700;
-  margin: 13px 0 5px;
-
-  font-size: 0.9rem;
-  line-height: 1.25;
-
-  color: var(--veloop-text-primary);
+  margin-top: 5px;
 }
 
-.cardDesc {
-  min-height: 30px;
+.heroBalanceValue img {
+  width: 29px;
+  height: 29px;
+  object-fit: contain;
 
-  font-size: 0.75rem;
-  line-height: 1.4;
+  filter:
+    drop-shadow(0 0 7px rgba(240, 185, 11, 0.6));
+}
+
+.heroBalanceValue strong {
+  color: var(--veloop-gold-light);
+
+  font-size: 1.7rem;
+  line-height: 1;
+
+  font-weight: 900;
+}
+
+.heroBalanceUnit {
+  margin-top: 4px;
 
   color: var(--veloop-text-secondary);
 
-  margin: 0 0 16px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
 }
 
-/* Small Game Coin icons */
-.inlineIcon {
-  width: 17px;
-  height: 17px;
+/* =========================================================
+   MAIN
+   ========================================================= */
+
+.main {
+  width: min(100% - 40px, 1240px);
+  margin: 0 auto;
+}
+
+/* =========================================================
+   COMMON SECTION STYLES
+   ========================================================= */
+
+.sectionEyebrow {
+  display: block;
+
+  color: var(--veloop-gold-light);
+
+  font-size: 0.62rem;
+  font-weight: 850;
+  letter-spacing: 0.18em;
+}
+
+.sectionHeading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+
+  margin-bottom: 24px;
+}
+
+.sectionHeading h2,
+.sectionHeadingCentered h2 {
+  margin: 7px 0 0;
+
+  color: var(--veloop-text);
+
+  font-size: clamp(1.35rem, 2.6vw, 2rem);
+  line-height: 1;
+  letter-spacing: -0.035em;
+
+  font-weight: 900;
+}
+
+.sectionHeading p,
+.sectionHeadingCentered p {
+  margin: 10px 0 0;
+
+  color: var(--veloop-text-muted);
+
+  font-size: 0.8rem;
+  line-height: 1.6;
+}
+
+.sectionHeadingCentered {
+  max-width: 650px;
+
+  margin: 0 auto 30px;
+
+  text-align: center;
+}
+
+/* =========================================================
+   BALANCE SECTION
+   ========================================================= */
+
+.balanceSection {
+  display: grid;
+  grid-template-columns: minmax(0, 1.55fr) minmax(280px, 0.75fr);
+  gap: 18px;
+
+  margin: 48px 0 80px;
+}
+
+.balanceCard,
+.balanceSideCard {
+  position: relative;
+
+  border: 1px solid var(--veloop-border);
+  border-radius: var(--veloop-radius-lg);
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.035),
+      transparent 60%
+    ),
+    var(--veloop-surface);
+
+  box-shadow: var(--veloop-shadow-md);
+}
+
+.balanceCard {
+  padding: 26px;
+  overflow: hidden;
+}
+
+.balanceCard::before {
+  content: "";
+
+  position: absolute;
+
+  left: 0;
+  right: 0;
+  top: 0;
+
+  height: 2px;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      var(--veloop-gold),
+      transparent
+    );
+
+  opacity: 0.75;
+}
+
+.balanceCardTop {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.balanceHeading {
+  margin: 6px 0 0;
+
+  font-size: 1.05rem;
+  font-weight: 850;
+}
+
+.balanceMiniCoin {
+  width: 44px;
+  height: 44px;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 14px;
+
+  background: rgba(240, 185, 11, 0.08);
+  border: 1px solid rgba(240, 185, 11, 0.14);
+}
+
+.balanceMiniCoin img {
+  width: 29px;
+  height: 29px;
+
   object-fit: contain;
 
-  vertical-align: middle;
-  display: inline-block;
-  margin: 0 3px;
-
   filter:
-    drop-shadow(0 0 2px rgba(255, 220, 100, 0.9))
-    drop-shadow(0 0 6px rgba(255, 170, 20, 0.45));
+    drop-shadow(0 0 6px rgba(240, 185, 11, 0.5));
 }
 
-/* ========================================
-   REDEEM BUTTON
-   ======================================== */
+.balanceMain {
+  display: flex;
+  align-items: center;
+  gap: 9px;
 
-.redeemBtn {
-  width: 100%;
-  min-height: 38px;
+  margin: 25px 0 22px;
+}
 
-  margin-top: auto;
+.balanceMain img {
+  width: 43px;
+  height: 43px;
 
-  padding: 9px 12px;
+  object-fit: contain;
 
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 999px;
+  filter:
+    drop-shadow(0 0 8px rgba(240, 185, 11, 0.65));
+}
 
-  background: var(--veloop-btn-bg);
-  color: var(--veloop-btn-text);
+.balanceValue {
+  color: var(--veloop-text);
 
+  font-size: clamp(2rem, 5vw, 3rem);
+  line-height: 1;
+
+  font-weight: 950;
+  letter-spacing: -0.055em;
+}
+
+.balanceLabel {
+  align-self: flex-end;
+
+  margin-bottom: 4px;
+
+  color: var(--veloop-text-muted);
+
+  font-size: 0.72rem;
   font-weight: 700;
-  font-size: 0.8rem;
+}
 
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
+.rewardProgress {
+  padding-top: 17px;
 
-  box-shadow: var(--veloop-btn-shadow);
+  border-top: 1px solid var(--veloop-border);
+}
+
+.progressHeader,
+.progressBottom {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+}
+
+.progressHeader {
+  color: var(--veloop-text-secondary);
+
+  font-size: 0.7rem;
+  font-weight: 750;
+}
+
+.progressTrack,
+.cardProgressTrack {
+  position: relative;
+
+  width: 100%;
+
+  overflow: hidden;
+
+  background: rgba(255, 255, 255, 0.065);
+
+  border-radius: 999px;
+}
+
+.progressTrack {
+  height: 8px;
+
+  margin: 10px 0 8px;
+}
+
+.progressFill {
+  height: 100%;
+
+  border-radius: inherit;
+
+  background:
+    linear-gradient(
+      90deg,
+      #b98200,
+      var(--veloop-gold-light),
+      #fff0a6
+    );
+
+  box-shadow:
+    0 0 14px rgba(240, 185, 11, 0.3);
+
+  transition: width 0.5s ease;
+}
+
+.progressBottom {
+  color: var(--veloop-text-muted);
+
+  font-size: 0.65rem;
+}
+
+.balanceSideCard {
+  display: flex;
+  flex-direction: column;
+
+  justify-content: center;
+
+  padding: 28px;
+
+  background:
+    radial-gradient(
+      circle at 90% 10%,
+      rgba(240, 185, 11, 0.09),
+      transparent 40%
+    ),
+    var(--veloop-surface);
+}
+
+.balanceSideCard h3 {
+  margin: 8px 0 8px;
+
+  font-size: 1.1rem;
+  font-weight: 850;
+}
+
+.balanceSideCard p {
+  margin: 0;
+
+  color: var(--veloop-text-secondary);
+
+  font-size: 0.76rem;
+  line-height: 1.65;
+}
+
+.playButton,
+.earnButton {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  min-height: 43px;
+
+  margin-top: 20px;
+  padding: 0 15px;
+
+  border-radius: 12px;
+
+  background:
+    linear-gradient(
+      135deg,
+      var(--veloop-gold-light),
+      var(--veloop-gold)
+    );
+
+  color: #1c1708;
+
+  text-decoration: none;
+
+  font-size: 0.75rem;
+  font-weight: 900;
+
+  box-shadow:
+    0 10px 24px rgba(240, 185, 11, 0.16);
 
   transition:
     transform 0.2s ease,
-    box-shadow 0.2s ease,
-    filter 0.2s ease;
+    box-shadow 0.2s ease;
 }
 
-@media (hover: hover) and (pointer: fine) {
-  .redeemBtn:hover {
-    transform: translateY(-2px);
-    filter: brightness(1.06);
+.playButton:hover,
+.earnButton:hover {
+  transform: translateY(-2px);
 
-    box-shadow:
-      var(--veloop-btn-shadow),
-      0 0 14px rgba(240, 185, 11, 0.18);
-  }
+  box-shadow:
+    0 14px 28px rgba(240, 185, 11, 0.23);
+}
+
+.minimumReward {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+
+  margin-top: 16px;
+
+  color: var(--veloop-text-muted);
+
+  font-size: 0.64rem;
+}
+
+.minimumReward img {
+  width: 19px;
+  height: 19px;
+  object-fit: contain;
+}
+
+/* =========================================================
+   REWARD VAULT
+   ========================================================= */
+
+.vaultSection {
+  margin-bottom: 90px;
+}
+
+.vaultDecoration {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+
+  color: rgba(240, 185, 11, 0.35);
+}
+
+.vaultDecoration img {
+  width: 37px;
+  height: 37px;
+
+  object-fit: contain;
+
+  filter:
+    drop-shadow(0 0 8px rgba(240, 185, 11, 0.35));
+
+  animation: tinyCoinFloat 3s ease-in-out infinite;
+}
+
+.vaultDecoration span {
+  font-size: 0.65rem;
+}
+
+.rewardGrid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 15px;
+}
+
+/* =========================================================
+   REWARD CARD
+   ========================================================= */
+
+.card {
+  position: relative;
+
+  min-width: 0;
+
+  overflow: hidden;
+
+  padding: 20px 16px 16px;
+
+  border: 1px solid var(--veloop-border);
+  border-radius: var(--veloop-radius-lg);
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.035),
+      transparent 55%
+    ),
+    var(--veloop-surface);
+
+  box-shadow: var(--veloop-shadow-sm);
+
+  transition:
+    transform 0.28s ease,
+    border-color 0.28s ease,
+    box-shadow 0.28s ease;
+}
+
+.card::before {
+  content: "";
+
+  position: absolute;
+
+  width: 150px;
+  height: 150px;
+
+  left: 50%;
+  top: -100px;
+
+  transform: translateX(-50%);
+
+  border-radius: 50%;
+
+  background: rgba(240, 185, 11, 0.08);
+
+  filter: blur(28px);
+
+  pointer-events: none;
+}
+
+.cardAvailable {
+  border-color: rgba(240, 185, 11, 0.14);
+}
+
+.cardAvailable:hover {
+  transform: translateY(-7px);
+
+  border-color: rgba(240, 185, 11, 0.32);
+
+  box-shadow:
+    0 20px 42px rgba(0, 0, 0, 0.3),
+    0 0 28px rgba(240, 185, 11, 0.07);
+}
+
+.cardLocked {
+  opacity: 0.82;
+}
+
+.cardLocked:hover {
+  transform: translateY(-3px);
+
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.availableBadge,
+.lockedBadge {
+  position: absolute;
+
+  top: 12px;
+  right: 12px;
+
+  padding: 4px 7px;
+
+  border-radius: 999px;
+
+  font-size: 0.5rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+}
+
+.availableBadge {
+  color: #17130a;
+
+  background: var(--veloop-gold-light);
+}
+
+.lockedBadge {
+  color: var(--veloop-text-muted);
+
+  background: rgba(255, 255, 255, 0.065);
+}
+
+.cardGlow {
+  position: absolute;
+  inset: auto 0 0;
+
+  height: 90px;
+
+  background:
+    linear-gradient(
+      180deg,
+      transparent,
+      rgba(240, 185, 11, 0.035)
+    );
+
+  pointer-events: none;
+}
+
+.cardIconWrap {
+  position: relative;
+
+  width: 100px;
+  height: 100px;
+
+  margin: 13px auto 14px;
+
+  display: grid;
+  place-items: center;
+}
+
+.cardIconRing {
+  position: absolute;
+  inset: 4px;
+
+  border-radius: 50%;
+
+  border: 1px solid rgba(240, 185, 11, 0.12);
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(240, 185, 11, 0.09),
+      transparent 68%
+    );
+
+  transition:
+    transform 0.3s ease,
+    border-color 0.3s ease;
+}
+
+.card:hover .cardIconRing {
+  transform: scale(1.08);
+
+  border-color: rgba(240, 185, 11, 0.25);
+}
+
+.cardIcon {
+  position: relative;
+  z-index: 2;
+
+  width: 62px;
+  height: 62px;
+
+  object-fit: contain;
+
+  filter:
+    drop-shadow(0 6px 8px rgba(0, 0, 0, 0.25))
+    drop-shadow(0 0 10px rgba(240, 185, 11, 0.16));
+
+  transition:
+    transform 0.3s ease,
+    filter 0.3s ease;
+}
+
+.card:hover .cardIcon {
+  transform: scale(1.07);
+
+  filter:
+    drop-shadow(0 7px 10px rgba(0, 0, 0, 0.3))
+    drop-shadow(0 0 16px rgba(240, 185, 11, 0.25));
+}
+
+.cardContent {
+  position: relative;
+  z-index: 3;
+
+  text-align: center;
+}
+
+.cardCategory {
+  color: var(--veloop-text-muted);
+
+  font-size: 0.54rem;
+  font-weight: 850;
+  letter-spacing: 0.15em;
+}
+
+.cardTitle {
+  margin: 4px 0 11px;
+
+  color: var(--veloop-text);
+
+  font-size: 1rem;
+  font-weight: 900;
+}
+
+.cardCost {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+
+  color: var(--veloop-gold-light);
+
+  font-size: 0.72rem;
+}
+
+.cardCost img {
+  width: 20px;
+  height: 20px;
+
+  object-fit: contain;
+
+  filter:
+    drop-shadow(0 0 5px rgba(240, 185, 11, 0.55));
+}
+
+.cardCost strong {
+  font-size: 0.84rem;
+}
+
+.cardCost span {
+  color: var(--veloop-text-muted);
+}
+
+.cardProgress {
+  margin: 15px 0 14px;
+}
+
+.cardProgressTrack {
+  height: 5px;
+}
+
+.cardProgressFill {
+  height: 100%;
+
+  border-radius: inherit;
+
+  background:
+    linear-gradient(
+      90deg,
+      #9d7200,
+      var(--veloop-gold-light)
+    );
+
+  transition: width 0.4s ease;
+}
+
+.cardProgress span {
+  display: block;
+
+  margin-top: 6px;
+
+  color: var(--veloop-text-muted);
+
+  font-size: 0.55rem;
+}
+
+.redeemBtn {
+  width: 100%;
+  min-height: 40px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 0 12px;
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 11px;
+
+  background: rgba(255, 255, 255, 0.055);
+
+  color: var(--veloop-text);
+
+  font-size: 0.68rem;
+  font-weight: 800;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.cardAvailable .redeemBtn {
+  background:
+    linear-gradient(
+      135deg,
+      rgba(240, 185, 11, 0.17),
+      rgba(240, 185, 11, 0.06)
+    );
+
+  border-color: rgba(240, 185, 11, 0.18);
+
+  color: var(--veloop-gold-light);
+}
+
+.redeemBtn:hover {
+  transform: translateY(-1px);
+
+  border-color: rgba(240, 185, 11, 0.35);
 }
 
 .redeemBtn:active {
   transform: scale(0.97);
 }
 
-/* ========================================
-   REDEMPTION HISTORY
-   ======================================== */
+/* =========================================================
+   JOURNEY
+   ========================================================= */
 
-.historySection {
-  width: min(100% - 40px, 1100px);
-  margin: 30px auto 0;
+.journeySection {
+  margin-bottom: 90px;
 }
 
-.historyTitle {
-  font-size: 0.95rem;
-  font-weight: 800;
-  margin: 0 0 10px;
-  color: var(--veloop-text-primary);
+.journey {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr auto 1fr;
+  align-items: center;
+
+  max-width: 900px;
+
+  margin: 0 auto;
+
+  padding: 25px;
+
+  border: 1px solid var(--veloop-border);
+  border-radius: var(--veloop-radius-lg);
+
+  background: var(--veloop-surface);
+
+  box-shadow: var(--veloop-shadow-sm);
+}
+
+.journeyStep {
+  text-align: center;
+}
+
+.journeyNumber {
+  color: var(--veloop-text-disabled);
+
+  font-size: 0.55rem;
+  font-weight: 850;
+  letter-spacing: 0.12em;
+}
+
+.journeyIcon {
+  width: 52px;
+  height: 52px;
+
+  margin: 8px auto 10px;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 15px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(240, 185, 11, 0.15),
+      rgba(240, 185, 11, 0.045)
+    );
+
+  border: 1px solid rgba(240, 185, 11, 0.16);
+
+  color: var(--veloop-gold-light);
+
+  font-size: 0.9rem;
+  font-weight: 900;
+}
+
+.journeyIcon img {
+  width: 29px;
+  height: 29px;
+
+  object-fit: contain;
+
+  filter:
+    drop-shadow(0 0 7px rgba(240, 185, 11, 0.55));
+}
+
+.journeyStep h3 {
+  margin: 0;
+
+  font-size: 0.75rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+}
+
+.journeyStep p {
+  max-width: 150px;
+
+  margin: 6px auto 0;
+
+  color: var(--veloop-text-muted);
+
+  font-size: 0.62rem;
+  line-height: 1.5;
+}
+
+.journeyLine {
+  width: 65px;
+  height: 1px;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(240, 185, 11, 0.28),
+      transparent
+    );
+}
+
+/* =========================================================
+   HISTORY
+   ========================================================= */
+
+.historySection {
+  margin-bottom: 90px;
 }
 
 .historyList {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 9px;
 }
 
 .historyItem {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  gap: 12px;
+  justify-content: space-between;
+  gap: 15px;
 
-  background: var(--veloop-bg-card);
-  border: var(--veloop-card-border);
+  padding: 14px 16px;
 
-  padding: 11px 14px;
-  border-radius: 10px;
+  border: 1px solid var(--veloop-border);
+  border-radius: 14px;
 
-  font-size: 0.8rem;
-  color: var(--veloop-text-primary);
+  background: var(--veloop-surface);
+
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease;
 }
 
-.historyLine {
+.historyItem:hover {
+  border-color: rgba(240, 185, 11, 0.16);
+  background: var(--veloop-surface-2);
+}
+
+.historyReward {
   display: flex;
   align-items: center;
-  min-width: 0;
+  gap: 11px;
 }
 
-.historyWhen {
-  flex: 0 0 auto;
+.historyIcon {
+  width: 35px;
+  height: 35px;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 10px;
+
+  color: #a5e7b9;
+
+  background: rgba(79, 156, 99, 0.11);
+  border: 1px solid rgba(79, 156, 99, 0.18);
+
+  font-size: 0.8rem;
+  font-weight: 900;
+}
+
+.historyReward strong {
+  display: block;
+
+  color: var(--veloop-text);
+
+  font-size: 0.75rem;
+}
+
+.historyReward span {
+  display: block;
+
+  margin-top: 3px;
+
   color: var(--veloop-text-muted);
+
+  font-size: 0.6rem;
 }
 
-/* ========================================
-   MODAL / OVERLAY
-   ======================================== */
+.historyCost {
+  display: flex;
+  align-items: center;
+  gap: 5px;
 
-/* ========================================
-   REDEMPTION MODAL
-   ======================================== */
+  color: var(--veloop-gold-light);
+
+  font-size: 0.7rem;
+  font-weight: 850;
+}
+
+.historyCost img {
+  width: 20px;
+  height: 20px;
+
+  object-fit: contain;
+}
+
+/* =========================================================
+   EARN SECTION
+   ========================================================= */
+
+.earnSection {
+  position: relative;
+
+  display: grid;
+  grid-template-columns: 170px 1fr;
+  align-items: center;
+  gap: 30px;
+
+  margin-bottom: 90px;
+
+  padding: 35px;
+
+  overflow: hidden;
+
+  border: 1px solid rgba(240, 185, 11, 0.14);
+  border-radius: var(--veloop-radius-xl);
+
+  background:
+    radial-gradient(
+      circle at 12% 50%,
+      rgba(240, 185, 11, 0.11),
+      transparent 28%
+    ),
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.035),
+      transparent 65%
+    ),
+    var(--veloop-surface);
+}
+
+.earnCoin {
+  position: relative;
+
+  display: grid;
+  place-items: center;
+
+  min-height: 140px;
+}
+
+.earnCoin::before {
+  content: "";
+
+  position: absolute;
+
+  width: 130px;
+  height: 130px;
+
+  border-radius: 50%;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(240, 185, 11, 0.17),
+      transparent 68%
+    );
+
+  filter: blur(7px);
+}
+
+.earnCoin img {
+  position: relative;
+  z-index: 2;
+
+  width: 105px;
+  height: 105px;
+
+  object-fit: contain;
+
+  filter:
+    drop-shadow(0 15px 18px rgba(0, 0, 0, 0.35))
+    drop-shadow(0 0 15px rgba(240, 185, 11, 0.4));
+
+  animation: coinFloat 4.5s ease-in-out infinite;
+}
+
+.earnContent h2 {
+  margin: 6px 0 8px;
+
+  font-size: clamp(1.4rem, 3vw, 2.2rem);
+  line-height: 1;
+
+  letter-spacing: -0.04em;
+
+  font-weight: 950;
+}
+
+.earnContent p {
+  max-width: 560px;
+
+  margin: 0;
+
+  color: var(--veloop-text-secondary);
+
+  font-size: 0.76rem;
+  line-height: 1.65;
+}
+
+.earnButton {
+  width: min(100%, 180px);
+
+  margin-top: 18px;
+}
+
+/* =========================================================
+   HOW IT WORKS
+   ========================================================= */
+
+.howSection {
+  margin-bottom: 90px;
+}
+
+.howGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.howCard {
+  position: relative;
+
+  min-height: 160px;
+
+  padding: 22px;
+
+  overflow: hidden;
+
+  border: 1px solid var(--veloop-border);
+  border-radius: var(--veloop-radius-md);
+
+  background: var(--veloop-surface);
+}
+
+.howCard::after {
+  content: "";
+
+  position: absolute;
+
+  width: 100px;
+  height: 100px;
+
+  right: -45px;
+  bottom: -50px;
+
+  border-radius: 50%;
+
+  background: rgba(240, 185, 11, 0.05);
+
+  filter: blur(14px);
+}
+
+.howNumber {
+  color: rgba(240, 185, 11, 0.55);
+
+  font-size: 0.62rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+}
+
+.howCard h3 {
+  margin: 18px 0 7px;
+
+  font-size: 0.9rem;
+  font-weight: 850;
+}
+
+.howCard p {
+  max-width: 260px;
+
+  margin: 0;
+
+  color: var(--veloop-text-muted);
+
+  font-size: 0.7rem;
+  line-height: 1.6;
+}
+
+/* =========================================================
+   SUCCESS TOAST
+   ========================================================= */
+
+.successToast {
+  position: fixed;
+  z-index: 300;
+
+  top: 84px;
+  left: 50%;
+
+  transform: translateX(-50%);
+
+  width: min(calc(100% - 32px), 420px);
+
+  display: flex;
+  align-items: center;
+  gap: 11px;
+
+  padding: 13px 16px;
+
+  border: 1px solid rgba(126, 224, 160, 0.22);
+  border-radius: 15px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(79, 156, 99, 0.16),
+      rgba(79, 156, 99, 0.07)
+    ),
+    rgba(22, 24, 39, 0.94);
+
+  color: #b7f1ca;
+
+  box-shadow:
+    0 18px 45px rgba(0, 0, 0, 0.4);
+
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+
+  animation: toastIn 0.35s ease both;
+}
+
+.successIcon {
+  width: 31px;
+  height: 31px;
+
+  display: grid;
+  place-items: center;
+
+  flex: 0 0 auto;
+
+  border-radius: 50%;
+
+  background: rgba(126, 224, 160, 0.15);
+
+  font-weight: 900;
+}
+
+.successToast strong,
+.successToast span {
+  display: block;
+}
+
+.successToast strong {
+  font-size: 0.74rem;
+}
+
+.successToast span {
+  margin-top: 2px;
+
+  color: rgba(183, 241, 202, 0.7);
+
+  font-size: 0.62rem;
+}
+
+/* =========================================================
+   MODAL
+   ========================================================= */
 
 .overlay {
   position: fixed;
   inset: 0;
-  z-index: 200;
+
+  z-index: 250;
 
   display: flex;
   align-items: center;
@@ -418,131 +1783,298 @@
 
   padding: 20px;
 
-  background: rgba(7, 8, 18, 0.72);
+  background: rgba(6, 7, 16, 0.78);
 
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+
+  animation: overlayIn 0.22s ease both;
 }
 
 .modal {
   position: relative;
 
-  width: min(100%, 360px);
+  width: min(100%, 430px);
+  max-height: calc(100vh - 40px);
 
-  padding: 28px 24px 22px;
+  overflow-y: auto;
+
+  padding: 28px;
+
+  border: 1px solid rgba(240, 185, 11, 0.2);
+  border-radius: 25px;
 
   text-align: center;
 
   background:
-    linear-gradient(
-      145deg,
-      rgba(255, 255, 255, 0.045),
-      rgba(255, 255, 255, 0.012)
+    radial-gradient(
+      circle at 50% 0%,
+      rgba(240, 185, 11, 0.09),
+      transparent 35%
     ),
-    var(--veloop-bg-elevated);
-
-  border: 1px solid rgba(240, 185, 11, 0.18);
-  border-radius: 22px;
-
-  color: var(--veloop-text-primary);
+    var(--veloop-surface);
 
   box-shadow:
-    0 25px 65px rgba(0, 0, 0, 0.55),
-    0 0 35px rgba(240, 185, 11, 0.06);
+    0 35px 90px rgba(0, 0, 0, 0.62),
+    0 0 45px rgba(240, 185, 11, 0.07);
+
+  animation: modalIn 0.32s cubic-bezier(0.2, 0.85, 0.25, 1.15) both;
 }
 
-/* Small top accent */
 .modal::before {
   content: "";
+
   position: absolute;
+
   top: 0;
-  left: 25%;
-  right: 25%;
+  left: 20%;
+  right: 20%;
 
   height: 2px;
 
   border-radius: 0 0 10px 10px;
 
-  background: var(--veloop-gold);
-
-  opacity: 0.8;
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      var(--veloop-gold-light),
+      transparent
+    );
 }
 
-.modalTitle {
-  margin: 0 0 18px;
+.modalCoin,
+.modalCoinMuted {
+  width: 62px;
+  height: 62px;
 
-  font-size: 1.1rem;
-  font-weight: 800;
-  line-height: 1.3;
+  margin: 0 auto 13px;
 
-  color: var(--veloop-text-primary);
+  display: grid;
+  place-items: center;
+
+  border-radius: 18px;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(240, 185, 11, 0.14),
+      rgba(240, 185, 11, 0.04)
+    );
+
+  border: 1px solid rgba(240, 185, 11, 0.16);
+}
+
+.modalCoin img,
+.modalCoinMuted img {
+  width: 40px;
+  height: 40px;
+
+  object-fit: contain;
+
+  filter:
+    drop-shadow(0 0 8px rgba(240, 185, 11, 0.5));
+}
+
+.modalCoin {
+  animation: modalCoinFloat 2.8s ease-in-out infinite;
+}
+
+.modalCoinMuted {
+  opacity: 0.65;
+}
+
+.modalEyebrow {
+  color: var(--veloop-gold-light);
+
+  font-size: 0.58rem;
+  font-weight: 850;
+  letter-spacing: 0.16em;
+}
+
+.modalTitle,
+.insufficientTitle {
+  margin: 6px 0 9px;
+
+  color: var(--veloop-text);
+
+  font-size: 1.3rem;
+  font-weight: 900;
+  letter-spacing: -0.025em;
 }
 
 .modalText {
-  margin: 0 0 14px;
+  margin: 0 auto 17px;
+
+  max-width: 330px;
 
   color: var(--veloop-text-secondary);
 
-  font-size: 0.88rem;
-  line-height: 1.75;
+  font-size: 0.73rem;
+  line-height: 1.6;
 }
 
-.modalHighlight {
-  display: inline-flex;
+.modalReward {
+  display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 3px;
+  gap: 11px;
 
-  margin: 3px 0;
+  padding: 12px;
 
-  color: var(--veloop-text-primary);
-  font-size: 0.95rem;
-  font-weight: 800;
+  text-align: left;
+
+  border: 1px solid rgba(240, 185, 11, 0.12);
+  border-radius: 14px;
+
+  background: rgba(240, 185, 11, 0.045);
 }
 
-.remaining {
-  margin: 0 0 20px;
-  padding: 9px 12px;
+.modalReward img {
+  width: 48px;
+  height: 48px;
 
-  border-radius: 10px;
+  object-fit: contain;
+}
 
-  background: rgba(255, 255, 255, 0.045);
+.modalReward strong,
+.modalReward span {
+  display: block;
+}
+
+.modalReward strong {
+  color: var(--veloop-text);
+
+  font-size: 0.82rem;
+}
+
+.modalReward span {
+  margin-top: 3px;
 
   color: var(--veloop-text-muted);
 
-  font-size: 0.78rem;
-  line-height: 1.4;
+  font-size: 0.6rem;
 }
 
-/* ========================================
-   MODAL ACTIONS
-   ======================================== */
+.modalExchange {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+
+  margin: 15px 0;
+
+  padding: 14px 8px;
+
+  border-radius: 14px;
+
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.modalExchange > div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.modalExchange span:first-child {
+  color: var(--veloop-text-muted);
+
+  font-size: 0.52rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+}
+
+.modalExchange strong {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+  margin-top: 6px;
+
+  color: var(--veloop-gold-light);
+
+  font-size: 1rem;
+}
+
+.modalExchange strong img {
+  width: 20px;
+  height: 20px;
+
+  object-fit: contain;
+}
+
+.modalExchange small {
+  margin-top: 3px;
+
+  color: var(--veloop-text-muted);
+
+  font-size: 0.54rem;
+}
+
+.exchangeArrow {
+  color: var(--veloop-text-disabled);
+
+  font-size: 1rem;
+}
+
+.remaining {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  margin-bottom: 18px;
+  padding: 10px 12px;
+
+  border-radius: 11px;
+
+  background: rgba(255, 255, 255, 0.04);
+
+  color: var(--veloop-text-muted);
+
+  font-size: 0.62rem;
+}
+
+.remaining strong {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+  color: var(--veloop-text);
+}
+
+.remaining img {
+  width: 18px;
+  height: 18px;
+
+  object-fit: contain;
+}
 
 .modalActions {
-  display: flex;
-  gap: 10px;
+  display: grid;
+  grid-template-columns: 0.75fr 1.25fr;
+  gap: 9px;
 }
 
 .cancelBtn,
 .confirmBtn,
 .playGamesBtn {
-  flex: 1;
-
-  min-height: 42px;
-  padding: 10px 14px;
-
-  border-radius: 999px;
-  border: 1px solid transparent;
-
-  font-size: 0.82rem;
-  font-weight: 700;
-
-  cursor: pointer;
-  text-decoration: none;
+  min-height: 43px;
 
   display: inline-flex;
   align-items: center;
   justify-content: center;
+
+  padding: 0 13px;
+
+  border-radius: 11px;
+
+  border: 1px solid transparent;
+
+  font-size: 0.68rem;
+  font-weight: 850;
+
+  text-decoration: none;
+
+  cursor: pointer;
 
   transition:
     transform 0.2s ease,
@@ -551,31 +2083,37 @@
 }
 
 .cancelBtn {
-  background: rgba(255, 255, 255, 0.07);
+  background: rgba(255, 255, 255, 0.055);
+
   border-color: rgba(255, 255, 255, 0.08);
 
-  color: var(--veloop-text-primary);
+  color: var(--veloop-text);
 }
 
 .confirmBtn,
 .playGamesBtn {
-  background: var(--veloop-btn-bg);
-  color: var(--veloop-btn-text);
+  background:
+    linear-gradient(
+      135deg,
+      var(--veloop-gold-light),
+      var(--veloop-gold)
+    );
 
-  box-shadow: var(--veloop-btn-shadow);
+  color: #1c1708;
+
+  box-shadow:
+    0 10px 22px rgba(240, 185, 11, 0.16);
 }
 
-@media (hover: hover) and (pointer: fine) {
-  .cancelBtn:hover {
-    border-color: rgba(255, 255, 255, 0.14);
-    filter: brightness(1.08);
-  }
+.cancelBtn:hover,
+.confirmBtn:hover,
+.playGamesBtn:hover {
+  transform: translateY(-1px);
+}
 
-  .confirmBtn:hover,
-  .playGamesBtn:hover {
-    filter: brightness(1.07);
-    transform: translateY(-1px);
-  }
+.confirmBtn:hover,
+.playGamesBtn:hover {
+  filter: brightness(1.06);
 }
 
 .cancelBtn:active,
@@ -584,235 +2122,977 @@
   transform: scale(0.97);
 }
 
-/* ========================================
-   INSUFFICIENT GAME COINS
-   ======================================== */
+/* =========================================================
+   INSUFFICIENT COINS
+   ========================================================= */
 
 .insufficientTitle {
-  margin: 0 0 14px;
+  color: #ffd36b;
+}
 
-  font-size: 1.08rem;
+.requirementBox {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+
+  margin-bottom: 10px;
+}
+
+.requirementBox > div {
+  padding: 13px 8px;
+
+  border-radius: 13px;
+
+  background: rgba(255, 255, 255, 0.035);
+
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.requirementBox span,
+.requirementBox strong {
+  display: block;
+}
+
+.requirementBox span {
+  color: var(--veloop-text-muted);
+
+  font-size: 0.5rem;
   font-weight: 800;
+  letter-spacing: 0.08em;
+}
 
-  color: #ff6b6b;
+.requirementBox strong {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+
+  margin-top: 7px;
+
+  color: var(--veloop-text);
+
+  font-size: 0.88rem;
+}
+
+.requirementBox img {
+  width: 19px;
+  height: 19px;
+
+  object-fit: contain;
+}
+
+.missingCoins {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+
+  margin: 11px 0;
+
+  color: #ffd36b;
+
+  font-size: 0.64rem;
+  font-weight: 750;
+}
+
+.missingCoins img {
+  width: 20px;
+  height: 20px;
+
+  object-fit: contain;
 }
 
 .hint {
-  margin: 0 0 20px;
+  margin: 0 0 18px;
 
-  color: var(--veloop-text-secondary);
+  color: var(--veloop-text-muted);
 
-  font-size: 0.8rem;
+  font-size: 0.66rem;
   line-height: 1.5;
 }
 
-/* ========================================
-   MODAL MOBILE
-   ======================================== */
+/* =========================================================
+   FOOTER
+   ========================================================= */
 
-@media screen and (max-width: 380px) {
-  .overlay {
-    padding: 16px;
+.footer {
+  width: min(100% - 40px, 1240px);
+
+  margin: 0 auto;
+
+  padding-top: 30px;
+
+  border-top: 1px solid var(--veloop-border);
+}
+
+.footerInner {
+  display: grid;
+  grid-template-columns: 1.4fr 0.7fr 0.9fr;
+  gap: 30px;
+
+  padding: 0 0 28px;
+}
+
+.footerBrand p {
+  margin: 10px 0 0;
+
+  color: var(--veloop-text-muted);
+
+  font-size: 0.67rem;
+  line-height: 1.65;
+}
+
+.footerLogo {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+
+  color: var(--veloop-text);
+
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+}
+
+.footerLogo .brandMark {
+  width: 27px;
+  height: 27px;
+
+  border-radius: 8px;
+
+  font-size: 0.72rem;
+}
+
+.footerLinks {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.footerLinks a {
+  width: fit-content;
+
+  color: var(--veloop-text-muted);
+
+  font-size: 0.68rem;
+  font-weight: 700;
+
+  text-decoration: none;
+
+  transition: color 0.2s ease;
+}
+
+.footerLinks a:hover {
+  color: var(--veloop-gold-light);
+}
+
+.footerCoin {
+  justify-self: end;
+
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  height: fit-content;
+
+  color: var(--veloop-text-muted);
+
+  font-size: 0.66rem;
+  font-weight: 700;
+}
+
+.footerCoin img {
+  width: 27px;
+  height: 27px;
+
+  object-fit: contain;
+
+  filter:
+    drop-shadow(0 0 7px rgba(240, 185, 11, 0.4));
+}
+
+.footerBottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 13px 0;
+
+  border-top: 1px solid var(--veloop-border);
+
+  color: var(--veloop-text-disabled);
+
+  font-size: 0.58rem;
+}
+
+/* =========================================================
+   ANIMATIONS
+   ========================================================= */
+
+@keyframes heroGlowPulse {
+  0%,
+  100% {
+    opacity: 0.7;
+    transform: translate(-50%, -50%) scale(0.96);
+  }
+
+  50% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.04);
+  }
+}
+
+@keyframes coinAuraPulse {
+  0%,
+  100% {
+    transform: scale(0.92);
+    opacity: 0.65;
+  }
+
+  50% {
+    transform: scale(1.08);
+    opacity: 1;
+  }
+}
+
+@keyframes coinFloat {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-2deg) scale(1);
+  }
+
+  50% {
+    transform: translateY(-9px) rotate(2deg) scale(1.025);
+  }
+}
+
+@keyframes coinShine {
+  0%,
+  55%,
+  100% {
+    transform: rotate(-25deg) translateX(-120px);
+    opacity: 0;
+  }
+
+  65% {
+    transform: rotate(-25deg) translateX(120px);
+    opacity: 0.45;
+  }
+}
+
+@keyframes orbitRotate {
+  from {
+    transform: rotate(-20deg);
+  }
+
+  to {
+    transform: rotate(340deg);
+  }
+}
+
+@keyframes orbitRotateReverse {
+  from {
+    transform: rotate(30deg);
+  }
+
+  to {
+    transform: rotate(-330deg);
+  }
+}
+
+@keyframes sparkFloat {
+  0%,
+  100% {
+    transform: translateY(0) scale(0.85);
+    opacity: 0.35;
+  }
+
+  50% {
+    transform: translateY(-7px) scale(1);
+    opacity: 0.9;
+  }
+}
+
+@keyframes floatingCoinMove {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+  }
+
+  50% {
+    transform: translate3d(8px, -14px, 0) rotate(14deg);
+  }
+}
+
+@keyframes tinyCoinFloat {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+@keyframes toastIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -12px) scale(0.97);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
+  }
+}
+
+@keyframes overlayIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes modalIn {
+  from {
+    opacity: 0;
+    transform: translateY(15px) scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes modalCoinFloat {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-2deg);
+  }
+
+  50% {
+    transform: translateY(-5px) rotate(2deg);
+  }
+}
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media screen and (max-width: 1050px) {
+  .headerInner {
+    width: min(100% - 32px, 1100px);
+  }
+
+  .main {
+    width: min(100% - 32px, 1050px);
+  }
+
+  .rewardGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .balanceSection {
+    grid-template-columns: 1fr;
+  }
+
+  .balanceSideCard {
+    min-height: 190px;
+  }
+
+  .footer {
+    width: min(100% - 32px, 1050px);
+  }
+}
+
+/* =========================================================
+   TABLET / SMALL LAPTOP
+   ========================================================= */
+
+@media screen and (max-width: 760px) {
+  .headerInner {
+    min-height: 62px;
+
+    grid-template-columns: auto 1fr auto;
+    gap: 12px;
+  }
+
+  .brandText {
+    display: none;
+  }
+
+  .desktopNav {
+    justify-content: center;
+  }
+
+  .navLink {
+    padding: 8px 11px;
+
+    font-size: 0.72rem;
+  }
+
+  .hero {
+    min-height: 590px;
+  }
+
+  .heroTitle {
+    font-size: clamp(2.35rem, 11vw, 4rem);
+  }
+
+  .floatingCoinOne {
+    left: 5%;
+  }
+
+  .floatingCoinTwo {
+    right: 5%;
+  }
+
+  .floatingCoinThree {
+    left: 9%;
+  }
+
+  .floatingCoinFour {
+    right: 10%;
+  }
+
+  .rewardGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .journey {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .journeyLine {
+    width: 1px;
+    height: 25px;
+
+    margin: 0 auto;
+  }
+
+  .journeyStep p {
+    max-width: 220px;
+  }
+
+  .earnSection {
+    grid-template-columns: 125px 1fr;
+    gap: 20px;
+
+    padding: 25px;
+  }
+
+  .earnCoin img {
+    width: 90px;
+    height: 90px;
+  }
+
+  .howGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .howCard {
+    min-height: auto;
+  }
+
+  .footerInner {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .footerCoin {
+    justify-self: start;
+  }
+}
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media screen and (max-width: 520px) {
+  .page {
+    padding-bottom: 82px;
+  }
+
+  .headerInner {
+    width: calc(100% - 24px);
+  }
+
+  .brandMark {
+    width: 30px;
+    height: 30px;
+  }
+
+  .navCoinBalance {
+    min-height: 35px;
+    padding-right: 9px;
+
+    font-size: 0.72rem;
+  }
+
+  .navCoinBalance img {
+    width: 22px;
+    height: 22px;
+  }
+
+  .hero {
+    min-height: 550px;
+  }
+
+  .heroContent {
+    width: calc(100% - 28px);
+  }
+
+  .heroDescription {
+    max-width: 350px;
+
+    font-size: 0.78rem;
+  }
+
+  .heroCoinStage {
+    width: 220px;
+  }
+
+  .heroCoin {
+    width: 145px;
+    height: 145px;
+  }
+
+  .orbitOne {
+    width: 185px;
+    height: 82px;
+  }
+
+  .orbitTwo {
+    width: 205px;
+    height: 94px;
+  }
+
+  .floatingCoin {
+    opacity: 0.11;
+  }
+
+  .main {
+    width: calc(100% - 24px);
+  }
+
+  .balanceSection {
+    margin: 30px 0 58px;
+  }
+
+  .balanceCard {
+    padding: 20px;
+  }
+
+  .balanceSideCard {
+    padding: 21px;
+  }
+
+  .balanceMain {
+    margin-top: 21px;
+  }
+
+  .balanceValue {
+    font-size: 2.35rem;
+  }
+
+  .vaultSection,
+  .journeySection,
+  .historySection,
+  .earnSection,
+  .howSection {
+    margin-bottom: 65px;
+  }
+
+  .sectionHeading {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 13px;
+  }
+
+  .vaultDecoration {
+    display: none;
+  }
+
+  .rewardGrid {
+    gap: 10px;
+  }
+
+  .card {
+    padding: 17px 11px 12px;
+
+    border-radius: 17px;
+  }
+
+  .cardIconWrap {
+    width: 82px;
+    height: 82px;
+
+    margin-top: 14px;
+  }
+
+  .cardIcon {
+    width: 51px;
+    height: 51px;
+  }
+
+  .availableBadge,
+  .lockedBadge {
+    top: 9px;
+    right: 9px;
+
+    font-size: 0.43rem;
+  }
+
+  .cardTitle {
+    font-size: 0.88rem;
+  }
+
+  .cardCost {
+    flex-wrap: wrap;
+  }
+
+  .cardProgress {
+    margin: 12px 0;
+  }
+
+  .cardProgress span {
+    font-size: 0.5rem;
+  }
+
+  .redeemBtn {
+    min-height: 38px;
+
+    font-size: 0.58rem;
+  }
+
+  .journey {
+    padding: 20px 15px;
+  }
+
+  .earnSection {
+    grid-template-columns: 1fr;
+
+    text-align: center;
+
+    padding: 25px 20px;
+  }
+
+  .earnCoin {
+    min-height: 100px;
+  }
+
+  .earnCoin img {
+    width: 82px;
+    height: 82px;
+  }
+
+  .earnContent p {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .earnButton {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .footer {
+    width: calc(100% - 24px);
+  }
+
+  .footerInner {
+    grid-template-columns: 1fr;
+    gap: 22px;
+  }
+
+  .footerCoin {
+    justify-self: start;
+  }
+
+  .footerBottom {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 5px;
   }
 
   .modal {
-    padding: 25px 18px 19px;
-    border-radius: 19px;
+    width: min(100%, 420px);
+
+    padding: 23px 17px 18px;
+
+    border-radius: 21px;
+  }
+
+  .modalActions {
+    grid-template-columns: 1fr 1.25fr;
+  }
+}
+
+/* =========================================================
+   SMALL MOBILE — 320px+
+   ========================================================= */
+
+@media screen and (max-width: 380px) {
+  .headerInner {
+    width: calc(100% - 18px);
+
+    gap: 7px;
+  }
+
+  .desktopNav {
+    gap: 0;
+  }
+
+  .navLink {
+    padding: 7px 8px;
+
+    font-size: 0.64rem;
+  }
+
+  .navCoinBalance {
+    padding: 5px 7px 5px 5px;
+
+    font-size: 0.64rem;
+  }
+
+  .navCoinBalance img {
+    width: 20px;
+    height: 20px;
+  }
+
+  .hero {
+    min-height: 515px;
+  }
+
+  .heroEyebrow {
+    gap: 7px;
+
+    font-size: 0.52rem;
+  }
+
+  .heroEyebrow span {
+    width: 17px;
+  }
+
+  .heroTitle {
+    font-size: 2.15rem;
+  }
+
+  .heroDescription {
+    margin-top: 14px;
+
+    font-size: 0.7rem;
+  }
+
+  .heroCoinStage {
+    width: 195px;
+  }
+
+  .heroCoin {
+    width: 128px;
+    height: 128px;
+  }
+
+  .heroCoinStage::after {
+    width: 120px;
+    height: 120px;
+  }
+
+  .orbitOne {
+    width: 165px;
+    height: 72px;
+  }
+
+  .orbitTwo {
+    width: 182px;
+    height: 82px;
+  }
+
+  .heroBalanceValue strong {
+    font-size: 1.45rem;
+  }
+
+  .heroBalanceValue img {
+    width: 24px;
+    height: 24px;
+  }
+
+  .main {
+    width: calc(100% - 18px);
+  }
+
+  .balanceCard,
+  .balanceSideCard {
+    border-radius: 17px;
+  }
+
+  .balanceCard {
+    padding: 17px;
+  }
+
+  .balanceValue {
+    font-size: 2rem;
+  }
+
+  .balanceLabel {
+    font-size: 0.62rem;
+  }
+
+  .progressBottom {
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .rewardGrid {
+    gap: 8px;
+  }
+
+  .card {
+    padding: 14px 8px 10px;
+
+    border-radius: 15px;
+  }
+
+  .cardIconWrap {
+    width: 70px;
+    height: 70px;
+
+    margin-bottom: 10px;
+  }
+
+  .cardIcon {
+    width: 43px;
+    height: 43px;
+  }
+
+  .cardCategory {
+    font-size: 0.45rem;
+  }
+
+  .cardTitle {
+    font-size: 0.77rem;
+    margin-bottom: 8px;
+  }
+
+  .cardCost {
+    font-size: 0.6rem;
+  }
+
+  .cardCost strong {
+    font-size: 0.7rem;
+  }
+
+  .cardCost img {
+    width: 17px;
+    height: 17px;
+  }
+
+  .cardProgress {
+    margin: 9px 0;
+  }
+
+  .cardProgress span {
+    font-size: 0.45rem;
+  }
+
+  .redeemBtn {
+    min-height: 35px;
+
+    padding: 0 8px;
+
+    font-size: 0.51rem;
+  }
+
+  .availableBadge,
+  .lockedBadge {
+    padding: 3px 5px;
+
+    font-size: 0.37rem;
+  }
+
+  .sectionHeading h2,
+  .sectionHeadingCentered h2 {
+    font-size: 1.25rem;
+  }
+
+  .sectionHeading p,
+  .sectionHeadingCentered p {
+    font-size: 0.68rem;
+  }
+
+  .historyItem {
+    padding: 11px;
+  }
+
+  .historyReward strong {
+    font-size: 0.66rem;
+  }
+
+  .historyReward span {
+    font-size: 0.54rem;
+  }
+
+  .historyCost {
+    font-size: 0.62rem;
+  }
+
+  .howCard {
+    padding: 17px;
+  }
+
+  .modal {
+    padding: 21px 14px 16px;
   }
 
   .modalTitle,
   .insufficientTitle {
-    font-size: 1rem;
+    font-size: 1.08rem;
   }
 
   .modalText {
-    font-size: 0.84rem;
+    font-size: 0.66rem;
   }
 
-  .modalHighlight {
-    font-size: 0.9rem;
+  .modalReward img {
+    width: 42px;
+    height: 42px;
+  }
+
+  .modalExchange strong {
+    font-size: 0.85rem;
   }
 
   .modalActions {
-    gap: 8px;
+    gap: 7px;
   }
 
   .cancelBtn,
   .confirmBtn,
   .playGamesBtn {
     min-height: 40px;
-    padding: 9px 10px;
-    font-size: 0.78rem;
+
+    padding: 0 8px;
+
+    font-size: 0.58rem;
   }
 }
 
-/* ========================================
-   TABLET
-   ======================================== */
-
-@media screen and (max-width: 1024px) {
-  .grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-
-  .card {
-    min-height: 245px;
-  }
-}
-
-/* ========================================
-   MOBILE
-   ======================================== */
-
-@media screen and (max-width: 700px) {
-  .header {
-    padding: 14px 16px;
-    gap: 12px;
-  }
-
-  .pageTitle {
-    font-size: 1rem;
-  }
-
-  .balanceBanner {
-    width: calc(100% - 32px);
-    margin: 18px auto 18px;
-    padding: 18px;
-  }
-
-  .balanceIcon {
-    width: 30px;
-    height: 30px;
-  }
-
-  .balanceValue {
-    font-size: 1.75rem;
-  }
-
-  .grid {
-    width: calc(100% - 32px);
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 12px;
-  }
-
-  .card {
-    min-height: 238px;
-    padding: 19px 12px 14px;
-  }
-
-  .cardIcon {
-    width: 44px;
-    height: 44px;
-  }
-
-  .historySection {
-    width: calc(100% - 32px);
-  }
-}
-
-/* ========================================
-   SMALL MOBILE
-   ======================================== */
-
-@media screen and (max-width: 380px) {
-  .header {
-    padding: 13px 12px;
-  }
-
-  .backLink {
-    font-size: 0.85rem;
-  }
-
-  .pageTitle {
-    font-size: 0.92rem;
-  }
-
-  .balanceBanner {
-    width: calc(100% - 24px);
-    padding: 16px 12px;
-    gap: 8px;
-  }
-
-  .balanceIcon {
-    width: 27px;
-    height: 27px;
-  }
-
-  .balanceValue {
-    font-size: 1.55rem;
-  }
-
-  .balanceLabel {
-    font-size: 0.78rem;
-  }
-
-  .grid {
-    width: calc(100% - 24px);
-    gap: 10px;
-  }
-
-  .card {
-    min-height: 225px;
-    padding: 17px 9px 12px;
-    border-radius: 14px;
-  }
-
-  .cardIcon {
-    width: 40px;
-    height: 40px;
-  }
-
-  .cardTitle {
-    font-size: 0.82rem;
-    margin-top: 11px;
-  }
-
-  .cardDesc {
-    font-size: 0.69rem;
-    margin-bottom: 13px;
-  }
-
-  .redeemBtn {
-    min-height: 36px;
-    padding: 8px 8px;
-    font-size: 0.74rem;
-  }
-
-  .inlineIcon {
-    width: 15px;
-    height: 15px;
-  }
-
-  .historyItem {
-    padding: 10px 11px;
-    font-size: 0.74rem;
-  }
-
-  .modal {
-    padding: 24px 18px;
-  }
-}
-
-/* ========================================
+/* =========================================================
    REDUCED MOTION
-   ======================================== */
+   ========================================================= */
 
 @media (prefers-reduced-motion: reduce) {
-  .backLink,
-  .card,
-  .cardIcon,
-  .redeemBtn,
-  .cancelBtn,
-  .confirmBtn,
-  .playGamesBtn {
-    transition: none;
-  }
-
-  .card:hover,
-  .redeemBtn:hover,
-  .cancelBtn:hover,
-  .confirmBtn:hover,
-  .playGamesBtn:hover {
-    transform: none;
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.001ms !important;
   }
 }

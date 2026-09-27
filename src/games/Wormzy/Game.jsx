@@ -48,9 +48,11 @@ function WormzyGame({ onGameEnd, onExit, onGameOver }) {
   const [phase, setPhase] = useState("idle");
   const [countdown, setCountdown] = useState(COUNTDOWN_SECONDS);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
+
   const [showHowToPlay, setShowHowToPlay] = useState(false);
   const [screenShake, setScreenShake] = useState(false);
   const [finalReward, setFinalReward] = useState(0);
+
   const [fallRetryUsed, setFallRetryUsed] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [muted, setMutedState] = useState(false);
@@ -60,27 +62,40 @@ function WormzyGame({ onGameEnd, onExit, onGameOver }) {
   const score = calculateScore(gameState, elapsedSeconds);
   const stars = calculateStars(gameState, elapsedSeconds);
 
-  const enterFullscreen = useCallback(async () => {
-    try {
-      if (
-        !document.fullscreenElement &&
-        gameRef.current &&
-        document.fullscreenEnabled
-      ) {
-        await gameRef.current.requestFullscreen();
-      }
-    } catch (error) {
-      console.warn("Fullscreen was not available:", error);
-    }
-  }, []);
+  const currentLevelNumber = levelIndex + 1;
+  const levelProgress = (currentLevelNumber / totalLevels) * 100;
 
-  const exitFullscreen = useCallback(async () => {
+  const appleCount = gameState.applesEaten;
+  const applesTotal = 2;
+
+  const currentScore = gameState.completed
+    ? score
+    : Math.max(0, Math.round(elapsedSeconds * 0));
+
+  const formatTime = (seconds) => {
+    const safeSeconds = Math.max(0, Number(seconds) || 0);
+    const minutes = Math.floor(safeSeconds / 60);
+    const secs = safeSeconds % 60;
+
+    return `${String(minutes).padStart(2, "0")}:${String(secs).padStart(
+      2,
+      "0",
+    )}`;
+  };
+
+  const requestFullscreen = useCallback(async () => {
+    const element = gameRef.current;
+
+    if (!element) return;
+
     try {
-      if (document.fullscreenElement) {
-        await document.exitFullscreen();
+      if (!document.fullscreenElement) {
+        await element.requestFullscreen?.();
+      } else {
+        await document.exitFullscreen?.();
       }
-    } catch (error) {
-      console.warn("Exiting fullscreen failed:", error);
+    } catch {
+      // Fullscreen is optional and can be blocked by the browser.
     }
   }, []);
 
@@ -98,9 +113,6 @@ function WormzyGame({ onGameEnd, onExit, onGameOver }) {
 
   const startLevel = useCallback(
     (nextLevelIndex = levelIndex) => {
-      // Browsers only allow audio to start from a user gesture — every
-      // startLevel() call happens from a button click, so this is a safe,
-      // reliable place to unlock the AudioContext and kick off the ambience.
       initSound();
       startAmbience();
 
@@ -111,119 +123,177 @@ function WormzyGame({ onGameEnd, onExit, onGameOver }) {
       setPhase("counting");
       setShowHowToPlay(false);
       setScreenShake(false);
-      // Every fresh attempt (new level OR retrying the same one) gets its
-      // own free fall-retry. Previously this only reset on mount, so a
-      // player who'd used their retry on level 2 would go straight to
-      // "Game Over" on their very first fall on level 3.
       setFallRetryUsed(false);
     },
     [levelIndex],
   );
 
-  // Stop the ambient loop if the player navigates away without going
-  // through handleExit/handleCollectReward (e.g. the parent unmounts us).
   useEffect(() => {
-    return () => stopAmbience();
+    return () => {
+      stopAmbience();
+    };
   }, []);
 
-  const handleMuteToggle = () => {
-    const next = !muted;
-    setMutedState(next);
-    setMuted(next);
+  const toggleMute = () => {
+    const nextMuted = !muted;
+
+    setMutedState(nextMuted);
+    setMuted(nextMuted);
   };
 
   useEffect(() => {
-    if (phase !== "counting") return undefined;
-    const timer = setTimeout(
-      () => {
-        if (countdown === 0) setPhase("playing");
-        else setCountdown((c) => c - 1);
-      },
-      countdown === 0 ? 700 : 1000,
-    );
-    return () => clearTimeout(timer);
+    if (phase !== "counting") return;
+
+    if (countdown <= 0) {
+      const timer = window.setTimeout(() => {
+        setPhase("playing");
+      }, 700);
+
+      return () => window.clearTimeout(timer);
+    }
+
+    const timer = window.setTimeout(() => {
+      setCountdown((value) => value - 1);
+    }, 1000);
+
+    return () => window.clearTimeout(timer);
   }, [phase, countdown]);
 
   useEffect(() => {
-    if (phase !== "playing") return undefined;
-    const timer = setInterval(() => setElapsedSeconds((c) => c + 1), 1000);
-    return () => clearInterval(timer);
+    if (phase !== "playing") return;
+
+    const timer = window.setInterval(() => {
+      setElapsedSeconds((value) => value + 1);
+    }, 1000);
+
+    return () => window.clearInterval(timer);
   }, [phase]);
+
+  const triggerShake = useCallback((duration = 180) => {
+    setScreenShake(true);
+
+    window.setTimeout(() => {
+      setScreenShake(false);
+    }, duration);
+  }, []);
 
   const handleMove = useCallback(
     (direction) => {
-      if (phase !== "playing" || gameState.completed || gameState.failed)
+      if (phase !== "playing" || gameState.completed || gameState.failed) {
         return;
+      }
 
-      const next = moveWorm(gameState, direction);
-      const ateApple = next.apples.length < gameState.apples.length;
-      const stoneMoved = next.stones.some((s, i) => {
-        const prev = gameState.stones[i];
-        return !prev || s.row !== prev.row || s.col !== prev.col;
-      });
-      setGameState(next);
+      const previousState = gameState;
+      const nextState = moveWorm(previousState, direction);
 
-      if (next.invalidMove) {
+      if (nextState === previousState) return;
+
+      if (nextState.invalidMove) {
         playInvalid();
-        setScreenShake(true);
-        setTimeout(() => setScreenShake(false), 180);
-      } else if (next.completed) {
+        triggerShake(150);
+        setGameState(nextState);
+        return;
+      }
+
+      const ateApple = nextState.applesEaten > previousState.applesEaten;
+
+      const stoneMoved =
+        JSON.stringify(nextState.stones) !==
+        JSON.stringify(previousState.stones);
+
+      setGameState(nextState);
+
+      if (nextState.failed) {
+        if (nextState.failReason === "spike") {
+          playSpikeHit();
+          triggerShake(220);
+        } else if (nextState.failReason === "fell") {
+          playFall();
+          triggerShake(260);
+        }
+
+        if (nextState.failReason === "fell" && !fallRetryUsed) {
+          setFallRetryUsed(true);
+          setPhase("failed");
+        } else {
+          setPhase("gameover");
+        }
+
+        return;
+      }
+
+      if (nextState.completed) {
         playLevelComplete();
         setPhase("complete");
-      } else if (next.failed) {
-        if (next.failReason === "fell") {
-          playFall();
-          if (!fallRetryUsed) {
-            setFallRetryUsed(true);
-            setPhase("failed"); // first fall this attempt — free retry
-          } else {
-            setPhase("gameover"); // fell again after the free retry
-          }
-        } else {
-          playSpikeHit();
-          setPhase("failed"); // spikes stay unlimited free retries
-        }
-      } else {
-        if (stoneMoved) playPush();
-        if (ateApple) playEat();
+        return;
+      }
+
+      if (stoneMoved) {
+        playPush();
+      }
+
+      if (ateApple) {
+        playEat();
       }
     },
-    [phase, gameState, fallRetryUsed],
+    [fallRetryUsed, gameState, phase, triggerShake],
   );
 
   useEffect(() => {
     const handleKeyDown = (event) => {
       const direction = KEY_TO_DIRECTION[event.key];
+
       if (!direction) return;
+
       event.preventDefault();
       handleMove(direction);
     };
+
     window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
   }, [handleMove]);
 
   const handleTouchStart = (event) => {
-    const t = event.touches[0];
-    touchStartRef.current = { x: t.clientX, y: t.clientY };
+    const touch = event.touches?.[0];
+
+    if (!touch) return;
+
+    touchStartRef.current = {
+      x: touch.clientX,
+      y: touch.clientY,
+    };
   };
 
   const handleTouchEnd = (event) => {
     if (!touchStartRef.current) return;
-    const t = event.changedTouches[0];
-    const dx = t.clientX - touchStartRef.current.x;
-    const dy = t.clientY - touchStartRef.current.y;
-    const adx = Math.abs(dx);
-    const ady = Math.abs(dy);
-    if (Math.max(adx, ady) < 25) {
+
+    const touch = event.changedTouches?.[0];
+
+    if (!touch) {
       touchStartRef.current = null;
       return;
     }
-    if (adx > ady) handleMove(dx > 0 ? "right" : "left");
-    else handleMove(dy > 0 ? "down" : "up");
+
+    const dx = touch.clientX - touchStartRef.current.x;
+    const dy = touch.clientY - touchStartRef.current.y;
+
     touchStartRef.current = null;
+
+    const distance = Math.max(Math.abs(dx), Math.abs(dy));
+
+    if (distance < 24) return;
+
+    if (Math.abs(dx) > Math.abs(dy)) {
+      handleMove(dx > 0 ? "right" : "left");
+    } else {
+      handleMove(dy > 0 ? "down" : "up");
+    }
   };
 
-  const handleRetryAfterFail = () => {
+  const handleRetry = () => {
     startLevel(levelIndex);
   };
 
@@ -232,65 +302,118 @@ function WormzyGame({ onGameEnd, onExit, onGameOver }) {
   };
 
   const handleNextLevel = () => {
-    const newTotal = totalScoreRef.current + score;
-    totalScoreRef.current = newTotal;
+    totalScoreRef.current += score;
 
-    const nextLevel = levelIndex + 1;
-    if (nextLevel >= totalLevels) {
+    if (levelIndex >= totalLevels - 1) {
+      const totalScore = totalScoreRef.current;
+      const reward = calculateCoinReward(totalScore);
+
       playAllComplete();
-      setFinalReward(calculateCoinReward(newTotal));
+
+      setFinalReward(reward);
       setPhase("finished");
       return;
     }
-    startLevel(nextLevel);
+
+    startLevel(levelIndex + 1);
   };
 
-  const handleCollectReward = async () => {
+  const handleCollectReward = () => {
     stopAmbience();
-    await exitFullscreen();
-    if (onGameEnd) onGameEnd(finalReward);
-  };
 
-  const handleExit = async () => {
-    stopAmbience();
-    await exitFullscreen();
-    if (onExit) onExit();
-  };
-
-  const handleGameOverRetry = async () => {
-    await exitFullscreen();
-    if (onGameOver) onGameOver(true);
-  };
-
-  const handleGameOverGoBack = async () => {
-    stopAmbience();
-    await exitFullscreen();
-    if (onGameOver) onGameOver(false);
-  };
-
-  const handleFullscreenToggle = async () => {
     if (document.fullscreenElement) {
-      await exitFullscreen();
-    } else {
-      await enterFullscreen();
+      document.exitFullscreen?.().catch(() => {});
     }
+
+    onGameEnd?.(finalReward);
+  };
+
+  const handleExit = () => {
+    stopAmbience();
+
+    if (document.fullscreenElement) {
+      document.exitFullscreen?.().catch(() => {});
+    }
+
+    onExit?.();
+  };
+
+  const handleGameOverRetry = () => {
+    stopAmbience();
+
+    if (document.fullscreenElement) {
+      document.exitFullscreen?.().catch(() => {});
+    }
+
+    onGameOver?.(true);
+  };
+
+  const handleGameOverExit = () => {
+    stopAmbience();
+
+    if (document.fullscreenElement) {
+      document.exitFullscreen?.().catch(() => {});
+    }
+
+    onGameOver?.(false);
   };
 
   const renderCellContent = (cellType) => {
     switch (cellType) {
       case "wormHead":
-        return <span className={styles.wormHead}>👀</span>;
+        return (
+          <span className={styles.wormHead}>
+            <span className={`${styles.wormEye} ${styles.wormEyeLeft}`} />
+            <span className={`${styles.wormEye} ${styles.wormEyeRight}`} />
+            <span className={styles.wormMouth} />
+          </span>
+        );
+
       case "wormBody":
         return <span className={styles.wormBody} />;
+
       case "apple":
-        return <span className={styles.apple}>🍎</span>;
+        return (
+          <span className={styles.apple}>
+            <span className={styles.appleLeaf} />
+          </span>
+        );
+
       case "hole":
-        return <span className={styles.hole}>🕳️</span>;
+        return (
+          <span className={styles.hole}>
+            <span className={styles.holeCore} />
+            <span className={styles.holeRing} />
+          </span>
+        );
+
       case "stone":
+        return <span className={styles.stone} />;
+
       case "stoneOnTarget":
-        return <span className={styles.stone} aria-hidden="true" />;
+        return (
+          <span className={styles.stoneTargetWrap}>
+            <span className={styles.targetGlow} />
+            <span className={styles.stone} />
+          </span>
+        );
+
       case "spike":
-        return <span className={styles.spikeIcon}>⚠️</span>;
+        return (
+          <span className={styles.spike}>
+            <span />
+            <span />
+            <span />
+          </span>
+        );
+
+      case "target":
+        return (
+          <span className={styles.target}>
+            <span className={styles.targetInner} />
+          </span>
+        );
+
       default:
         return null;
     }
@@ -298,215 +421,445 @@ function WormzyGame({ onGameEnd, onExit, onGameOver }) {
 
   const renderBoard = () => {
     const cells = [];
+
     for (let row = 0; row < ROWS; row += 1) {
       for (let col = 0; col < COLS; col += 1) {
         const cellType = getCellType(gameState, row, col);
-        const cellKey = getCellKey(row, col);
-        const isSolved = cellType === "stoneOnTarget";
+        const key = getCellKey(row, col);
+
         cells.push(
           <div
-            key={cellKey}
-            className={`${styles.cell} ${styles[`cell${cellType}`] || ""} ${
-              isSolved ? styles.cellSolved : ""
-            }`}
+            key={key}
+            className={`${styles.cell} ${
+              styles[cellType] || ""
+            } ${cellType === "platform" ? styles.platformCell : ""}`}
           >
+            <span className={styles.cellShine} />
             {renderCellContent(cellType)}
           </div>,
         );
       }
     }
+
     return cells;
   };
+
+  const objectiveProgress = Math.min(100, (appleCount / applesTotal) * 100);
 
   return (
     <main
       ref={gameRef}
-      className={`${styles.gameContainer} ${screenShake ? styles.screenShake : ""}`}
+      className={`${styles.gameContainer} ${
+        screenShake ? styles.screenShake : ""
+      }`}
     >
-      <div className={styles.backgroundDecor}>
-        <span className={`${styles.cloud} ${styles.cloudOne}`}>☁️</span>
-        <span className={`${styles.cloud} ${styles.cloudTwo}`}>☁️</span>
-        <span className={`${styles.tree} ${styles.treeOne}`}>🌲</span>
-        <span className={`${styles.tree} ${styles.treeTwo}`}>🌳</span>
-        <span className={`${styles.tree} ${styles.treeThree}`}>🌲</span>
-      </div>
+      <div className={`${styles.ambientOrb} ${styles.orbOne}`} />
+      <div className={`${styles.ambientOrb} ${styles.orbTwo}`} />
+      <div className={`${styles.ambientOrb} ${styles.orbThree}`} />
 
       <section className={styles.game}>
-        <header className={styles.header}>
-          <div>
-            <p className={styles.eyebrow}>PUZZLE ADVENTURE</p>
-            <h1 className={styles.title}>Wormzy</h1>
-            <p className={styles.subtitle}>Eat. Push. Escape.</p>
+        {/* =========================================================
+            TOP NAV
+        ========================================================= */}
+        <header className={styles.gameNav}>
+          <button
+            type="button"
+            className={styles.navBack}
+            onClick={handleExit}
+            aria-label="Back to games"
+          >
+            <span className={styles.navBackIcon}>←</span>
+            <span>Games</span>
+          </button>
+
+          <div className={styles.navBrand}>
+            <span className={styles.navBrandMark}>V</span>
+            <span>VELOOP</span>
+            <small>GAMES</small>
           </div>
 
-          <div className={styles.headerActions}>
+          <div className={styles.navActions}>
+            <div className={styles.navLevel}>
+              <span>LEVEL</span>
+              <strong>{String(currentLevelNumber).padStart(2, "0")}</strong>
+              <small>/ {String(totalLevels).padStart(2, "0")}</small>
+            </div>
+
             <button
               type="button"
-              className={styles.fullscreenButton}
-              onClick={handleMuteToggle}
+              className={styles.iconButton}
+              onClick={toggleMute}
               aria-label={muted ? "Unmute sound" : "Mute sound"}
-              title={muted ? "Unmute" : "Mute"}
             >
               {muted ? "🔇" : "🔊"}
             </button>
 
             <button
               type="button"
-              className={styles.fullscreenButton}
-              onClick={handleFullscreenToggle}
+              className={styles.iconButton}
+              onClick={requestFullscreen}
               aria-label={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
-              title={isFullscreen ? "Exit fullscreen" : "Fullscreen"}
             >
-              {isFullscreen ? "⛶" : "⛶"}
+              {isFullscreen ? "↙" : "⛶"}
             </button>
-
-            <button
-              type="button"
-              className={styles.exitButton}
-              onClick={handleExit}
-              aria-label="Exit game"
-              title="Exit game"
-            >
-              ✕
-            </button>
-          </div>
-
-          <div className={styles.levelBadge}>
-            <span>LEVEL</span>
-            <strong>
-              {levelIndex + 1}/{totalLevels}
-            </strong>
           </div>
         </header>
 
-        <section className={styles.stats}>
-          <div className={styles.statBox}>
-            <span className={styles.statLabel}>MOVES</span>
-            <strong>{gameState.moves}</strong>
-          </div>
-          <div className={styles.statBox}>
-            <span className={styles.statLabel}>TIME</span>
-            <strong>{elapsedSeconds}s</strong>
-          </div>
-          <div className={styles.statBox}>
-            <span className={styles.statLabel}>STARS</span>
-            <strong>{stars > 0 ? "★".repeat(stars) : "—"}</strong>
+        {/* =========================================================
+            HERO BANNER
+        ========================================================= */}
+        <section className={styles.heroBanner}>
+          <div className={styles.heroGrid} />
+
+          <div className={styles.heroGlow} />
+
+          <div className={styles.heroContent}>
+            <div className={styles.heroCopy}>
+              <span className={styles.heroEyebrow}>
+                <i />
+                PUZZLE ADVENTURE
+                <i />
+              </span>
+
+              <h1>WORMZY</h1>
+
+              <p>EAT • GROW • SOLVE • ESCAPE</p>
+            </div>
+
+            <div className={styles.heroSymbols} aria-hidden="true">
+              <span className={`${styles.heroSymbol} ${styles.symbolApple}`}>
+                🍎
+              </span>
+
+              <span className={`${styles.heroSymbol} ${styles.symbolStone}`}>
+                ◈
+              </span>
+
+              <span className={`${styles.heroSymbol} ${styles.symbolNumber}`}>
+                2
+              </span>
+
+              <span className={`${styles.heroSymbol} ${styles.symbolWorm}`}>
+                ~
+              </span>
+
+              <span className={`${styles.heroSymbol} ${styles.symbolHole}`}>
+                ◉
+              </span>
+            </div>
+
+            <div className={styles.heroTrail} aria-hidden="true">
+              <span />
+              <span />
+              <span />
+              <span />
+              <span />
+            </div>
           </div>
         </section>
 
-        <section className={styles.levelInfo}>
-          <div>
-            <p className={styles.levelTitle}>{gameState.levelName}</p>
-            <p className={styles.levelDescription}>{gameState.description}</p>
+        {/* =========================================================
+            LEVEL + OBJECTIVE
+        ========================================================= */}
+        <section className={styles.missionPanel}>
+          <div className={styles.missionMain}>
+            <div className={styles.missionLabel}>
+              <span className={styles.liveDot} />
+              CURRENT MISSION
+            </div>
+
+            <div className={styles.missionTitleRow}>
+              <div>
+                <span className={styles.levelKicker}>
+                  LEVEL {String(currentLevelNumber).padStart(2, "0")}
+                </span>
+
+                <h2>{gameState.levelName}</h2>
+              </div>
+
+              <div className={styles.levelProgress}>
+                <div className={styles.levelProgressHeader}>
+                  <span>CAMPAIGN</span>
+                  <strong>
+                    {currentLevelNumber}/{totalLevels}
+                  </strong>
+                </div>
+
+                <div className={styles.levelProgressTrack}>
+                  <span style={{ width: `${levelProgress}%` }} />
+                </div>
+              </div>
+            </div>
+
+            <p className={styles.missionDescription}>{gameState.description}</p>
+
+            <div className={styles.objectiveRow}>
+              <div className={styles.objectiveIcon}>
+                <span>🍎</span>
+              </div>
+
+              <div className={styles.objectiveCopy}>
+                <span>OBJECTIVE</span>
+                <strong>Collect both apples and reach the exit hole.</strong>
+              </div>
+
+              <div className={styles.appleProgress}>
+                <strong>
+                  {appleCount}/{applesTotal}
+                </strong>
+
+                <div className={styles.appleTrack}>
+                  <span
+                    style={{
+                      width: `${objectiveProgress}%`,
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
           </div>
-          <div className={styles.objective}>
-            <span>🍎🍎</span>
-            <span>→</span>
-            <span>🕳️</span>
+
+          <div className={styles.missionStats}>
+            <div className={styles.missionStat}>
+              <span className={styles.statIcon}>✦</span>
+              <small>SCORE</small>
+              <strong>{currentScore.toLocaleString()}</strong>
+            </div>
+
+            <div className={styles.missionStat}>
+              <span className={styles.statIcon}>↗</span>
+              <small>MOVES</small>
+              <strong>{gameState.moves}</strong>
+            </div>
+
+            <div className={styles.missionStat}>
+              <span className={styles.statIcon}>◷</span>
+              <small>TIME</small>
+              <strong>{formatTime(elapsedSeconds)}</strong>
+            </div>
+
+            <div className={styles.missionStat}>
+              <span className={styles.statIcon}>★</span>
+              <small>STARS</small>
+              <strong>
+                {Array.from({ length: 3 }).map((_, index) => (
+                  <span
+                    key={index}
+                    className={
+                      index < stars ? styles.starActive : styles.starInactive
+                    }
+                  >
+                    ★
+                  </span>
+                ))}
+              </strong>
+            </div>
           </div>
         </section>
 
-        <section className={styles.boardSection}>
-          <div
-            className={styles.board}
-            style={{
-              gridTemplateColumns: `repeat(${COLS}, 1fr)`,
-              gridTemplateRows: `repeat(${ROWS}, 1fr)`,
-            }}
-            onTouchStart={handleTouchStart}
-            onTouchEnd={handleTouchEnd}
-          >
-            {renderBoard()}
+        {/* =========================================================
+            MAIN GAME AREA
+        ========================================================= */}
+        <section className={styles.gameLayout}>
+          {/* LEFT PANEL */}
+          <aside className={styles.sidePanel}>
+            <div className={styles.panelHeading}>
+              <span>MISSION DATA</span>
+              <i />
+            </div>
 
-            {phase !== "playing" && (
-              <div className={styles.overlay}>
+            <div className={styles.missionCard}>
+              <span className={styles.cardLabel}>APPLES</span>
+
+              <div className={styles.appleBigRow}>
+                <span className={styles.appleMini}>🍎</span>
+                <strong>
+                  {appleCount}
+                  <small>/2</small>
+                </strong>
+              </div>
+
+              <div className={styles.cardProgress}>
+                <span style={{ width: `${objectiveProgress}%` }} />
+              </div>
+
+              <p>Eat both apples before reaching the exit.</p>
+            </div>
+
+            <div className={styles.missionCard}>
+              <span className={styles.cardLabel}>CURRENT RUN</span>
+
+              <div className={styles.runRows}>
+                <div>
+                  <span>Moves</span>
+                  <strong>{gameState.moves}</strong>
+                </div>
+
+                <div>
+                  <span>Time</span>
+                  <strong>{formatTime(elapsedSeconds)}</strong>
+                </div>
+
+                <div>
+                  <span>Stars</span>
+                  <strong className={styles.smallStars}>
+                    {stars > 0 ? "★".repeat(stars) : "—"}
+                  </strong>
+                </div>
+              </div>
+            </div>
+
+            <div className={styles.controlHint}>
+              <div className={styles.keyboardIcon}>
+                <span>↑</span>
+                <span>←</span>
+                <span>↓</span>
+                <span>→</span>
+              </div>
+
+              <div>
+                <strong>MOVE WORMZY</strong>
+                <span>Arrow keys or WASD</span>
+              </div>
+            </div>
+          </aside>
+
+          {/* BOARD */}
+          <div className={styles.boardColumn}>
+            <div className={styles.boardTopline}>
+              <span>WORMZY // ACTIVE BOARD</span>
+
+              <span className={styles.boardStatus}>
+                <i />
+                LIVE
+              </span>
+            </div>
+
+            <div
+              className={`${styles.boardShell} ${
+                phase === "playing" ? styles.boardPlaying : ""
+              }`}
+              onTouchStart={handleTouchStart}
+              onTouchEnd={handleTouchEnd}
+            >
+              <div
+                className={styles.board}
+                style={{
+                  gridTemplateColumns: `repeat(${COLS}, minmax(0, 1fr))`,
+                  gridTemplateRows: `repeat(${ROWS}, minmax(0, 1fr))`,
+                }}
+              >
+                {renderBoard()}
+
+                {phase === "counting" && (
+                  <div className={styles.boardOverlay}>
+                    <div className={styles.countdownCard}>
+                      <span>GET READY</span>
+                      <strong>{countdown > 0 ? countdown : "GO"}</strong>
+
+                      <small>
+                        {countdown > 0
+                          ? "Plan your first move"
+                          : "Good luck, Wormzy"}
+                      </small>
+                    </div>
+                  </div>
+                )}
+
                 {phase === "idle" && (
-                  <div className={styles.startPanel}>
-                    <div className={styles.logoWorm}>🐛</div>
-                    <h2>Welcome to Wormzy</h2>
-                    <p>
-                      Eat both apples, avoid spikes, mind the gaps, and reach
-                      the hole.
-                    </p>
-                    <div className={styles.overlayButtons}>
+                  <div className={styles.boardOverlay}>
+                    <div className={styles.stateCard}>
+                      <div className={styles.stateIcon}>🐍</div>
+
+                      <span className={styles.stateEyebrow}>
+                        WELCOME TO WORMZY
+                      </span>
+
+                      <h2>Ready to solve?</h2>
+
+                      <p>Eat the apples, solve the path and reach the exit.</p>
+
                       <button
                         type="button"
                         className={styles.primaryButton}
                         onClick={() => startLevel(levelIndex)}
                       >
-                        <span>▶</span>Play
+                        <span>Play Level</span>
+                        <b>→</b>
                       </button>
+
                       <button
                         type="button"
                         className={styles.secondaryButton}
                         onClick={() => setShowHowToPlay(true)}
                       >
-                        How to Play
+                        How To Play
                       </button>
                     </div>
-                  </div>
-                )}
-
-                {phase === "counting" && (
-                  <div className={styles.countdown}>
-                    {countdown === 0 ? "GO!" : countdown}
                   </div>
                 )}
 
                 {phase === "failed" && (
-                  <div className={styles.completePanel}>
-                    <div className={styles.completeIcon}>
-                      {gameState.failReason === "spike" ? "💥" : "🕳️"}
-                    </div>
-                    <h2>
-                      {gameState.failReason === "spike"
-                        ? "Ouch! Spike Hit"
-                        : "You Fell!"}
-                    </h2>
-                    <p>
-                      {gameState.failReason === "spike"
-                        ? "Watch out for the spikes next time."
-                        : "You fell into the void. Try a different path."}
-                    </p>
-                    <div className={styles.overlayButtons}>
+                  <div className={styles.boardOverlay}>
+                    <div className={styles.stateCard}>
+                      <div className={styles.dangerIcon}>↘</div>
+
+                      <span className={styles.stateEyebrow}>WORMZY FELL</span>
+
+                      <h2>Try the path again.</h2>
+
+                      <p>
+                        The gap got you this time. You have one free fall retry
+                        on this attempt.
+                      </p>
+
                       <button
                         type="button"
                         className={styles.primaryButton}
-                        onClick={handleRetryAfterFail}
+                        onClick={handleRetry}
                       >
-                        Try Again
+                        <span>Retry Level</span>
+                        <b>↻</b>
                       </button>
+
                       <button
                         type="button"
                         className={styles.secondaryButton}
                         onClick={handleExit}
                       >
-                        Exit
+                        Exit Game
                       </button>
                     </div>
                   </div>
                 )}
 
                 {phase === "gameover" && (
-                  <div className={styles.completePanel}>
-                    <div className={styles.completeIcon}>💀</div>
-                    <h2>Game Over</h2>
-                    <p>
-                      You've used your retry and fallen again. Try again with a
-                      fresh entry?
-                    </p>
-                    <div className={styles.overlayButtons}>
+                  <div className={styles.boardOverlay}>
+                    <div className={styles.stateCard}>
+                      <div className={styles.dangerIcon}>!</div>
+
+                      <span className={styles.stateEyebrow}>RUN ENDED</span>
+
+                      <h2>Wormzy needs another try.</h2>
+
+                      <p>
+                        Start this level again for the normal 20 Token entry
+                        cost.
+                      </p>
+
                       <button
                         type="button"
                         className={styles.primaryButton}
                         onClick={handleGameOverRetry}
                       >
-                        Try Again (20 Tokens)
+                        <span>Try Again</span>
+                        <small>20 Tokens</small>
                       </button>
+
                       <button
                         type="button"
                         className={styles.secondaryButton}
-                        onClick={handleGameOverGoBack}
+                        onClick={handleGameOverExit}
                       >
                         Go Back
                       </button>
@@ -515,163 +868,443 @@ function WormzyGame({ onGameEnd, onExit, onGameOver }) {
                 )}
 
                 {phase === "complete" && (
-                  <div className={styles.completePanel}>
-                    <div className={styles.completeIcon}>🎉</div>
-                    <h2>Level Complete!</h2>
-                    <div className={styles.resultStars}>
-                      {"★".repeat(stars)}
-                      <span>{"★".repeat(3 - stars)}</span>
-                    </div>
-                    <p className={styles.resultScore}>
-                      Score: <strong>{score}</strong>
-                    </p>
-                    <p className={styles.resultDetails}>
-                      Completed in {gameState.moves} moves and {elapsedSeconds}{" "}
-                      seconds.
-                    </p>
-                    <div className={styles.overlayButtons}>
+                  <div className={styles.boardOverlay}>
+                    <div
+                      className={`${styles.stateCard} ${styles.completeCard}`}
+                    >
+                      <div className={styles.completeIcon}>✓</div>
+
+                      <span className={styles.stateEyebrow}>
+                        LEVEL COMPLETE
+                      </span>
+
+                      <h2>Path solved.</h2>
+
+                      <div className={styles.bigStars}>
+                        {Array.from({ length: 3 }).map((_, index) => (
+                          <span
+                            key={index}
+                            className={
+                              index < stars
+                                ? styles.starActive
+                                : styles.starInactive
+                            }
+                          >
+                            ★
+                          </span>
+                        ))}
+                      </div>
+
+                      <div className={styles.completeStats}>
+                        <div>
+                          <span>SCORE</span>
+                          <strong>{score.toLocaleString()}</strong>
+                        </div>
+
+                        <div>
+                          <span>MOVES</span>
+                          <strong>{gameState.moves}</strong>
+                        </div>
+
+                        <div>
+                          <span>TIME</span>
+                          <strong>{formatTime(elapsedSeconds)}</strong>
+                        </div>
+                      </div>
+
                       <button
                         type="button"
                         className={styles.primaryButton}
                         onClick={handleNextLevel}
                       >
-                        {levelIndex + 1 >= totalLevels
-                          ? "Finish Game"
-                          : "Next Level"}
+                        <span>
+                          {levelIndex >= totalLevels - 1
+                            ? "Finish Campaign"
+                            : "Next Level"}
+                        </span>
+                        <b>→</b>
                       </button>
+
                       <button
                         type="button"
                         className={styles.secondaryButton}
                         onClick={handleRestart}
                       >
-                        Replay
+                        Replay Level
                       </button>
                     </div>
                   </div>
                 )}
 
                 {phase === "finished" && (
-                  <div className={styles.completePanel}>
-                    <div className={styles.completeIcon}>🏆</div>
-                    <h2>All Levels Complete!</h2>
-                    <p>
-                      You completed the entire Wormzy adventure and earned{" "}
-                      <strong>{finalReward} Game Coins</strong>
-                    </p>
-                    <div className={styles.overlayButtons}>
+                  <div className={styles.boardOverlay}>
+                    <div
+                      className={`${styles.stateCard} ${styles.finishedCard}`}
+                    >
+                      <div className={styles.trophyIcon}>✦</div>
+
+                      <span className={styles.stateEyebrow}>
+                        CAMPAIGN COMPLETE
+                      </span>
+
+                      <h2>You mastered Wormzy.</h2>
+
+                      <p>
+                        Every level is complete. Your final performance has been
+                        converted into Game Coins.
+                      </p>
+
+                      <div className={styles.finalReward}>
+                        <img src="/assets/icons/game-coin-icon.png" alt="" />
+
+                        <div>
+                          <span>GAME COINS EARNED</span>
+                          <strong>+{finalReward}</strong>
+                        </div>
+                      </div>
+
                       <button
                         type="button"
                         className={styles.primaryButton}
                         onClick={handleCollectReward}
                       >
-                        Collect Reward
+                        <span>Collect Reward</span>
+                        <b>→</b>
+                      </button>
+
+                      <button
+                        type="button"
+                        className={styles.secondaryButton}
+                        onClick={handleExit}
+                      >
+                        Back to Games
                       </button>
                     </div>
                   </div>
                 )}
               </div>
-            )}
+            </div>
 
-            {showHowToPlay && (
-              <div className={styles.overlay}>
-                <div className={styles.instructionsPanel}>
-                  <h2>How to Play</h2>
-                  <div className={styles.instructionItem}>
-                    <span>🐛</span>
-                    <p>Move Wormzy using arrow keys or swipe.</p>
-                  </div>
-                  <div className={styles.instructionItem}>
-                    <span>🍎</span>
-                    <p>Eat both apples on the level.</p>
-                  </div>
-                  <div className={styles.instructionItem}>
-                    <span>🪨</span>
-                    <p>Push stones onto glowing targets to bridge gaps.</p>
-                  </div>
-                  <div className={styles.instructionItem}>
-                    <span>⚠️</span>
-                    <p>Avoid spikes — one touch ends the attempt.</p>
-                  </div>
-                  <div className={styles.instructionItem}>
-                    <span>🕳️</span>
-                    <p>
-                      Falling off a platform with nothing below restarts the
-                      level.
-                    </p>
-                  </div>
-                  <button
-                    type="button"
-                    className={styles.primaryButton}
-                    onClick={() => {
-                      setShowHowToPlay(false);
-                      startLevel(levelIndex);
-                    }}
-                  >
-                    Start Game
-                  </button>
-                  <button
-                    type="button"
-                    className={styles.backButton}
-                    onClick={() => setShowHowToPlay(false)}
-                  >
-                    Back
-                  </button>
+            <div className={styles.boardLegend}>
+              <span>
+                <i className={styles.legendWorm} />
+                WORMZY
+              </span>
+
+              <span>
+                <i className={styles.legendApple} />
+                APPLE
+              </span>
+
+              <span>
+                <i className={styles.legendStone} />
+                STONE
+              </span>
+
+              <span>
+                <i className={styles.legendTarget} />
+                TARGET
+              </span>
+
+              <span>
+                <i className={styles.legendDanger} />
+                DANGER
+              </span>
+            </div>
+          </div>
+
+          {/* RIGHT PANEL */}
+          <aside className={styles.howToPanel}>
+            <div className={styles.panelHeading}>
+              <span>HOW TO PLAY</span>
+              <i />
+            </div>
+
+            <div className={styles.howVisual}>
+              <div className={styles.howGrid} />
+
+              <div className={styles.howWorm}>
+                <span />
+                <span />
+                <span />
+                <b>
+                  <i />
+                  <i />
+                </b>
+              </div>
+
+              <span className={styles.howApple}>🍎</span>
+              <span className={styles.howStone}>◆</span>
+              <span className={styles.howTarget}>◎</span>
+            </div>
+
+            <div className={styles.instructions}>
+              <div className={styles.instruction}>
+                <span>01</span>
+
+                <div>
+                  <strong>MOVE</strong>
+                  <p>Use arrows, WASD or swipe.</p>
                 </div>
               </div>
-            )}
-          </div>
+
+              <div className={styles.instruction}>
+                <span>02</span>
+
+                <div>
+                  <strong>EAT</strong>
+                  <p>Collect both apples to grow.</p>
+                </div>
+              </div>
+
+              <div className={styles.instruction}>
+                <span>03</span>
+
+                <div>
+                  <strong>PUSH</strong>
+                  <p>Move stones into glowing targets.</p>
+                </div>
+              </div>
+
+              <div className={styles.instruction}>
+                <span>04</span>
+
+                <div>
+                  <strong>SURVIVE</strong>
+                  <p>Avoid spikes and dangerous falls.</p>
+                </div>
+              </div>
+
+              <div className={styles.instruction}>
+                <span>05</span>
+
+                <div>
+                  <strong>ESCAPE</strong>
+                  <p>Reach the hole after the objective.</p>
+                </div>
+              </div>
+            </div>
+
+            <div className={styles.tipBox}>
+              <span>PRO TIP</span>
+              <p>
+                Your body can bridge a gap while at least one segment remains
+                anchored.
+              </p>
+            </div>
+          </aside>
         </section>
 
+        {/* =========================================================
+            MOBILE CONTROLS
+        ========================================================= */}
         <section className={styles.mobileControls}>
-          <button
-            type="button"
-            aria-label="Move up"
-            onClick={() => handleMove("up")}
-          >
-            ▲
-          </button>
-          <div className={styles.horizontalControls}>
+          <div className={styles.mobileControlTitle}>
+            <span>MOVE WORMZY</span>
+            <small>SWIPE OR TAP</small>
+          </div>
+
+          <div className={styles.dPad}>
             <button
               type="button"
-              aria-label="Move left"
+              onClick={() => handleMove("up")}
+              aria-label="Move up"
+            >
+              ↑
+            </button>
+
+            <button
+              type="button"
               onClick={() => handleMove("left")}
+              aria-label="Move left"
             >
-              ◀
+              ←
             </button>
+
             <button
               type="button"
-              aria-label="Move down"
               onClick={() => handleMove("down")}
+              aria-label="Move down"
             >
-              ▼
+              ↓
             </button>
+
             <button
               type="button"
-              aria-label="Move right"
               onClick={() => handleMove("right")}
+              aria-label="Move right"
             >
-              ▶
+              →
             </button>
           </div>
         </section>
 
-        <footer className={styles.footer}>
+        {/* =========================================================
+            DETAILS
+        ========================================================= */}
+        <section className={styles.detailsSection}>
+          <div className={styles.detailIntro}>
+            <span className={styles.sectionEyebrow}>
+              WORMZY // GAME DETAILS
+            </span>
+
+            <h2>
+              Every move matters.
+              <br />
+              Every level gets harder.
+            </h2>
+
+            <p>
+              Solve the route, manage your movement and collect enough apples to
+              reach the exit. Your score is calculated from level progress,
+              moves, time and stars.
+            </p>
+          </div>
+
+          <div className={styles.detailGrid}>
+            <article className={styles.detailCard}>
+              <span>01</span>
+              <strong>15 LEVELS</strong>
+              <p>Progress through a complete puzzle campaign.</p>
+            </article>
+
+            <article className={styles.detailCard}>
+              <span>02</span>
+              <strong>STONE PUZZLES</strong>
+              <p>Push stones into targets to bridge dangerous gaps.</p>
+            </article>
+
+            <article className={styles.detailCard}>
+              <span>03</span>
+              <strong>STAR SYSTEM</strong>
+              <p>Faster and cleaner solutions can earn up to three stars.</p>
+            </article>
+
+            <article className={styles.detailCard}>
+              <span>04</span>
+              <strong>GAME COINS</strong>
+              <p>Complete the campaign and earn Game Coins.</p>
+            </article>
+          </div>
+        </section>
+
+        {/* =========================================================
+            FOOTER
+        ========================================================= */}
+        <footer className={styles.gameFooter}>
+          <div className={styles.footerBrand}>
+            <span className={styles.footerMark}>V</span>
+
+            <div>
+              <strong>VELOOP</strong>
+              <span>Games & Rewards</span>
+            </div>
+          </div>
+
+          <div className={styles.footerCenter}>
+            <span>WORMZY</span>
+            <i>•</i>
+            <span>EAT</span>
+            <i>•</i>
+            <span>GROW</span>
+            <i>•</i>
+            <span>ESCAPE</span>
+          </div>
+
           <button
             type="button"
-            className={styles.footerButton}
-            onClick={handleRestart}
+            className={styles.footerExit}
+            onClick={handleExit}
           >
-            ↻ Restart
-          </button>
-          <p>Use arrow keys, swipe, or the controls</p>
-          <button
-            type="button"
-            className={styles.footerButton}
-            onClick={() => setShowHowToPlay(true)}
-          >
-            ? Help
+            Back to Games →
           </button>
         </footer>
+
+        {/* =========================================================
+            HOW TO PLAY MODAL
+        ========================================================= */}
+        {showHowToPlay && (
+          <div className={styles.modalBackdrop}>
+            <div
+              className={styles.howModal}
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="wormzy-how-title"
+            >
+              <button
+                type="button"
+                className={styles.modalClose}
+                onClick={() => setShowHowToPlay(false)}
+                aria-label="Close how to play"
+              >
+                ×
+              </button>
+
+              <span className={styles.modalEyebrow}>WORMZY // GUIDE</span>
+
+              <h2 id="wormzy-how-title">How To Play</h2>
+
+              <p className={styles.modalIntro}>
+                Solve each level by collecting both apples, navigating the
+                platforms and reaching the exit.
+              </p>
+
+              <div className={styles.modalSteps}>
+                <div>
+                  <span>01</span>
+                  <strong>MOVE WORMZY</strong>
+                  <p>Arrow keys, WASD, swipe or the mobile controls.</p>
+                </div>
+
+                <div>
+                  <span>02</span>
+                  <strong>EAT APPLES</strong>
+                  <p>Collect both apples before reaching the hole.</p>
+                </div>
+
+                <div>
+                  <span>03</span>
+                  <strong>PUSH STONES</strong>
+                  <p>Use stones to bridge gaps and solve paths.</p>
+                </div>
+
+                <div>
+                  <span>04</span>
+                  <strong>AVOID DANGER</strong>
+                  <p>Spikes and unsupported falls can end a run.</p>
+                </div>
+
+                <div>
+                  <span>05</span>
+                  <strong>REACH THE HOLE</strong>
+                  <p>Complete the objective and escape the level.</p>
+                </div>
+              </div>
+
+              <div className={styles.modalTip}>
+                <span>★</span>
+                <p>
+                  Keep your move count and time low to improve your star rating.
+                </p>
+              </div>
+
+              <button
+                type="button"
+                className={styles.primaryButton}
+                onClick={() => {
+                  setShowHowToPlay(false);
+
+                  if (phase === "idle") {
+                    startLevel(levelIndex);
+                  }
+                }}
+              >
+                <span>{phase === "idle" ? "Start Level" : "Got It"}</span>
+                <b>→</b>
+              </button>
+            </div>
+          </div>
+        )}
       </section>
     </main>
   );
