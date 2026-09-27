@@ -32,17 +32,35 @@ import {
 } from "./sound";
 
 const COUNTDOWN_SECONDS = 3;
-
 const BACKGROUND_MUSIC_SRC = "/sounds/background.mp3";
 const BACKGROUND_MUSIC_VOLUME = 0.22;
-
 const SWIPE_THRESHOLD = 30;
 
-function MergeMasterGame({ onGameEnd }) {
-  // =========================================================
-  // GAME STATE
-  // =========================================================
+const HERO_TILES = [
+  2,
+  16,
+  64,
+  128,
+  512,
+  1024,
+  2048,
+];
 
+const TARGETS = [
+  2,
+  4,
+  8,
+  16,
+  32,
+  64,
+  128,
+  256,
+  512,
+  1024,
+  2048,
+];
+
+function MergeMasterGame({ onGameEnd }) {
   const [grid, setGrid] = useState(createInitialGrid);
 
   const [score, setScore] = useState(0);
@@ -53,191 +71,193 @@ function MergeMasterGame({ onGameEnd }) {
   });
 
   const [gameOver, setGameOver] = useState(false);
-
   const [hasUsedRevive, setHasUsedRevive] = useState(false);
 
-  /*
-    idle
-      Game has not started.
-
-    counting
-      3 → 2 → 1 → GO.
-
-    playing
-      Normal gameplay.
-  */
   const [phase, setPhase] = useState("idle");
+  const [countdown, setCountdown] =
+    useState(COUNTDOWN_SECONDS);
 
-  const [countdown, setCountdown] = useState(COUNTDOWN_SECONDS);
+  const [showHowToPlay, setShowHowToPlay] =
+    useState(false);
 
-  const [showHowToPlay, setShowHowToPlay] = useState(false);
+  const [isFullscreen, setIsFullscreen] =
+    useState(false);
 
-  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [muted, setMutedState] =
+    useState(false);
 
-  const [muted, setMutedState] = useState(false);
+  const [bombPowerups, setBombPowerups] =
+    useState(1);
 
-  // =========================================================
-  // POWER-UP STATE
-  // =========================================================
+  const [doubleScorePowerups, setDoubleScorePowerups] =
+    useState(1);
 
-  const [bombPowerups, setBombPowerups] = useState(1);
+  const [undoPowerups, setUndoPowerups] =
+    useState(1);
 
-  const [doubleScorePowerups, setDoubleScorePowerups] = useState(1);
+  const [doubleScoreMoves, setDoubleScoreMoves] =
+    useState(0);
 
-  const [undoPowerups, setUndoPowerups] = useState(1);
+  const [undoAvailable, setUndoAvailable] =
+    useState(false);
 
-  const [doubleScoreMoves, setDoubleScoreMoves] = useState(0);
-
-  const [undoAvailable, setUndoAvailable] = useState(false);
-
-  const [powerupMessage, setPowerupMessage] = useState(null);
-
-  // =========================================================
-  // MILESTONE / CELEBRATION STATE
-  // =========================================================
+  const [powerupMessage, setPowerupMessage] =
+    useState(null);
 
   const [show2048Celebration, setShow2048Celebration] =
     useState(false);
 
-  const [reached2048, setReached2048] = useState(false);
+  const [reached2048, setReached2048] =
+    useState(false);
 
-  const [milestone, setMilestone] = useState(null);
+  const [milestone, setMilestone] =
+    useState(null);
 
-  // =========================================================
-  // VISUAL EFFECT STATE
-  // =========================================================
+  const [mergeEffects, setMergeEffects] =
+    useState([]);
 
-  const [mergeEffects, setMergeEffects] = useState([]);
+  const [floatingScores, setFloatingScores] =
+    useState([]);
 
-  const [floatingScores, setFloatingScores] = useState([]);
+  const [spawnEffects, setSpawnEffects] =
+    useState([]);
 
-  const [spawnEffects, setSpawnEffects] = useState([]);
+  const [explosionEffects, setExplosionEffects] =
+    useState([]);
 
-  const [explosionEffects, setExplosionEffects] = useState([]);
+  const [screenShake, setScreenShake] =
+    useState(false);
 
-  const [screenShake, setScreenShake] = useState(false);
+  const [combo, setCombo] =
+    useState(0);
 
-  const [combo, setCombo] = useState(0);
+  const [comboVisible, setComboVisible] =
+    useState(false);
 
-  const [comboVisible, setComboVisible] = useState(false);
+  const [bonusFlash, setBonusFlash] =
+    useState(null);
 
-  const [bonusFlash, setBonusFlash] = useState(null);
+  const touchStartRef =
+    useRef(null);
 
-  // =========================================================
-  // REFS
-  // =========================================================
+  const gridRef =
+    useRef(grid);
 
-  const touchStartRef = useRef(null);
+  const gameRef =
+    useRef(null);
 
-  const gridRef = useRef(grid);
+  const comboTimerRef =
+    useRef(null);
 
-  const gameRef = useRef(null);
+  const effectIdRef =
+    useRef(0);
 
-  const comboTimerRef = useRef(null);
+  const gameOverTimerRef =
+    useRef(null);
 
-  const effectIdRef = useRef(0);
+  const screenShakeTimerRef =
+    useRef(null);
 
-  const gameOverTimerRef = useRef(null);
+  const effectTimersRef =
+    useRef([]);
 
-  const screenShakeTimerRef = useRef(null);
+  const previousStateRef =
+    useRef(null);
 
-  const effectTimersRef = useRef([]);
+  const scoreRef =
+    useRef(0);
 
-  const previousStateRef = useRef(null);
+  const powerupMessageTimerRef =
+    useRef(null);
 
-  const scoreRef = useRef(0);
+  /*
+   * ---------------------------------------------------------
+   * DERIVED GAME DATA
+   * ---------------------------------------------------------
+   */
 
-  const powerupMessageTimerRef = useRef(null);
-
-  // =========================================================
-  // KEEP REFS SYNCHRONIZED
-  // =========================================================
-
-  useEffect(() => {
-    gridRef.current = grid;
-  }, [grid]);
-
-  useEffect(() => {
-    scoreRef.current = score;
-  }, [score]);
-
-  // =========================================================
-  // BEST SCORE
-  // =========================================================
-
-  useEffect(() => {
-    if (score <= bestScore) {
-      return;
-    }
-
-    setBestScore(score);
-
-    localStorage.setItem(
-      "merge-master-best",
-      String(score),
+  const numericTiles = grid
+    .flat()
+    .filter(
+      (value) =>
+        typeof value === "number" &&
+        value > 0,
     );
-  }, [score, bestScore]);
 
-  // =========================================================
-  // TIMER HELPER
-  // =========================================================
+  const highestTile =
+    numericTiles.length > 0
+      ? Math.max(...numericTiles)
+      : 0;
 
-  const schedule = useCallback((callback, delay) => {
-    const timer = setTimeout(callback, delay);
+  const currentTarget =
+    highestTile || 2;
 
-    effectTimersRef.current.push(timer);
+  const nextTarget =
+    highestTile < 2
+      ? 2
+      : highestTile < 2048
+        ? highestTile * 2
+        : highestTile * 2;
 
-    return timer;
-  }, []);
+  const progressValue =
+    highestTile > 0
+      ? Math.min(
+          100,
+          (highestTile / 2048) * 100,
+        )
+      : 0;
 
-  // =========================================================
-  // POWER-UP MESSAGE
-  // =========================================================
+  const progressLabel =
+    highestTile >= 2048
+      ? "2048 MASTERED"
+      : `${highestTile || 0} / 2048`;
 
-  const showPowerupMessage = useCallback((message) => {
-    setPowerupMessage(message);
-
-    if (powerupMessageTimerRef.current) {
-      clearTimeout(powerupMessageTimerRef.current);
-    }
-
-    powerupMessageTimerRef.current = setTimeout(() => {
-      setPowerupMessage(null);
-      powerupMessageTimerRef.current = null;
-    }, 1200);
-  }, []);
-
-  // =========================================================
-  // COUNTDOWN
-  // =========================================================
+  /*
+   * ---------------------------------------------------------
+   * CLEANUP
+   * ---------------------------------------------------------
+   */
 
   useEffect(() => {
-    if (phase !== "counting") {
-      return;
-    }
-
-    const timer = setTimeout(() => {
-      if (countdown === 0) {
-        setPhase("playing");
-        return;
+    return () => {
+      if (comboTimerRef.current) {
+        clearTimeout(comboTimerRef.current);
       }
 
-      setCountdown((current) => current - 1);
-    }, 1000);
+      if (gameOverTimerRef.current) {
+        clearTimeout(gameOverTimerRef.current);
+      }
 
-    return () => {
-      clearTimeout(timer);
+      if (screenShakeTimerRef.current) {
+        clearTimeout(
+          screenShakeTimerRef.current,
+        );
+      }
+
+      if (powerupMessageTimerRef.current) {
+        clearTimeout(
+          powerupMessageTimerRef.current,
+        );
+      }
+
+      effectTimersRef.current.forEach(
+        (timer) => clearTimeout(timer),
+      );
+
+      stopBackgroundMusic();
     };
-  }, [phase, countdown]);
+  }, []);
 
-  // =========================================================
-  // FULLSCREEN STATE
-  // =========================================================
+  /*
+   * ---------------------------------------------------------
+   * FULLSCREEN
+   * ---------------------------------------------------------
+   */
 
   useEffect(() => {
     const handleFullscreenChange = () => {
       setIsFullscreen(
-        document.fullscreenElement === gameRef.current,
+        Boolean(document.fullscreenElement),
       );
     };
 
@@ -254,267 +274,94 @@ function MergeMasterGame({ onGameEnd }) {
     };
   }, []);
 
-  // =========================================================
-  // AUDIO CLEANUP
-  // =========================================================
-
-  useEffect(() => {
-    return () => {
-      stopBackgroundMusic();
-    };
-  }, []);
-
-  // =========================================================
-  // GENERAL CLEANUP
-  // =========================================================
-
-  useEffect(() => {
-    return () => {
-      if (comboTimerRef.current) {
-        clearTimeout(comboTimerRef.current);
-      }
-
-      if (gameOverTimerRef.current) {
-        clearTimeout(gameOverTimerRef.current);
-      }
-
-      if (screenShakeTimerRef.current) {
-        clearTimeout(screenShakeTimerRef.current);
-      }
-
-      if (powerupMessageTimerRef.current) {
-        clearTimeout(powerupMessageTimerRef.current);
-      }
-
-      effectTimersRef.current.forEach((timer) => {
-        clearTimeout(timer);
-      });
-
-      effectTimersRef.current = [];
-    };
-  }, []);
-
-  // =========================================================
-  // FULLSCREEN
-  // =========================================================
-
   const toggleFullscreen = useCallback(async () => {
     try {
-      if (!document.fullscreenEnabled || !gameRef.current) {
-        return;
-      }
-
-      if (document.fullscreenElement) {
+      if (!document.fullscreenElement) {
+        await gameRef.current?.requestFullscreen?.();
+      } else {
         await document.exitFullscreen();
-        return;
       }
-
-      await gameRef.current.requestFullscreen();
-    } catch (error) {
-      console.error("Fullscreen failed:", error);
+    } catch {
+      // Fullscreen is optional.
     }
   }, []);
 
-  // =========================================================
-  // SOUND
-  // =========================================================
+  /*
+   * ---------------------------------------------------------
+   * SOUND
+   * ---------------------------------------------------------
+   */
 
   const handleMuteToggle = useCallback(() => {
     const nextMuted = !muted;
 
     setMutedState(nextMuted);
-
     setMuted(nextMuted);
-  }, [muted]);
 
-  // =========================================================
-  // START / RESTART GAME
-  // =========================================================
-
-  const handlePlay = useCallback(() => {
-    // -----------------------------------------------
-    // Clear pending timers
-    // -----------------------------------------------
-
-    if (gameOverTimerRef.current) {
-      clearTimeout(gameOverTimerRef.current);
-      gameOverTimerRef.current = null;
+    if (nextMuted) {
+      stopBackgroundMusic();
+    } else if (phase === "playing") {
+      startBackgroundMusic(
+        BACKGROUND_MUSIC_SRC,
+        BACKGROUND_MUSIC_VOLUME,
+      );
     }
+  }, [muted, phase]);
 
-    if (comboTimerRef.current) {
-      clearTimeout(comboTimerRef.current);
-      comboTimerRef.current = null;
-    }
+  /*
+   * ---------------------------------------------------------
+   * TIMER HELPERS
+   * ---------------------------------------------------------
+   */
 
-    if (screenShakeTimerRef.current) {
-      clearTimeout(screenShakeTimerRef.current);
-      screenShakeTimerRef.current = null;
-    }
+  const schedule = useCallback(
+    (callback, delay) => {
+      const timer = setTimeout(
+        callback,
+        delay,
+      );
 
-    if (powerupMessageTimerRef.current) {
-      clearTimeout(powerupMessageTimerRef.current);
-      powerupMessageTimerRef.current = null;
-    }
+      effectTimersRef.current.push(timer);
 
-    // -----------------------------------------------
-    // Unlock / start audio
-    // -----------------------------------------------
-
-    initSound();
-
-    startBackgroundMusic(
-      BACKGROUND_MUSIC_SRC,
-      BACKGROUND_MUSIC_VOLUME,
-    );
-
-    // -----------------------------------------------
-    // Create fresh board
-    // -----------------------------------------------
-
-    const newGrid = createInitialGrid();
-
-    gridRef.current = newGrid;
-
-    setGrid(newGrid);
-
-    // -----------------------------------------------
-    // Reset score
-    // -----------------------------------------------
-
-    scoreRef.current = 0;
-
-    setScore(0);
-
-    // -----------------------------------------------
-    // Reset game state
-    // -----------------------------------------------
-
-    setGameOver(false);
-
-    setHasUsedRevive(false);
-
-    setCountdown(COUNTDOWN_SECONDS);
-
-    setPhase("counting");
-
-    // -----------------------------------------------
-    // Reset visual effects
-    // -----------------------------------------------
-
-    setMergeEffects([]);
-
-    setFloatingScores([]);
-
-    setSpawnEffects([]);
-
-    setExplosionEffects([]);
-
-    setBonusFlash(null);
-
-    setCombo(0);
-
-    setComboVisible(false);
-
-    setScreenShake(false);
-
-    // -----------------------------------------------
-    // Reset power-ups
-    // -----------------------------------------------
-
-    setBombPowerups(1);
-
-    setDoubleScorePowerups(1);
-
-    setUndoPowerups(1);
-
-    setDoubleScoreMoves(0);
-
-    setUndoAvailable(false);
-
-    previousStateRef.current = null;
-
-    setPowerupMessage(null);
-
-    // -----------------------------------------------
-    // Reset milestone / celebration
-    // -----------------------------------------------
-
-    setShow2048Celebration(false);
-
-    setReached2048(false);
-
-    setMilestone(null);
-  }, []);
-
-  // =========================================================
-  // HOW TO PLAY
-  // =========================================================
-
-  const handleHowToPlay = useCallback(() => {
-    setShowHowToPlay(true);
-  }, []);
-
-  const closeHowToPlay = useCallback(() => {
-    setShowHowToPlay(false);
-  }, []);
-
-  // =========================================================
-  // EFFECT LEVEL
-  // =========================================================
-
-  const getEffectLevel = useCallback((value) => {
-    if (value >= 1024) {
-      return "mergeLegendary";
-    }
-
-    if (value >= 256) {
-      return "mergeEpic";
-    }
-
-    if (value >= 64) {
-      return "mergeStrong";
-    }
-
-    if (value >= 16) {
-      return "mergeMedium";
-    }
-
-    return "mergeSmall";
-  }, []);
-
-  // =========================================================
-  // CREATE MERGE EFFECT
-  // =========================================================
-
-  const createMergeEffect = useCallback(
-    (merge) => {
-      return {
-        id: ++effectIdRef.current,
-        row: merge.row,
-        col: merge.col,
-        value: merge.value,
-        level: getEffectLevel(merge.value),
-      };
+      return timer;
     },
-    [getEffectLevel],
+    [],
   );
 
-  // =========================================================
-  // CREATE FLOATING SCORE
-  // =========================================================
+  /*
+   * ---------------------------------------------------------
+   * EFFECT LEVEL
+   * ---------------------------------------------------------
+   */
 
-  const createFloatingScore = useCallback((merge) => {
-    return {
-      id: ++effectIdRef.current,
-      row: merge.row,
-      col: merge.col,
-      value: merge.value,
-    };
-  }, []);
+  const getEffectLevel = useCallback(
+    (value) => {
+      if (value >= 1024) {
+        return "legendary";
+      }
 
-  // =========================================================
-  // MERGE EFFECTS
-  // =========================================================
+      if (value >= 256) {
+        return "epic";
+      }
+
+      if (value >= 64) {
+        return "strong";
+      }
+
+      if (value >= 16) {
+        return "medium";
+      }
+
+      return "small";
+    },
+    [],
+  );
+
+  /*
+   * ---------------------------------------------------------
+   * MERGE EFFECTS
+   * ---------------------------------------------------------
+   */
 
   const triggerMergeEffects = useCallback(
     (merges) => {
@@ -523,100 +370,129 @@ function MergeMasterGame({ onGameEnd }) {
       }
 
       const newMergeEffects = merges.map(
-        createMergeEffect,
+        (merge) => ({
+          id: ++effectIdRef.current,
+          row: merge.row,
+          col: merge.col,
+          value: merge.value,
+          level: getEffectLevel(
+            merge.value,
+          ),
+        }),
       );
 
-      const newFloatingScores = merges.map(
-        createFloatingScore,
+      const newFloatingScores =
+        merges.map((merge) => ({
+          id: ++effectIdRef.current,
+          row: merge.row,
+          col: merge.col,
+          value: merge.value,
+        }));
+
+      setMergeEffects(
+        (current) => [
+          ...current,
+          ...newMergeEffects,
+        ],
       );
 
-      setMergeEffects(newMergeEffects);
+      setFloatingScores(
+        (current) => [
+          ...current,
+          ...newFloatingScores,
+        ],
+      );
 
-      setFloatingScores(newFloatingScores);
+      setCombo((current) => {
+        const next = current + merges.length;
 
-      // -----------------------------------------------
-      // Combo
-      // -----------------------------------------------
+        setComboVisible(next > 1);
 
-      setCombo((currentCombo) => {
-        return currentCombo + merges.length;
+        if (comboTimerRef.current) {
+          clearTimeout(
+            comboTimerRef.current,
+          );
+        }
+
+        comboTimerRef.current =
+          setTimeout(() => {
+            setCombo(0);
+            setComboVisible(false);
+          }, 1800);
+
+        return next;
       });
 
-      setComboVisible(true);
-
-      if (comboTimerRef.current) {
-        clearTimeout(comboTimerRef.current);
-      }
-
-      comboTimerRef.current = schedule(() => {
-        setComboVisible(false);
-        setCombo(0);
-      }, 1400);
-
-      // -----------------------------------------------
-      // Screen shake
-      // -----------------------------------------------
-
-      const biggestMerge = Math.max(
-        ...merges.map((merge) => merge.value),
-      );
+      const biggestMerge =
+        Math.max(
+          ...merges.map(
+            (merge) => merge.value,
+          ),
+        );
 
       if (biggestMerge >= 64) {
         setScreenShake(true);
 
         if (screenShakeTimerRef.current) {
-          clearTimeout(screenShakeTimerRef.current);
+          clearTimeout(
+            screenShakeTimerRef.current,
+          );
         }
 
-        screenShakeTimerRef.current = schedule(
-          () => {
+        screenShakeTimerRef.current =
+          setTimeout(() => {
             setScreenShake(false);
-          },
-          biggestMerge >= 512 ? 500 : 350,
-        );
+          }, 260);
       }
 
-      // -----------------------------------------------
-      // Clear effects
-      // -----------------------------------------------
-
       schedule(() => {
-        setMergeEffects([]);
-      }, 650);
+        setMergeEffects((current) =>
+          current.filter(
+            (effect) =>
+              !newMergeEffects.some(
+                (item) =>
+                  item.id === effect.id,
+              ),
+          ),
+        );
 
-      schedule(() => {
-        setFloatingScores([]);
+        setFloatingScores((current) =>
+          current.filter(
+            (effect) =>
+              !newFloatingScores.some(
+                (item) =>
+                  item.id === effect.id,
+              ),
+          ),
+        );
       }, 850);
     },
-    [
-      createMergeEffect,
-      createFloatingScore,
-      schedule,
-    ],
+    [getEffectLevel, schedule],
   );
 
-  // =========================================================
-  // SPAWN EFFECT
-  // =========================================================
+  /*
+   * ---------------------------------------------------------
+   * SPAWN EFFECT
+   * ---------------------------------------------------------
+   */
 
   const triggerSpawnEffect = useCallback(
     (nextGrid, previousGrid) => {
       const effects = [];
 
-      for (let row = 0; row < nextGrid.length; row++) {
+      for (
+        let row = 0;
+        row < GRID_SIZE;
+        row++
+      ) {
         for (
           let col = 0;
-          col < nextGrid[row].length;
+          col < GRID_SIZE;
           col++
         ) {
-          const oldValue = previousGrid[row][col];
-
-          const newValue = nextGrid[row][col];
-
           if (
-            oldValue === 0 &&
-            newValue !== 0 &&
-            newValue !== BOMB
+            previousGrid[row][col] === 0 &&
+            nextGrid[row][col] !== 0
           ) {
             effects.push({
               id: ++effectIdRef.current,
@@ -631,325 +507,205 @@ function MergeMasterGame({ onGameEnd }) {
         return;
       }
 
-      setSpawnEffects(effects);
+      setSpawnEffects((current) => [
+        ...current,
+        ...effects,
+      ]);
 
       schedule(() => {
-        setSpawnEffects([]);
-      }, 350);
+        setSpawnEffects((current) =>
+          current.filter(
+            (effect) =>
+              !effects.some(
+                (item) =>
+                  item.id === effect.id,
+              ),
+          ),
+        );
+      }, 450);
     },
     [schedule],
   );
 
-  // =========================================================
-  // MILESTONE
-  // =========================================================
+  /*
+   * ---------------------------------------------------------
+   * MILESTONE
+   * ---------------------------------------------------------
+   */
 
-  const getMilestone = useCallback((value) => {
-    if (value >= 4096) {
-      return "LEGENDARY";
-    }
+  const getMilestone = useCallback(
+    (value) => {
+      if (value >= 4096) {
+        return "LEGENDARY";
+      }
 
-    if (value >= 2048) {
-      return "MASTER";
-    }
+      if (value >= 2048) {
+        return "MASTER";
+      }
 
-    if (value >= 1024) {
-      return "EPIC";
-    }
+      if (value >= 1024) {
+        return "EPIC";
+      }
 
-    if (value >= 512) {
-      return "ELITE";
-    }
+      if (value >= 512) {
+        return "ELITE";
+      }
 
-    if (value >= 256) {
-      return "GREAT";
-    }
+      if (value >= 256) {
+        return "GREAT";
+      }
 
-    if (value >= 128) {
-      return "NICE";
-    }
+      if (value >= 128) {
+        return "NICE";
+      }
 
-    if (value >= 64) {
-      return "GOOD";
-    }
+      if (value >= 64) {
+        return "GOOD";
+      }
 
-    return null;
-  }, []);
+      return null;
+    },
+    [],
+  );
 
   const triggerMilestone = useCallback(
     (value) => {
-      const label = getMilestone(value);
+      const nextMilestone =
+        getMilestone(value);
 
-      if (!label) {
+      if (!nextMilestone) {
         return;
       }
 
-      setMilestone({
-        value,
-        label,
-      });
+      setMilestone(nextMilestone);
 
-      /*
-        Small feedback message for milestones below 2048.
-        The 2048 milestone gets its dedicated celebration.
-      */
-      if (value < 2048) {
-        showPowerupMessage(
-          `${label} — ${value}`,
+      setPowerupMessage(
+        `${value.toLocaleString()} — ${nextMilestone}`,
+      );
+
+      if (powerupMessageTimerRef.current) {
+        clearTimeout(
+          powerupMessageTimerRef.current,
         );
       }
 
-      schedule(
-        () => {
-          setMilestone(null);
-        },
-        value >= 1024 ? 1800 : 900,
-      );
+      powerupMessageTimerRef.current =
+        setTimeout(() => {
+          setPowerupMessage(null);
+        }, 1800);
     },
-    [
-      getMilestone,
-      schedule,
-      showPowerupMessage,
-    ],
+    [getMilestone],
   );
 
-  // =========================================================
-  // BOMB POWER-UP
-  // =========================================================
+  /*
+   * ---------------------------------------------------------
+   * PLAY / RESET
+   * ---------------------------------------------------------
+   */
 
-  const handleBombPowerup = useCallback(() => {
-    if (
-      phase !== "playing" ||
-      gameOver ||
-      show2048Celebration ||
-      bombPowerups <= 0
-    ) {
-      return;
-    }
+  const handlePlay = useCallback(() => {
+    const freshGrid =
+      createInitialGrid();
 
-    const currentGrid = gridRef.current;
+    setGrid(freshGrid);
+    gridRef.current = freshGrid;
 
-    const emptyCells = [];
+    setScore(0);
+    scoreRef.current = 0;
 
-    for (
-      let row = 0;
-      row < GRID_SIZE;
-      row++
-    ) {
-      for (
-        let col = 0;
-        col < GRID_SIZE;
-        col++
-      ) {
-        if (currentGrid[row][col] === 0) {
-          emptyCells.push([row, col]);
-        }
-      }
-    }
+    setGameOver(false);
+    setHasUsedRevive(false);
 
-    if (emptyCells.length === 0) {
-      showPowerupMessage("BOARD FULL");
-      return;
-    }
+    setBombPowerups(1);
+    setDoubleScorePowerups(1);
+    setUndoPowerups(1);
 
-    // -----------------------------------------------
-    // Save state for Undo
-    // -----------------------------------------------
+    setDoubleScoreMoves(0);
+    setUndoAvailable(false);
 
-    previousStateRef.current = {
-      grid: currentGrid.map((row) => [...row]),
-      score: scoreRef.current,
-      doubleScoreMoves,
-    };
+    setPowerupMessage(null);
 
-    setUndoAvailable(true);
+    setShow2048Celebration(false);
+    setReached2048(false);
 
-    // -----------------------------------------------
-    // Place bomb
-    // -----------------------------------------------
+    setMilestone(null);
 
-    const [row, col] =
-      emptyCells[
-        Math.floor(
-          Math.random() * emptyCells.length,
-        )
-      ];
+    setMergeEffects([]);
+    setFloatingScores([]);
+    setSpawnEffects([]);
+    setExplosionEffects([]);
 
-    const nextGrid = currentGrid.map((gridRow) => [
-      ...gridRow,
-    ]);
-
-    nextGrid[row][col] = BOMB;
-
-    gridRef.current = nextGrid;
-
-    setGrid(nextGrid);
-
-    setBombPowerups((current) =>
-      Math.max(0, current - 1),
-    );
-
-    playSpawn();
-
-    showPowerupMessage("💣 BOMB READY");
-
-    // -----------------------------------------------
-    // Small impact feedback
-    // -----------------------------------------------
-
-    setScreenShake(true);
-
-    if (screenShakeTimerRef.current) {
-      clearTimeout(screenShakeTimerRef.current);
-    }
-
-    screenShakeTimerRef.current = schedule(() => {
-      setScreenShake(false);
-    }, 250);
-  }, [
-    phase,
-    gameOver,
-    show2048Celebration,
-    bombPowerups,
-    doubleScoreMoves,
-    showPowerupMessage,
-    schedule,
-  ]);
-
-  // =========================================================
-  // DOUBLE SCORE POWER-UP
-  // =========================================================
-
-  const handleDoubleScore = useCallback(() => {
-    if (
-      phase !== "playing" ||
-      gameOver ||
-      show2048Celebration ||
-      doubleScorePowerups <= 0 ||
-      doubleScoreMoves > 0
-    ) {
-      return;
-    }
-
-    setDoubleScorePowerups((current) =>
-      Math.max(0, current - 1),
-    );
-
-    setDoubleScoreMoves(3);
-
-    showPowerupMessage(
-      "⚡ 2× SCORE — 3 MOVES",
-    );
-  }, [
-    phase,
-    gameOver,
-    show2048Celebration,
-    doubleScorePowerups,
-    doubleScoreMoves,
-    showPowerupMessage,
-  ]);
-
-  // =========================================================
-  // UNDO
-  // =========================================================
-
-  const handleUndo = useCallback(() => {
-    if (
-      phase !== "playing" ||
-      gameOver ||
-      show2048Celebration ||
-      undoPowerups <= 0 ||
-      !previousStateRef.current
-    ) {
-      return;
-    }
-
-    // -----------------------------------------------
-    // Cancel pending Game Over
-    // -----------------------------------------------
-
-    if (gameOverTimerRef.current) {
-      clearTimeout(gameOverTimerRef.current);
-
-      gameOverTimerRef.current = null;
-    }
-
-    // -----------------------------------------------
-    // Restore previous state
-    // -----------------------------------------------
-
-    const previous = previousStateRef.current;
-
-    const restoredGrid = previous.grid.map(
-      (row) => [...row],
-    );
-
-    gridRef.current = restoredGrid;
-
-    setGrid(restoredGrid);
-
-    setScore(previous.score);
-
-    scoreRef.current = previous.score;
-
-    setDoubleScoreMoves(
-      previous.doubleScoreMoves,
-    );
-
-    // -----------------------------------------------
-    // Consume undo
-    // -----------------------------------------------
-
-    setUndoPowerups((current) =>
-      Math.max(0, current - 1),
-    );
+    setCombo(0);
+    setComboVisible(false);
+    setBonusFlash(null);
+    setScreenShake(false);
 
     previousStateRef.current = null;
 
-    setUndoAvailable(false);
+    initSound();
+    setMuted(muted);
 
-    setGameOver(false);
-
-    // -----------------------------------------------
-    // Clear visual effects
-    // -----------------------------------------------
-
-    setMergeEffects([]);
-
-    setFloatingScores([]);
-
-    setSpawnEffects([]);
-
-    setExplosionEffects([]);
-
-    setBonusFlash(null);
-
-    setScreenShake(false);
-
-    setCombo(0);
-
-    setComboVisible(false);
-
-    if (comboTimerRef.current) {
-      clearTimeout(comboTimerRef.current);
-
-      comboTimerRef.current = null;
+    if (!muted) {
+      startBackgroundMusic(
+        BACKGROUND_MUSIC_SRC,
+        BACKGROUND_MUSIC_VOLUME,
+      );
     }
 
-    showPowerupMessage(
-      "↩ MOVE UNDONE",
+    setCountdown(
+      COUNTDOWN_SECONDS,
     );
-  }, [
-    phase,
-    gameOver,
-    show2048Celebration,
-    undoPowerups,
-    showPowerupMessage,
-  ]);
 
-  // =========================================================
-  // MOVE
-  // =========================================================
+    setPhase("counting");
+  }, [muted]);
+
+  /*
+   * ---------------------------------------------------------
+   * COUNTDOWN
+   * ---------------------------------------------------------
+   */
+
+  useEffect(() => {
+    if (phase !== "counting") {
+      return;
+    }
+
+    if (countdown <= 0) {
+      const timer = setTimeout(() => {
+        setPhase("playing");
+      }, 350);
+
+      return () => clearTimeout(timer);
+    }
+
+    const timer = setTimeout(() => {
+      setCountdown(
+        (current) => current - 1,
+      );
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, [phase, countdown]);
+
+  /*
+   * ---------------------------------------------------------
+   * HOW TO PLAY
+   * ---------------------------------------------------------
+   */
+
+  const handleHowToPlay = useCallback(() => {
+    setShowHowToPlay(true);
+  }, []);
+
+  const closeHowToPlay = useCallback(() => {
+    setShowHowToPlay(false);
+  }, []);
+
+  /*
+   * ---------------------------------------------------------
+   * MOVE
+   * ---------------------------------------------------------
+   */
 
   const handleMove = useCallback(
     (direction) => {
@@ -961,91 +717,81 @@ function MergeMasterGame({ onGameEnd }) {
         return;
       }
 
-      const previousGrid = gridRef.current;
+      const currentGrid =
+        gridRef.current;
 
       const result = move(
-        previousGrid,
+        currentGrid,
         direction,
       );
-
-      // -----------------------------------------------
-      // Invalid move
-      // -----------------------------------------------
 
       if (!result.moved) {
         playInvalidMove();
         return;
       }
 
-      // -----------------------------------------------
-      // Save state for Undo
-      // -----------------------------------------------
-
       previousStateRef.current = {
-        grid: previousGrid.map((row) => [...row]),
+        grid: currentGrid.map(
+          (row) => [...row],
+        ),
         score: scoreRef.current,
         doubleScoreMoves,
       };
 
       setUndoAvailable(true);
 
-      // -----------------------------------------------
-      // Calculate score
-      // -----------------------------------------------
-
       const multiplier =
         doubleScoreMoves > 0 ? 2 : 1;
 
       const gainedScore =
-        result.scoreGained * multiplier;
+        result.scoreGained *
+        multiplier;
 
       const nextScore =
-        scoreRef.current + gainedScore;
+        scoreRef.current +
+        gainedScore;
 
-      scoreRef.current = nextScore;
+      scoreRef.current =
+        nextScore;
 
       setScore(nextScore);
 
-      // -----------------------------------------------
-      // Add normal random tile
-      // -----------------------------------------------
+      if (nextScore > bestScore) {
+        setBestScore(nextScore);
 
-      let nextGrid = addRandomTile(
-        result.grid,
-      );
+        localStorage.setItem(
+          "merge-master-best",
+          String(nextScore),
+        );
+      }
 
-      // -----------------------------------------------
-      // Existing random bomb mechanic
-      // -----------------------------------------------
+      let nextGrid =
+        addRandomTile(
+          result.grid,
+        );
 
       if (
         result.scoreGained >= 64 &&
         Math.random() < 0.25
       ) {
-        nextGrid = addBombTile(nextGrid);
+        nextGrid =
+          addBombTile(nextGrid);
       }
 
-      // -----------------------------------------------
-      // Update board
-      // -----------------------------------------------
-
-      gridRef.current = nextGrid;
+      gridRef.current =
+        nextGrid;
 
       setGrid(nextGrid);
 
-      // -----------------------------------------------
-      // Consume one 2× move
-      // -----------------------------------------------
-
       if (doubleScoreMoves > 0) {
-        setDoubleScoreMoves((current) =>
-          Math.max(0, current - 1),
+        setDoubleScoreMoves(
+          (current) =>
+            Math.max(
+              0,
+              current - 1,
+            ),
         );
       }
-
-      // -----------------------------------------------
-      // Merge effects
-      // -----------------------------------------------
 
       if (result.merges.length > 0) {
         triggerMergeEffects(
@@ -1065,23 +811,17 @@ function MergeMasterGame({ onGameEnd }) {
           result.merges.length,
         );
 
-        // -----------------------------------------
-        // Highest newly created tile
-        // -----------------------------------------
-
-        const highestMerge = Math.max(
-          ...result.merges.map(
-            (merge) => merge.value,
-          ),
-        );
+        const highestMerge =
+          Math.max(
+            ...result.merges.map(
+              (merge) =>
+                merge.value,
+            ),
+          );
 
         triggerMilestone(
           highestMerge,
         );
-
-        // -----------------------------------------
-        // 2048 celebration
-        // -----------------------------------------
 
         if (
           highestMerge >= 2048 &&
@@ -1090,31 +830,24 @@ function MergeMasterGame({ onGameEnd }) {
           setReached2048(true);
 
           schedule(() => {
-            setShow2048Celebration(true);
+            setShow2048Celebration(
+              true,
+            );
           }, 500);
         }
       } else {
         playSpawn();
       }
 
-      // -----------------------------------------------
-      // Spawn VFX
-      // -----------------------------------------------
-
       triggerSpawnEffect(
         nextGrid,
         result.grid,
       );
 
-      // -----------------------------------------------
-      // Game Over
-      // -----------------------------------------------
-
       if (isGameOver(nextGrid)) {
         gameOverTimerRef.current =
           schedule(() => {
             setGameOver(true);
-
             playGameOver();
           }, 250);
       }
@@ -1124,21 +857,24 @@ function MergeMasterGame({ onGameEnd }) {
       gameOver,
       show2048Celebration,
       doubleScoreMoves,
+      bestScore,
       reached2048,
       triggerMergeEffects,
-      triggerSpawnEffect,
       triggerMilestone,
+      triggerSpawnEffect,
       schedule,
     ],
   );
 
-  // =========================================================
-  // KEYBOARD CONTROLS
-  // =========================================================
+  /*
+   * ---------------------------------------------------------
+   * KEYBOARD
+   * ---------------------------------------------------------
+   */
 
   useEffect(() => {
     const handleKeyDown = (event) => {
-      const keyMap = {
+      const directions = {
         ArrowLeft: "left",
         ArrowRight: "right",
         ArrowUp: "up",
@@ -1146,17 +882,9 @@ function MergeMasterGame({ onGameEnd }) {
       };
 
       const direction =
-        keyMap[event.key];
+        directions[event.key];
 
       if (!direction) {
-        return;
-      }
-
-      if (phase !== "playing") {
-        return;
-      }
-
-      if (gameOver || show2048Celebration) {
         return;
       }
 
@@ -1176,55 +904,31 @@ function MergeMasterGame({ onGameEnd }) {
         handleKeyDown,
       );
     };
-  }, [
-    handleMove,
-    phase,
-    gameOver,
-    show2048Celebration,
-  ]);
+  }, [handleMove]);
 
-  // =========================================================
-  // TOUCH START
-  // =========================================================
+  /*
+   * ---------------------------------------------------------
+   * TOUCH
+   * ---------------------------------------------------------
+   */
 
   const handleTouchStart = useCallback(
     (event) => {
-      if (
-        phase !== "playing" ||
-        gameOver ||
-        show2048Celebration
-      ) {
-        return;
-      }
-
       const touch =
         event.touches[0];
-
-      if (!touch) {
-        return;
-      }
 
       touchStartRef.current = {
         x: touch.clientX,
         y: touch.clientY,
       };
     },
-    [
-      phase,
-      gameOver,
-      show2048Celebration,
-    ],
+    [],
   );
-
-  // =========================================================
-  // TOUCH END
-  // =========================================================
 
   const handleTouchEnd = useCallback(
     (event) => {
       if (
-        !touchStartRef.current ||
-        show2048Celebration
+        !touchStartRef.current
       ) {
         return;
       }
@@ -1232,341 +936,415 @@ function MergeMasterGame({ onGameEnd }) {
       const touch =
         event.changedTouches[0];
 
-      if (!touch) {
-        touchStartRef.current = null;
-        return;
-      }
-
-      const dx =
+      const deltaX =
         touch.clientX -
         touchStartRef.current.x;
 
-      const dy =
+      const deltaY =
         touch.clientY -
         touchStartRef.current.y;
-
-      const absDx = Math.abs(dx);
-
-      const absDy = Math.abs(dy);
 
       touchStartRef.current = null;
 
       if (
-        Math.max(absDx, absDy) <
-        SWIPE_THRESHOLD
+        Math.max(
+          Math.abs(deltaX),
+          Math.abs(deltaY),
+        ) < SWIPE_THRESHOLD
       ) {
         return;
       }
 
-      if (absDx > absDy) {
+      if (
+        Math.abs(deltaX) >
+        Math.abs(deltaY)
+      ) {
         handleMove(
-          dx > 0
+          deltaX > 0
             ? "right"
             : "left",
         );
       } else {
         handleMove(
-          dy > 0
+          deltaY > 0
             ? "down"
             : "up",
         );
       }
     },
-    [
-      handleMove,
-      show2048Celebration,
-    ],
+    [handleMove],
   );
 
-  // =========================================================
-  // BOMB TILE CLICK
-  // =========================================================
+  /*
+   * ---------------------------------------------------------
+   * CELL / BOMB
+   * ---------------------------------------------------------
+   */
 
-  const handleCellClick = useCallback(
-    (index) => {
-      if (
-        phase !== "playing" ||
-        gameOver ||
-        show2048Celebration
-      ) {
-        return;
-      }
+  const handleCellClick =
+    useCallback(
+      (index) => {
+        if (
+          phase !== "playing" ||
+          gameOver
+        ) {
+          return;
+        }
 
-      const row =
-        Math.floor(
+        const row = Math.floor(
           index / GRID_SIZE,
         );
 
-      const col =
-        index % GRID_SIZE;
+        const col =
+          index % GRID_SIZE;
 
-      // -----------------------------------------------
-      // Only bomb tiles are clickable
-      // -----------------------------------------------
+        if (
+          gridRef.current[row][col] !==
+          BOMB
+        ) {
+          return;
+        }
 
-      if (
-        gridRef.current[row]?.[col] !==
-        BOMB
-      ) {
-        return;
-      }
+        const result =
+          detonateBomb(
+            gridRef.current,
+            row,
+            col,
+          );
 
-      const currentGrid =
-        gridRef.current;
+        setGrid(result.grid);
+        gridRef.current =
+          result.grid;
 
-      // -----------------------------------------------
-      // Save state for Undo
-      // -----------------------------------------------
+        setScore(
+          (current) => {
+            const next =
+              current +
+              result.bonus;
 
-      previousStateRef.current = {
-        grid: currentGrid.map(
-          (gridRow) => [...gridRow],
-        ),
-        score: scoreRef.current,
-        doubleScoreMoves,
-      };
+            scoreRef.current =
+              next;
 
-      setUndoAvailable(true);
+            if (
+              next > bestScore
+            ) {
+              setBestScore(next);
 
-      // -----------------------------------------------
-      // Detonate
-      // -----------------------------------------------
+              localStorage.setItem(
+                "merge-master-best",
+                String(next),
+              );
+            }
 
-      const result =
-        detonateBomb(
-          currentGrid,
-          row,
-          col,
+            return next;
+          },
         );
 
-      const explosionId =
-        ++effectIdRef.current;
+        setExplosionEffects([
+          {
+            id: ++effectIdRef.current,
+            row,
+            col,
+          },
+        ]);
 
-      setExplosionEffects([
-        {
-          id: explosionId,
-          row,
-          col,
-        },
-      ]);
+        setBonusFlash(
+          result.bonus,
+        );
 
-      schedule(() => {
-        setExplosionEffects([]);
-      }, 700);
+        playBombExplosion();
+        playBonus();
 
-      playBombExplosion();
-
-      // -----------------------------------------------
-      // Update board
-      // -----------------------------------------------
-
-      gridRef.current =
-        result.grid;
-
-      setGrid(result.grid);
-
-      // -----------------------------------------------
-      // Apply 2× score if active
-      // -----------------------------------------------
-
-      const multiplier =
-        doubleScoreMoves > 0
-          ? 2
-          : 1;
-
-      const actualBonus =
-        result.bonus *
-        multiplier;
-
-      const nextScore =
-        scoreRef.current +
-        actualBonus;
-
-      scoreRef.current =
-        nextScore;
-
-      setScore(nextScore);
-
-      // -----------------------------------------------
-      // Consume one 2× move
-      // -----------------------------------------------
-
-      if (doubleScoreMoves > 0) {
-        setDoubleScoreMoves(
+        setBombPowerups(
           (current) =>
             Math.max(
               0,
               current - 1,
             ),
         );
+
+        schedule(() => {
+          setExplosionEffects([]);
+          setBonusFlash(null);
+        }, 800);
+      },
+      [
+        phase,
+        gameOver,
+        bestScore,
+        schedule,
+      ],
+    );
+
+  /*
+   * ---------------------------------------------------------
+   * POWER-UP: BOMB
+   * ---------------------------------------------------------
+   */
+
+  const handleBombPowerup =
+    useCallback(() => {
+      if (
+        bombPowerups <= 0 ||
+        phase !== "playing"
+      ) {
+        return;
       }
 
-      // -----------------------------------------------
-      // Bonus sound
-      // -----------------------------------------------
+      const emptyCells = [];
 
-      schedule(() => {
-        playBonus();
-      }, 250);
+      for (
+        let row = 0;
+        row < GRID_SIZE;
+        row++
+      ) {
+        for (
+          let col = 0;
+          col < GRID_SIZE;
+          col++
+        ) {
+          if (
+            gridRef.current[row][col] ===
+            0
+          ) {
+            emptyCells.push([
+              row,
+              col,
+            ]);
+          }
+        }
+      }
 
-      // -----------------------------------------------
-      // Bonus UI
-      // -----------------------------------------------
+      if (!emptyCells.length) {
+        setPowerupMessage(
+          "No empty tile available",
+        );
+        return;
+      }
 
-      setBonusFlash(
-        actualBonus,
+      const [
+        row,
+        col,
+      ] =
+        emptyCells[
+          Math.floor(
+            Math.random() *
+              emptyCells.length,
+          )
+        ];
+
+      const nextGrid =
+        gridRef.current.map(
+          (line) => [...line],
+        );
+
+      nextGrid[row][col] =
+        BOMB;
+
+      gridRef.current =
+        nextGrid;
+
+      setGrid(nextGrid);
+
+      setBombPowerups(
+        (current) =>
+          Math.max(
+            0,
+            current - 1,
+          ),
       );
 
-      schedule(() => {
-        setBonusFlash(null);
-      }, 900);
-
-      // -----------------------------------------------
-      // Screen shake
-      // -----------------------------------------------
-
-      setScreenShake(true);
+      setPowerupMessage(
+        "Bomb placed — tap it!",
+      );
 
       if (
-        screenShakeTimerRef.current
+        powerupMessageTimerRef.current
       ) {
         clearTimeout(
-          screenShakeTimerRef.current,
+          powerupMessageTimerRef.current,
         );
       }
 
-      screenShakeTimerRef.current =
-        schedule(() => {
-          setScreenShake(false);
-        }, 400);
-
-      // -----------------------------------------------
-      // Bomb may create enough space that
-      // game-over is no longer possible.
-      // -----------------------------------------------
-
-      if (
-        isGameOver(result.grid)
-      ) {
-        gameOverTimerRef.current =
-          schedule(() => {
-            setGameOver(true);
-
-            playGameOver();
-          }, 250);
-      }
-    },
-    [
-      phase,
-      gameOver,
-      show2048Celebration,
-      doubleScoreMoves,
-      schedule,
-    ],
-  );
-
-  // =========================================================
-  // REVIVE
-  // =========================================================
-
-  const handleRevive = useCallback(() => {
-    if (hasUsedRevive) {
-      return;
-    }
-
-    // -----------------------------------------------
-    // Cancel any pending Game Over timer
-    // -----------------------------------------------
-
-    if (gameOverTimerRef.current) {
-      clearTimeout(
-        gameOverTimerRef.current,
-      );
-
-      gameOverTimerRef.current = null;
-    }
-
-    playRevive();
-
-    // -----------------------------------------------
-    // Revive board
-    // -----------------------------------------------
-
-    const revivedGrid =
-      reviveGrid(
-        gridRef.current,
-      );
-
-    gridRef.current =
-      revivedGrid;
-
-    setGrid(revivedGrid);
-
-    setGameOver(false);
-
-    setHasUsedRevive(true);
-
-    // -----------------------------------------------
-    // Prevent undoing into Game Over state
-    // -----------------------------------------------
-
-    previousStateRef.current =
-      null;
-
-    setUndoAvailable(false);
-
-    // -----------------------------------------------
-    // Feedback
-    // -----------------------------------------------
-
-    setBonusFlash("REVIVED");
-
-    schedule(() => {
-      setBonusFlash(null);
-    }, 900);
-  }, [
-    hasUsedRevive,
-    schedule,
-  ]);
-
-  // =========================================================
-  // 2048 → BACK HOME
-  // =========================================================
-
-  const handle2048Home = useCallback(() => {
-    const reward =
-      calculateReward(score);
-
-    setShow2048Celebration(false);
-
-    stopBackgroundMusic();
-
-    onGameEnd(reward);
-  }, [
-    score,
-    onGameEnd,
-  ]);
-
-  // =========================================================
-  // 2048 → CONTINUE
-  // =========================================================
-
-  const handle2048Continue =
-    useCallback(() => {
-      setShow2048Celebration(false);
-
-      setMilestone(null);
-
-      showPowerupMessage(
-        "🔥 MASTERED 2048",
-      );
+      powerupMessageTimerRef.current =
+        setTimeout(() => {
+          setPowerupMessage(null);
+        }, 1800);
     }, [
-      showPowerupMessage,
+      bombPowerups,
+      phase,
     ]);
 
-  // =========================================================
-  // GAME END
-  // =========================================================
+  /*
+   * ---------------------------------------------------------
+   * POWER-UP: DOUBLE SCORE
+   * ---------------------------------------------------------
+   */
+
+  const handleDoubleScore =
+    useCallback(() => {
+      if (
+        doubleScorePowerups <= 0 ||
+        doubleScoreMoves > 0 ||
+        phase !== "playing"
+      ) {
+        return;
+      }
+
+      setDoubleScorePowerups(
+        (current) =>
+          Math.max(
+            0,
+            current - 1,
+          ),
+      );
+
+      setDoubleScoreMoves(3);
+
+      setPowerupMessage(
+        "2× SCORE active for 3 moves!",
+      );
+
+      if (
+        powerupMessageTimerRef.current
+      ) {
+        clearTimeout(
+          powerupMessageTimerRef.current,
+        );
+      }
+
+      powerupMessageTimerRef.current =
+        setTimeout(() => {
+          setPowerupMessage(null);
+        }, 1800);
+    }, [
+      doubleScorePowerups,
+      doubleScoreMoves,
+      phase,
+    ]);
+
+  /*
+   * ---------------------------------------------------------
+   * POWER-UP: UNDO
+   * ---------------------------------------------------------
+   */
+
+  const handleUndo =
+    useCallback(() => {
+      if (
+        !undoAvailable ||
+        undoPowerups <= 0 ||
+        !previousStateRef.current ||
+        phase !== "playing"
+      ) {
+        return;
+      }
+
+      const previous =
+        previousStateRef.current;
+
+      const restoredGrid =
+        previous.grid.map(
+          (row) => [...row],
+        );
+
+      gridRef.current =
+        restoredGrid;
+
+      scoreRef.current =
+        previous.score;
+
+      setGrid(restoredGrid);
+      setScore(previous.score);
+
+      setDoubleScoreMoves(
+        previous.doubleScoreMoves,
+      );
+
+      setUndoAvailable(false);
+
+      setUndoPowerups(
+        (current) =>
+          Math.max(
+            0,
+            current - 1,
+          ),
+      );
+
+      setPowerupMessage(
+        "Previous move restored",
+      );
+
+      playRevive();
+
+      if (
+        powerupMessageTimerRef.current
+      ) {
+        clearTimeout(
+          powerupMessageTimerRef.current,
+        );
+      }
+
+      powerupMessageTimerRef.current =
+        setTimeout(() => {
+          setPowerupMessage(null);
+        }, 1500);
+    }, [
+      undoAvailable,
+      undoPowerups,
+      phase,
+    ]);
+
+  /*
+   * ---------------------------------------------------------
+   * REVIVE
+   * ---------------------------------------------------------
+   */
+
+  const handleRevive =
+    useCallback(() => {
+      if (hasUsedRevive) {
+        return;
+      }
+
+      const revived =
+        reviveGrid(
+          gridRef.current,
+          4,
+        );
+
+      gridRef.current =
+        revived;
+
+      setGrid(revived);
+      setGameOver(false);
+      setHasUsedRevive(true);
+
+      playRevive();
+
+      setPowerupMessage(
+        "REVIVED — keep merging!",
+      );
+
+      if (
+        powerupMessageTimerRef.current
+      ) {
+        clearTimeout(
+          powerupMessageTimerRef.current,
+        );
+      }
+
+      powerupMessageTimerRef.current =
+        setTimeout(() => {
+          setPowerupMessage(null);
+        }, 1800);
+    }, [hasUsedRevive]);
+
+  /*
+   * ---------------------------------------------------------
+   * GAME END
+   * ---------------------------------------------------------
+   */
 
   const handleNoThanks =
     useCallback(() => {
@@ -1575,39 +1353,86 @@ function MergeMasterGame({ onGameEnd }) {
       const reward =
         calculateReward(score);
 
-      onGameEnd(reward);
-    }, [
-      score,
-      onGameEnd,
-    ]);
+      onGameEnd?.(reward);
+    }, [score, onGameEnd]);
 
-  // =========================================================
-  // TILE CLASS
-  // =========================================================
+  /*
+   * ---------------------------------------------------------
+   * 2048
+   * ---------------------------------------------------------
+   */
 
-  const tileClass = useCallback(
-    (value) => {
+  const handle2048Continue =
+    useCallback(() => {
+      setShow2048Celebration(false);
+    }, []);
+
+  const handle2048Home =
+    useCallback(() => {
+      stopBackgroundMusic();
+
+      const reward =
+        calculateReward(score);
+
+      onGameEnd?.(reward);
+    }, [score, onGameEnd]);
+
+  /*
+   * ---------------------------------------------------------
+   * NAVIGATION
+   * ---------------------------------------------------------
+   */
+
+  const handleBack =
+    useCallback(() => {
+      stopBackgroundMusic();
+
+      if (window.history.length > 1) {
+        window.history.back();
+        return;
+      }
+
+      onGameEnd?.(0);
+    }, [onGameEnd]);
+
+  const handleRedeem =
+    useCallback(() => {
+      stopBackgroundMusic();
+      window.location.href =
+        "/redeem";
+    }, []);
+
+  /*
+   * ---------------------------------------------------------
+   * TILE CLASS
+   * ---------------------------------------------------------
+   */
+
+  const tileClass =
+    useCallback((value) => {
       if (value === BOMB) {
         return `${styles.tile} ${styles.bomb}`;
       }
 
-      if (!value) {
-        return styles.tile;
+      if (value === 0) {
+        return `${styles.tile} ${styles.tileEmpty}`;
       }
 
-      const valueClass =
+      const exactClass =
         styles[`tile${value}`];
 
-      return `${styles.tile} ${
-        valueClass || ""
-      }`;
-    },
-    [],
-  );
+      if (exactClass) {
+        return `${styles.tile} ${exactClass}`;
+      }
 
-  // =========================================================
-  // RENDER
-  // =========================================================
+      return `${styles.tile} ${styles.tile2048}`;
+    }, []);
+
+  /*
+   * ---------------------------------------------------------
+   * RENDER
+   * ---------------------------------------------------------
+   */
 
   return (
     <div
@@ -1624,26 +1449,50 @@ function MergeMasterGame({ onGameEnd }) {
     >
       <div className={styles.game}>
         {/* =================================================
-            HEADER
+            TOP NAV
         ================================================= */}
 
-        <div className={styles.header}>
-          <div>
-            <h1 className={styles.title}>
-              MERGE MASTER!
-            </h1>
+        <header className={styles.pageNav}>
+          <div className={styles.navLeft}>
+            <button
+              type="button"
+              className={styles.backButton}
+              onClick={handleBack}
+              aria-label="Back to game home"
+            >
+              <span aria-hidden="true">
+                ←
+              </span>
 
-            <p className={styles.subtitle}>
-              Merge. Explode. Master.
-            </p>
+              <span>Back</span>
+            </button>
           </div>
 
-          <div
-            className={
-              styles.headerActions
-            }
-          >
-            {/* SOUND */}
+          <div className={styles.navCenter}>
+            <span className={styles.navTitle}>
+              MERGE MASTER
+            </span>
+          </div>
+
+          <div className={styles.navRight}>
+            <div
+              className={styles.coinBalance}
+              aria-label="Game coin balance"
+            >
+              <span aria-hidden="true">
+                🪙
+              </span>
+
+              <span>GAME COINS</span>
+            </div>
+
+            <button
+              type="button"
+              className={styles.redeemButton}
+              onClick={handleRedeem}
+            >
+              Redeem
+            </button>
 
             <button
               type="button"
@@ -1655,23 +1504,16 @@ function MergeMasterGame({ onGameEnd }) {
               }
               aria-label={
                 muted
-                  ? "Unmute sound"
-                  : "Mute sound"
-              }
-              title={
-                muted
-                  ? "Unmute"
-                  : "Mute"
+                  ? "Unmute game"
+                  : "Mute game"
               }
             >
-              <span aria-hidden="true">
+              <span>
                 {muted
                   ? "🔇"
                   : "🔊"}
               </span>
             </button>
-
-            {/* FULLSCREEN */}
 
             {document.fullscreenEnabled && (
               <button
@@ -1687,13 +1529,8 @@ function MergeMasterGame({ onGameEnd }) {
                     ? "Exit fullscreen"
                     : "Enter fullscreen"
                 }
-                title={
-                  isFullscreen
-                    ? "Exit fullscreen"
-                    : "Fullscreen"
-                }
               >
-                <span aria-hidden="true">
+                <span>
                   {isFullscreen
                     ? "⤢"
                     : "⛶"}
@@ -1711,933 +1548,1508 @@ function MergeMasterGame({ onGameEnd }) {
               </button>
             )}
           </div>
-        </div>
+        </header>
 
         {/* =================================================
-            SCORE
+            HERO BANNER
         ================================================= */}
 
-        <div
-          className={
-            styles.scoreContainer
-          }
+        <section
+          className={styles.heroBanner}
+          aria-labelledby="merge-master-title"
         >
           <div
             className={
-              styles.scoreBox
+              styles.heroFloatingLayer
             }
+            aria-hidden="true"
           >
-            <div
-              className={
-                styles.scoreLabel
-              }
-            >
-              SCORE
-            </div>
-
-            <div
-              className={
-                styles.scoreValue
-              }
-            >
-              {score.toLocaleString()}
-            </div>
+            {HERO_TILES.map(
+              (value, index) => (
+                <span
+                  key={value}
+                  className={`${styles.floatingTile} ${
+                    styles[
+                      `tile${value}`
+                    ] || styles.tile2048
+                  }`}
+                  style={{
+                    "--float-index":
+                      index,
+                  }}
+                >
+                  {value}
+                </span>
+              ),
+            )}
           </div>
 
           <div
             className={
-              styles.scoreBox
+              styles.heroContent
             }
           >
-            <div
+            <p
               className={
-                styles.scoreLabel
+                styles.heroEyebrow
               }
             >
-              BEST
-            </div>
+              VELOOP ARCADE
+            </p>
+
+            <h1
+              id="merge-master-title"
+              className={
+                styles.heroTitle
+              }
+            >
+              MERGE MASTER
+            </h1>
+
+            <p
+              className={
+                styles.heroSubtitle
+              }
+            >
+              Merge. Match. Master
+              the board.
+            </p>
 
             <div
               className={
-                styles.scoreValue
+                styles.heroMeta
               }
             >
-              {bestScore.toLocaleString()}
+              <span>
+                5 × 5 BOARD
+              </span>
+
+              <span>
+                •
+              </span>
+
+              <span>
+                REACH 2048
+              </span>
+
+              <span>
+                •
+              </span>
+
+              <span>
+                EARN REWARDS
+              </span>
             </div>
           </div>
-        </div>
+        </section>
 
         {/* =================================================
-            COMBO
+            GAME AREA
         ================================================= */}
 
-        {comboVisible &&
-          combo > 1 && (
-            <div
-              className={`${styles.combo} ${
-                combo >= 4
-                  ? styles.comboEpic
-                  : ""
-              }`}
-            >
-              <span>🔥</span>
-
-              COMBO x{combo}
-
-              <span>🔥</span>
-            </div>
-          )}
-
-        {/* =================================================
-            BOARD
-        ================================================= */}
-
-        <div
-          className={
-            styles.boardWrap
-          }
+        <main
+          className={styles.gameLayout}
         >
-          <div
-            className={styles.board}
-            onTouchStart={
-              handleTouchStart
-            }
-            onTouchEnd={
-              handleTouchEnd
+          {/* ===============================================
+              TARGET PANEL
+          =============================================== */}
+
+          <aside
+            className={
+              styles.targetPanel
             }
           >
-            {/* ============================================
-                TILES
-            ============================================ */}
+            <div
+              className={
+                styles.panelEyebrow
+              }
+            >
+              CURRENT TARGET
+            </div>
 
-            {grid
-              .flat()
-              .map(
-                (
-                  value,
-                  index,
-                ) => {
-                  const row =
-                    Math.floor(
-                      index /
-                        GRID_SIZE,
-                    );
+            <h2
+              className={
+                styles.panelTitle
+              }
+            >
+              Master the
+              next level
+            </h2>
 
-                  const col =
-                    index %
-                    GRID_SIZE;
+            <div
+              className={
+                styles.targetTile
+              }
+            >
+              <span
+                className={
+                  styles.targetTileLabel
+                }
+              >
+                HIGHEST TILE
+              </span>
 
-                  const isSpawned =
-                    spawnEffects.some(
-                      (effect) =>
-                        effect.row ===
-                          row &&
-                        effect.col ===
-                          col,
-                    );
+              <strong
+                className={`${styles.tile} ${
+                  styles[
+                    `tile${Math.min(
+                      highestTile,
+                      2048,
+                    )}`
+                  ] ||
+                  styles.tile2048
+                }`}
+              >
+                {highestTile || 0}
+              </strong>
+            </div>
 
-                  return (
-                    <div
-                      key={`${row}-${col}`}
-                      className={tileClass(
-                        value,
-                      )}
-                      onClick={() =>
-                        handleCellClick(
-                          index,
-                        )
-                      }
-                    >
-                      {value ===
-                      BOMB
-                        ? "💣"
-                        : value !==
-                            0
-                          ? value
-                          : ""}
+            <div
+              className={
+                styles.targetMeta
+              }
+            >
+              <span>
+                NEXT TARGET
+              </span>
 
-                      {isSpawned && (
-                        <span
-                          className={
-                            styles.spawnFlash
-                          }
-                        />
-                      )}
-                    </div>
-                  );
-                },
-              )}
+              <strong>
+                {nextTarget.toLocaleString()}
+              </strong>
+            </div>
 
-            {/* ============================================
-                MERGE EFFECTS
-            ============================================ */}
-
-            {mergeEffects.map(
-              (effect) => {
-                const positionStyle =
-                  {
-                    "--row":
-                      effect.row,
-                    "--col":
-                      effect.col,
-                  };
-
-                return (
-                  <div
-                    key={
-                      effect.id
-                    }
-                    className={`${styles.mergeEffect} ${
-                      styles[
-                        effect.level
-                      ]
-                    }`}
-                    style={
-                      positionStyle
-                    }
-                  >
-                    <span
-                      className={
-                        styles.mergeRing
-                      }
-                    />
-
-                    <span
-                      className={
-                        styles.mergeBurst
-                      }
-                    />
-
-                    <span
-                      className={
-                        styles.mergeCore
-                      }
-                    />
-
-                    {Array.from(
-                      {
-                        length: 6,
-                      },
-                    ).map(
-                      (
-                        _,
-                        index,
-                      ) => (
-                        <span
-                          key={
-                            index
-                          }
-                          className={
-                            styles.mergeSpark
-                          }
-                        />
-                      ),
-                    )}
-                  </div>
-                );
-              },
-            )}
-
-            {/* ============================================
-                FLOATING SCORES
-            ============================================ */}
-
-            {floatingScores.map(
-              (effect) => {
-                const positionStyle =
-                  {
-                    "--row":
-                      effect.row,
-                    "--col":
-                      effect.col,
-                  };
-
-                return (
-                  <div
-                    key={
-                      effect.id
-                    }
-                    className={
-                      styles.floatingScore
-                    }
-                    style={
-                      positionStyle
-                    }
-                  >
-                    +
-                    {
-                      effect.value
-                    }
-                  </div>
-                );
-              },
-            )}
-
-            {/* ============================================
-                BOMB EXPLOSION
-            ============================================ */}
-
-            {explosionEffects.map(
-              (effect) => {
-                const positionStyle =
-                  {
-                    "--row":
-                      effect.row,
-                    "--col":
-                      effect.col,
-                  };
-
-                return (
-                  <div
-                    key={
-                      effect.id
-                    }
-                    className={
-                      styles.explosionEffect
-                    }
-                    style={
-                      positionStyle
-                    }
-                  >
-                    <span
-                      className={
-                        styles.explosionRing
-                      }
-                    />
-
-                    <span
-                      className={
-                        styles.explosionCore
-                      }
-                    />
-
-                    {Array.from(
-                      {
-                        length: 4,
-                      },
-                    ).map(
-                      (
-                        _,
-                        index,
-                      ) => (
-                        <span
-                          key={
-                            index
-                          }
-                          className={
-                            styles.explosionParticle
-                          }
-                        />
-                      ),
-                    )}
-                  </div>
-                );
-              },
-            )}
-
-            {/* ============================================
-                2048 CELEBRATION
-            ============================================ */}
-
-            {show2048Celebration && (
+            <div
+              className={
+                styles.progressSection
+              }
+            >
               <div
                 className={
-                  styles.celebrationOverlay
+                  styles.progressHeader
                 }
-                role="dialog"
-                aria-modal="true"
-                aria-labelledby="merge-master-achievement"
               >
-                {/* RGB / ENERGY GLOW */}
+                <span>
+                  PROGRESS
+                </span>
 
-                <div
+                <strong>
+                  {progressLabel}
+                </strong>
+              </div>
+
+              <div
+                className={
+                  styles.progressTrack
+                }
+                role="progressbar"
+                aria-valuemin="0"
+                aria-valuemax="100"
+                aria-valuenow={
+                  Math.round(
+                    progressValue,
+                  )
+                }
+              >
+                <span
                   className={
-                    styles.celebrationGlow
+                    styles.progressFill
                   }
+                  style={{
+                    width: `${progressValue}%`,
+                  }}
                 />
+              </div>
 
-                {/* PARTICLES */}
+              <p
+                className={
+                  styles.progressCaption
+                }
+              >
+                {highestTile >= 2048
+                  ? "2048 mastered. Keep pushing."
+                  : "Build your way to the legendary tile."}
+              </p>
+            </div>
 
-                <div
-                  className={
-                    styles.celebrationParticles
-                  }
-                >
-                  {Array.from({
-                    length: 18,
-                  }).map(
-                    (_, index) => (
-                      <span
-                        key={
-                          index
-                        }
-                        className={
-                          styles.celebrationParticle
-                        }
-                        style={{
-                          "--particle-index":
-                            index,
-                        }}
-                      />
-                    ),
-                  )}
-                </div>
+            {milestone && (
+              <div
+                className={
+                  styles.milestoneBadge
+                }
+              >
+                <span>
+                  ✦
+                </span>
 
-                {/* CONTENT */}
+                <div>
+                  <small>
+                    LATEST MILESTONE
+                  </small>
 
-                <div
-                  className={
-                    styles.celebrationContent
-                  }
-                >
-                  <div
-                    className={
-                      styles.celebrationCrown
-                    }
-                  >
-                    👑
-                  </div>
-
-                  <p
-                    className={
-                      styles.celebrationEyebrow
-                    }
-                  >
-                    MILESTONE REACHED
-                  </p>
-
-                  <h2
-                    id="merge-master-achievement"
-                    className={
-                      styles.celebrationTitle
-                    }
-                  >
-                    2048
-                  </h2>
-
-                  <p
-                    className={
-                      styles.celebrationTitleGlow
-                    }
-                  >
-                    MASTERED
-                  </p>
-
-                  <p
-                    className={
-                      styles.celebrationText
-                    }
-                  >
-                    You reached the
-                    legendary tile.
-                  </p>
-
-                  <div
-                    className={
-                      styles.celebrationActions
-                    }
-                  >
-                    <button
-                      type="button"
-                      className={
-                        styles.continueButton
-                      }
-                      onClick={
-                        handle2048Continue
-                      }
-                    >
-                      Continue Playing
-                    </button>
-
-                    <button
-                      type="button"
-                      className={
-                        styles.homeButton
-                      }
-                      onClick={
-                        handle2048Home
-                      }
-                    >
-                      Back to Home
-                    </button>
-                  </div>
+                  <strong>
+                    {milestone}
+                  </strong>
                 </div>
               </div>
             )}
 
-            {/* ============================================
-                START / COUNTDOWN
-            ============================================ */}
+            <div
+              className={
+                styles.targetStats
+              }
+            >
+              <div>
+                <span>
+                  SCORE
+                </span>
 
-            {phase !== "playing" &&
-              !showHowToPlay && (
-                <div
+                <strong>
+                  {score.toLocaleString()}
+                </strong>
+              </div>
+
+              <div>
+                <span>
+                  BEST
+                </span>
+
+                <strong>
+                  {bestScore.toLocaleString()}
+                </strong>
+              </div>
+            </div>
+          </aside>
+
+          {/* ===============================================
+              CENTER BOARD
+          =============================================== */}
+
+          <section
+            className={
+              styles.gameCenter
+            }
+          >
+            <div
+              className={
+                styles.scoreContainer
+              }
+            >
+              <div
+                className={
+                  styles.scoreBox
+                }
+              >
+                <span
                   className={
-                    styles.overlay
+                    styles.scoreLabel
                   }
                 >
-                  {/* IDLE */}
+                  SCORE
+                </span>
 
-                  {phase ===
-                    "idle" && (
-                    <>
+                <strong
+                  className={
+                    styles.scoreValue
+                  }
+                >
+                  {score.toLocaleString()}
+                </strong>
+              </div>
+
+              <div
+                className={
+                  styles.scoreBox
+                }
+              >
+                <span
+                  className={
+                    styles.scoreLabel
+                  }
+                >
+                  BEST
+                </span>
+
+                <strong
+                  className={
+                    styles.scoreValue
+                  }
+                >
+                  {bestScore.toLocaleString()}
+                </strong>
+              </div>
+            </div>
+
+            {comboVisible &&
+              combo > 1 && (
+                <div
+                  className={`${styles.combo} ${
+                    combo >= 4
+                      ? styles.comboEpic
+                      : ""
+                  }`}
+                >
+                  <span>
+                    ✦
+                  </span>
+
+                  COMBO ×{combo}
+
+                  <span>
+                    ✦
+                  </span>
+                </div>
+              )}
+
+            <div
+              className={
+                styles.boardWrap
+              }
+            >
+              <div
+                className={
+                  styles.board
+                }
+                onTouchStart={
+                  handleTouchStart
+                }
+                onTouchEnd={
+                  handleTouchEnd
+                }
+              >
+                {grid
+                  .flat()
+                  .map(
+                    (
+                      value,
+                      index,
+                    ) => {
+                      const row =
+                        Math.floor(
+                          index /
+                            GRID_SIZE,
+                        );
+
+                      const col =
+                        index %
+                        GRID_SIZE;
+
+                      const isSpawned =
+                        spawnEffects.some(
+                          (effect) =>
+                            effect.row ===
+                              row &&
+                            effect.col ===
+                              col,
+                        );
+
+                      return (
+                        <button
+                          key={`${row}-${col}`}
+                          type="button"
+                          className={tileClass(
+                            value,
+                          )}
+                          onClick={() =>
+                            handleCellClick(
+                              index,
+                            )
+                          }
+                          aria-label={
+                            value ===
+                            BOMB
+                              ? `Bomb at row ${
+                                  row + 1
+                                }, column ${
+                                  col + 1
+                                }`
+                              : value
+                                ? `Tile ${value}`
+                                : "Empty tile"
+                          }
+                        >
+                          {value ===
+                          BOMB
+                            ? "💣"
+                            : value !==
+                                0
+                              ? value
+                              : ""}
+
+                          {isSpawned && (
+                            <span
+                              className={
+                                styles.spawnFlash
+                              }
+                            />
+                          )}
+                        </button>
+                      );
+                    },
+                  )}
+
+                {/* MERGE EFFECTS */}
+
+                {mergeEffects.map(
+                  (effect) => {
+                    const positionStyle =
+                      {
+                        "--row":
+                          effect.row,
+                        "--col":
+                          effect.col,
+                      };
+
+                    return (
                       <div
-                        className={
-                          styles.overlayLogo
+                        key={
+                          effect.id
+                        }
+                        className={`${styles.mergeEffect} ${
+                          styles[
+                            effect.level
+                          ]
+                        }`}
+                        style={
+                          positionStyle
                         }
                       >
-                        🔥
+                        <span
+                          className={
+                            styles.mergeRing
+                          }
+                        />
+
+                        <span
+                          className={
+                            styles.mergeBurst
+                          }
+                        />
+
+                        <span
+                          className={
+                            styles.mergeCore
+                          }
+                        />
+
+                        {Array.from(
+                          {
+                            length: 6,
+                          },
+                        ).map(
+                          (
+                            _,
+                            index,
+                          ) => (
+                            <span
+                              key={
+                                index
+                              }
+                              className={
+                                styles.mergeSpark
+                              }
+                            />
+                          ),
+                        )}
+                      </div>
+                    );
+                  },
+                )}
+
+                {/* FLOATING SCORE */}
+
+                {floatingScores.map(
+                  (effect) => {
+                    const positionStyle =
+                      {
+                        "--row":
+                          effect.row,
+                        "--col":
+                          effect.col,
+                      };
+
+                    return (
+                      <div
+                        key={
+                          effect.id
+                        }
+                        className={
+                          styles.floatingScore
+                        }
+                        style={
+                          positionStyle
+                        }
+                      >
+                        +{effect.value}
+                      </div>
+                    );
+                  },
+                )}
+
+                {/* EXPLOSION */}
+
+                {explosionEffects.map(
+                  (effect) => {
+                    const positionStyle =
+                      {
+                        "--row":
+                          effect.row,
+                        "--col":
+                          effect.col,
+                      };
+
+                    return (
+                      <div
+                        key={
+                          effect.id
+                        }
+                        className={
+                          styles.explosionEffect
+                        }
+                        style={
+                          positionStyle
+                        }
+                      >
+                        <span
+                          className={
+                            styles.explosionRing
+                          }
+                        />
+
+                        <span
+                          className={
+                            styles.explosionCore
+                          }
+                        />
+
+                        {Array.from(
+                          {
+                            length: 4,
+                          },
+                        ).map(
+                          (
+                            _,
+                            index,
+                          ) => (
+                            <span
+                              key={
+                                index
+                              }
+                              className={
+                                styles.explosionParticle
+                              }
+                            />
+                          ),
+                        )}
+                      </div>
+                    );
+                  },
+                )}
+
+                {/* =========================================
+                    2048 CELEBRATION
+                ========================================= */}
+
+                {show2048Celebration && (
+                  <div
+                    className={
+                      styles.celebrationOverlay
+                    }
+                    role="dialog"
+                    aria-modal="true"
+                    aria-labelledby="merge-master-achievement"
+                  >
+                    <div
+                      className={
+                        styles.celebrationGlow
+                      }
+                    />
+
+                    <div
+                      className={
+                        styles.celebrationParticles
+                      }
+                    >
+                      {Array.from({
+                        length: 18,
+                      }).map(
+                        (_, index) => (
+                          <span
+                            key={
+                              index
+                            }
+                            className={
+                              styles.celebrationParticle
+                            }
+                            style={{
+                              "--particle-index":
+                                index,
+                            }}
+                          />
+                        ),
+                      )}
+                    </div>
+
+                    <div
+                      className={
+                        styles.celebrationContent
+                      }
+                    >
+                      <div
+                        className={
+                          styles.celebrationCrown
+                        }
+                      >
+                        👑
                       </div>
 
+                      <p
+                        className={
+                          styles.celebrationEyebrow
+                        }
+                      >
+                        MILESTONE REACHED
+                      </p>
+
+                      <h2
+                        id="merge-master-achievement"
+                        className={
+                          styles.celebrationTitle
+                        }
+                      >
+                        2048
+                      </h2>
+
+                      <p
+                        className={
+                          styles.celebrationTitleGlow
+                        }
+                      >
+                        MASTERED
+                      </p>
+
+                      <p
+                        className={
+                          styles.celebrationText
+                        }
+                      >
+                        You reached
+                        the legendary
+                        tile.
+                      </p>
+
+                      <div
+                        className={
+                          styles.celebrationActions
+                        }
+                      >
+                        <button
+                          type="button"
+                          className={
+                            styles.continueButton
+                          }
+                          onClick={
+                            handle2048Continue
+                          }
+                        >
+                          Continue
+                          Playing
+                        </button>
+
+                        <button
+                          type="button"
+                          className={
+                            styles.homeButton
+                          }
+                          onClick={
+                            handle2048Home
+                          }
+                        >
+                          Back to
+                          Home
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* =========================================
+                    START / COUNTDOWN
+                ========================================= */}
+
+                {phase !==
+                  "playing" &&
+                  !showHowToPlay &&
+                  !show2048Celebration && (
+                    <div
+                      className={
+                        styles.overlay
+                      }
+                    >
+                      {phase ===
+                        "idle" && (
+                        <>
+                          <div
+                            className={
+                              styles.overlayLogo
+                            }
+                          >
+                            ✦
+                          </div>
+
+                          <h2
+                            className={
+                              styles.overlayTitle
+                            }
+                          >
+                            READY TO
+                            MERGE?
+                          </h2>
+
+                          <p
+                            className={
+                              styles.overlayText
+                            }
+                          >
+                            Build
+                            powerful
+                            combinations,
+                            chase 2048
+                            and earn
+                            rewards.
+                          </p>
+
+                          <div
+                            className={
+                              styles.overlayButtons
+                            }
+                          >
+                            <button
+                              type="button"
+                              className={
+                                styles.playBtn
+                              }
+                              onClick={
+                                handlePlay
+                              }
+                            >
+                              <span>
+                                ▶
+                              </span>
+
+                              Play
+                              Now
+                            </button>
+
+                            <button
+                              type="button"
+                              className={
+                                styles.secondaryButton
+                              }
+                              onClick={
+                                handleHowToPlay
+                              }
+                            >
+                              How to
+                              Play
+                            </button>
+                          </div>
+                        </>
+                      )}
+
+                      {phase ===
+                        "counting" && (
+                        <div
+                          className={
+                            styles.countdown
+                          }
+                          key={
+                            countdown
+                          }
+                        >
+                          {countdown ===
+                          0
+                            ? "GO!"
+                            : countdown}
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                {/* =========================================
+                    HOW TO PLAY OVERLAY
+                ========================================= */}
+
+                {showHowToPlay && (
+                  <div
+                    className={
+                      styles.overlay
+                    }
+                  >
+                    <div
+                      className={
+                        styles.howToPlay
+                      }
+                    >
                       <h2
                         className={
                           styles.overlayTitle
                         }
                       >
-                        MERGE MASTER
+                        How to Play
                       </h2>
-
-                      <p
-                        className={
-                          styles.overlayText
-                        }
-                      >
-                        Match tiles,
-                        create
-                        combos and
-                        reach 2048.
-                      </p>
 
                       <div
                         className={
-                          styles.overlayButtons
+                          styles.instructions
                         }
                       >
-                        <button
-                          type="button"
-                          className={
-                            styles.playBtn
-                          }
-                          onClick={
-                            handlePlay
-                          }
-                        >
+                        <div>
                           <span>
-                            ▶
+                            👆
                           </span>
 
-                          Play Now
-                        </button>
+                          <p>
+                            Swipe in
+                            any
+                            direction
+                            to move
+                            tiles.
+                          </p>
+                        </div>
 
-                        <button
-                          type="button"
-                          className={
-                            styles.secondaryButton
-                          }
-                          onClick={
-                            handleHowToPlay
-                          }
-                        >
-                          How to Play
-                        </button>
+                        <div>
+                          <span>
+                            ⌨️
+                          </span>
+
+                          <p>
+                            Use arrow
+                            keys on
+                            desktop.
+                          </p>
+                        </div>
+
+                        <div>
+                          <span>
+                            🔢
+                          </span>
+
+                          <p>
+                            Match two
+                            identical
+                            numbers
+                            to merge
+                            them.
+                          </p>
+                        </div>
+
+                        <div>
+                          <span>
+                            💣
+                          </span>
+
+                          <p>
+                            Tap a bomb
+                            to clear
+                            tiles and
+                            earn a
+                            bonus.
+                          </p>
+                        </div>
+
+                        <div>
+                          <span>
+                            🏆
+                          </span>
+
+                          <p>
+                            Build
+                            bigger
+                            tiles and
+                            chase the
+                            highest
+                            score.
+                          </p>
+                        </div>
                       </div>
-                    </>
-                  )}
 
-                  {/* COUNTDOWN */}
+                      <button
+                        type="button"
+                        className={
+                          styles.playBtn
+                        }
+                        onClick={() => {
+                          closeHowToPlay();
+                          handlePlay();
+                        }}
+                      >
+                        <span>
+                          ▶
+                        </span>
 
-                  {phase ===
-                    "counting" && (
-                    <div
-                      className={
-                        styles.countdown
-                      }
-                      key={
-                        countdown
-                      }
-                    >
-                      {countdown ===
-                      0
-                        ? "GO!"
-                        : countdown}
+                        Play Now
+                      </button>
+
+                      <button
+                        type="button"
+                        className={
+                          styles.closeButton
+                        }
+                        onClick={
+                          closeHowToPlay
+                        }
+                      >
+                        Back
+                      </button>
                     </div>
-                  )}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* BONUS */}
+
+            {bonusFlash !==
+              null && (
+              <div
+                className={
+                  styles.bonusFlash
+                }
+              >
+                {typeof bonusFlash ===
+                "number"
+                  ? `+${bonusFlash}`
+                  : bonusFlash}
+              </div>
+            )}
+
+            {/* 2× STATUS */}
+
+            {phase ===
+              "playing" &&
+              !gameOver &&
+              doubleScoreMoves >
+                0 && (
+                <div
+                  className={
+                    styles.multiplierStatus
+                  }
+                >
+                  <span>
+                    ⚡
+                  </span>
+
+                  <span>
+                    2× SCORE ACTIVE
+                  </span>
+
+                  <strong>
+                    {doubleScoreMoves}
+                  </strong>
                 </div>
               )}
 
-            {/* ============================================
-                HOW TO PLAY
-            ============================================ */}
+            {/* POWER-UPS */}
 
-            {showHowToPlay && (
+            {phase ===
+              "playing" &&
+              !gameOver && (
               <div
                 className={
-                  styles.overlay
+                  styles.powerups
                 }
               >
-                <div
-                  className={
-                    styles.howToPlay
+                <button
+                  type="button"
+                  className={`${styles.powerupButton} ${
+                    bombPowerups <= 0
+                      ? styles.powerupDisabled
+                      : ""
+                  }`}
+                  onClick={
+                    handleBombPowerup
                   }
+                  disabled={
+                    bombPowerups <= 0
+                  }
+                  aria-label={`Use bomb power-up. ${bombPowerups} remaining.`}
                 >
-                  <h2
+                  <span
                     className={
-                      styles.overlayTitle
+                      styles.powerupIcon
                     }
                   >
-                    How to Play
-                  </h2>
+                    💣
+                  </span>
 
-                  <div
+                  <span
                     className={
-                      styles.instructions
+                      styles.powerupInfo
                     }
                   >
-                    <div>
-                      <span>
-                        👆
-                      </span>
-
-                      <p>
-                        Swipe in any
-                        direction
-                        to move
-                        tiles.
-                      </p>
-                    </div>
-
-                    <div>
-                      <span>
-                        ⌨️
-                      </span>
-
-                      <p>
-                        Use arrow
-                        keys on
-                        desktop.
-                      </p>
-                    </div>
-
-                    <div>
-                      <span>
-                        🔢
-                      </span>
-
-                      <p>
-                        Match two
-                        identical
-                        numbers to
-                        merge them.
-                      </p>
-                    </div>
-
-                    <div>
-                      <span>
-                        💣
-                      </span>
-
-                      <p>
-                        Tap a bomb
-                        to clear
-                        nearby
-                        tiles.
-                      </p>
-                    </div>
-
-                    <div>
-                      <span>
-                        🏆
-                      </span>
-
-                      <p>
-                        Build
-                        bigger
-                        tiles and
-                        chase the
-                        highest
-                        score.
-                      </p>
-                    </div>
-                  </div>
-
-                  <button
-                    type="button"
-                    className={
-                      styles.playBtn
-                    }
-                    onClick={() => {
-                      closeHowToPlay();
-
-                      handlePlay();
-                    }}
-                  >
-                    <span>
-                      ▶
+                    <span
+                      className={
+                        styles.powerupText
+                      }
+                    >
+                      BOMB
                     </span>
 
-                    Play Now
-                  </button>
+                    <span
+                      className={
+                        styles.powerupCount
+                      }
+                    >
+                      {bombPowerups}
+                    </span>
+                  </span>
+                </button>
 
-                  <button
-                    type="button"
+                <button
+                  type="button"
+                  className={`${styles.powerupButton} ${
+                    doubleScorePowerups <=
+                      0 ||
+                    doubleScoreMoves >
+                      0
+                      ? styles.powerupDisabled
+                      : ""
+                  }`}
+                  onClick={
+                    handleDoubleScore
+                  }
+                  disabled={
+                    doubleScorePowerups <=
+                      0 ||
+                    doubleScoreMoves >
+                      0
+                  }
+                  aria-label={`Use double score power-up. ${doubleScorePowerups} remaining.`}
+                >
+                  <span
                     className={
-                      styles.closeButton
-                    }
-                    onClick={
-                      closeHowToPlay
+                      styles.powerupIcon
                     }
                   >
-                    Back
-                  </button>
-                </div>
+                    ⚡
+                  </span>
+
+                  <span
+                    className={
+                      styles.powerupInfo
+                    }
+                  >
+                    <span
+                      className={
+                        styles.powerupText
+                      }
+                    >
+                      2× SCORE
+                    </span>
+
+                    <span
+                      className={
+                        styles.powerupCount
+                      }
+                    >
+                      {
+                        doubleScorePowerups
+                      }
+                    </span>
+                  </span>
+                </button>
+
+                <button
+                  type="button"
+                  className={`${styles.powerupButton} ${
+                    !undoAvailable ||
+                    undoPowerups <= 0
+                      ? styles.powerupDisabled
+                      : ""
+                  }`}
+                  onClick={
+                    handleUndo
+                  }
+                  disabled={
+                    !undoAvailable ||
+                    undoPowerups <= 0
+                  }
+                  aria-label={`Undo last move. ${undoPowerups} remaining.`}
+                >
+                  <span
+                    className={
+                      styles.powerupIcon
+                    }
+                  >
+                    ↩
+                  </span>
+
+                  <span
+                    className={
+                      styles.powerupInfo
+                    }
+                  >
+                    <span
+                      className={
+                        styles.powerupText
+                      }
+                    >
+                      UNDO
+                    </span>
+
+                    <span
+                      className={
+                        styles.powerupCount
+                      }
+                    >
+                      {undoPowerups}
+                    </span>
+                  </span>
+                </button>
               </div>
             )}
-          </div>
 
-          {/* =============================================
-              BONUS FLASH
-          ============================================= */}
-
-          {bonusFlash !==
-            null && (
-            <div
+            <p
               className={
-                styles.bonusFlash
+                styles.hint
               }
             >
-              {typeof bonusFlash ===
-              "number"
-                ? `+${bonusFlash}`
-                : bonusFlash}
+              Swipe or use arrow
+              keys to merge tiles
+              <br />
+              Tap 💣 to detonate a
+              bomb
+            </p>
+          </section>
+
+          {/* ===============================================
+              PERMANENT HOW TO PLAY
+          =============================================== */}
+
+          <aside
+            className={
+              styles.howToPlayPanel
+            }
+          >
+            <div
+              className={
+                styles.panelEyebrow
+              }
+            >
+              HOW TO PLAY
             </div>
-          )}
-        </div>
 
-        {/* =================================================
-            2× SCORE STATUS
-        ================================================= */}
-
-        {phase ===
-          "playing" &&
-          !gameOver &&
-          doubleScoreMoves >
-            0 && (
-            <div
+            <h2
               className={
-                styles.multiplierStatus
+                styles.panelTitle
               }
             >
-              <span>
-                ⚡
+              Think ahead.
+              Merge smart.
+            </h2>
+
+            <div
+              className={
+                styles.howToPlayIllustration
+              }
+              aria-hidden="true"
+            >
+              <span
+                className={
+                  styles.illustrationTile
+                }
+              >
+                2
               </span>
 
+              <span
+                className={
+                  styles.illustrationOperator
+                }
+              >
+                +
+              </span>
+
+              <span
+                className={
+                  styles.illustrationTile
+                }
+              >
+                2
+              </span>
+
+              <span
+                className={
+                  styles.illustrationOperator
+                }
+              >
+                =
+              </span>
+
+              <span
+                className={`${styles.illustrationTile} ${styles.illustrationTarget}`}
+              >
+                4
+              </span>
+            </div>
+
+            <div
+              className={
+                styles.instructionList
+              }
+            >
+              <div
+                className={
+                  styles.instructionItem
+                }
+              >
+                <span
+                  className={
+                    styles.instructionIcon
+                  }
+                >
+                  01
+                </span>
+
+                <div
+                  className={
+                    styles.instructionText
+                  }
+                >
+                  <strong>
+                    Move
+                  </strong>
+
+                  <span>
+                    Swipe or use
+                    arrow keys.
+                  </span>
+                </div>
+              </div>
+
+              <div
+                className={
+                  styles.instructionItem
+                }
+              >
+                <span
+                  className={
+                    styles.instructionIcon
+                  }
+                >
+                  02
+                </span>
+
+                <div
+                  className={
+                    styles.instructionText
+                  }
+                >
+                  <strong>
+                    Merge
+                  </strong>
+
+                  <span>
+                    Match identical
+                    numbers.
+                  </span>
+                </div>
+              </div>
+
+              <div
+                className={
+                  styles.instructionItem
+                }
+              >
+                <span
+                  className={
+                    styles.instructionIcon
+                  }
+                >
+                  03
+                </span>
+
+                <div
+                  className={
+                    styles.instructionText
+                  }
+                >
+                  <strong>
+                    Power Up
+                  </strong>
+
+                  <span>
+                    Bomb, 2× score
+                    and undo.
+                  </span>
+                </div>
+              </div>
+
+              <div
+                className={
+                  styles.instructionItem
+                }
+              >
+                <span
+                  className={
+                    styles.instructionIcon
+                  }
+                >
+                  04
+                </span>
+
+                <div
+                  className={
+                    styles.instructionText
+                  }
+                >
+                  <strong>
+                    Master
+                  </strong>
+
+                  <span>
+                    Reach 2048 and
+                    keep going.
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div
+              className={
+                styles.nextTarget
+              }
+            >
               <span>
-                2× SCORE ACTIVE
+                NEXT TARGET
               </span>
 
               <strong>
-                {doubleScoreMoves}
+                {nextTarget.toLocaleString()}
               </strong>
             </div>
-          )}
+          </aside>
+        </main>
 
         {/* =================================================
-            POWER-UPS
+            DETAILS
         ================================================= */}
 
-        {phase ===
-          "playing" &&
-          !gameOver && (
-            <div
-              className={
-                styles.powerups
-              }
-            >
-              {/* BOMB */}
-
-              <button
-                type="button"
-                className={`${styles.powerupButton} ${
-                  bombPowerups <=
-                  0
-                    ? styles.powerupDisabled
-                    : ""
-                }`}
-                onClick={
-                  handleBombPowerup
-                }
-                disabled={
-                  bombPowerups <=
-                  0
-                }
-                aria-label={`Use bomb power-up. ${bombPowerups} remaining.`}
-                title="Place a bomb on an empty tile"
-              >
-                <span
-                  className={
-                    styles.powerupIcon
-                  }
-                  aria-hidden="true"
-                >
-                  💣
-                </span>
-
-                <span
-                  className={
-                    styles.powerupInfo
-                  }
-                >
-                  <span
-                    className={
-                      styles.powerupText
-                    }
-                  >
-                    BOMB
-                  </span>
-
-                  <span
-                    className={
-                      styles.powerupCount
-                    }
-                  >
-                    {
-                      bombPowerups
-                    }
-                  </span>
-                </span>
-              </button>
-
-              {/* DOUBLE SCORE */}
-
-              <button
-                type="button"
-                className={`${styles.powerupButton} ${
-                  doubleScorePowerups <=
-                    0 ||
-                  doubleScoreMoves >
-                    0
-                    ? styles.powerupDisabled
-                    : ""
-                }`}
-                onClick={
-                  handleDoubleScore
-                }
-                disabled={
-                  doubleScorePowerups <=
-                    0 ||
-                  doubleScoreMoves >
-                    0
-                }
-                aria-label={`Use double score power-up. ${doubleScorePowerups} remaining.`}
-                title="Double score for the next 3 moves"
-              >
-                <span
-                  className={
-                    styles.powerupIcon
-                  }
-                  aria-hidden="true"
-                >
-                  ⚡
-                </span>
-
-                <span
-                  className={
-                    styles.powerupInfo
-                  }
-                >
-                  <span
-                    className={
-                      styles.powerupText
-                    }
-                  >
-                    2× SCORE
-                  </span>
-
-                  <span
-                    className={
-                      styles.powerupCount
-                    }
-                  >
-                    {
-                      doubleScorePowerups
-                    }
-                  </span>
-                </span>
-              </button>
-
-              {/* UNDO */}
-
-              <button
-                type="button"
-                className={`${styles.powerupButton} ${
-                  !undoAvailable ||
-                  undoPowerups <=
-                    0
-                    ? styles.powerupDisabled
-                    : ""
-                }`}
-                onClick={
-                  handleUndo
-                }
-                disabled={
-                  !undoAvailable ||
-                  undoPowerups <=
-                    0
-                }
-                aria-label={`Undo last move. ${undoPowerups} remaining.`}
-                title="Undo the previous move"
-              >
-                <span
-                  className={
-                    styles.powerupIcon
-                  }
-                  aria-hidden="true"
-                >
-                  ↩
-                </span>
-
-                <span
-                  className={
-                    styles.powerupInfo
-                  }
-                >
-                  <span
-                    className={
-                      styles.powerupText
-                    }
-                  >
-                    UNDO
-                  </span>
-
-                  <span
-                    className={
-                      styles.powerupCount
-                    }
-                  >
-                    {
-                      undoPowerups
-                    }
-                  </span>
-                </span>
-              </button>
-            </div>
-          )}
-
-        {/* =================================================
-            GAME HINT
-        ================================================= */}
-
-        <p
+        <section
           className={
-            styles.hint
+            styles.gameDetails
           }
         >
-          Swipe or use arrow
-          keys to merge tiles
-          <br />
-          Tap 💣 to detonate a
-          bomb
-        </p>
+          <div
+            className={
+              styles.detailCard
+            }
+          >
+            <span>
+              ENTRY
+            </span>
+
+            <strong>
+              20 TOKENS
+            </strong>
+
+            <p>
+              Start every run
+              with a 20 Token
+              entry.
+            </p>
+          </div>
+
+          <div
+            className={
+              styles.detailCard
+            }
+          >
+            <span>
+              REWARD
+            </span>
+
+            <strong>
+              SCORE BASED
+            </strong>
+
+            <p>
+              Higher scores
+              unlock bigger
+              rewards.
+            </p>
+          </div>
+
+          <div
+            className={
+              styles.detailCard
+            }
+          >
+            <span>
+              MILESTONE
+            </span>
+
+            <strong>
+              2048+
+            </strong>
+
+            <p>
+              Reach the
+              legendary tile
+              and continue.
+            </p>
+          </div>
+        </section>
+
+        {/* =================================================
+            FOOTER
+        ================================================= */}
+
+        <footer
+          className={
+            styles.gameFooter
+          }
+        >
+          <div
+            className={
+              styles.footerBrand
+            }
+          >
+            <strong>
+              VELOOP
+            </strong>
+
+            <span>
+              PLAY • EARN • REDEEM
+            </span>
+          </div>
+
+          <div
+            className={
+              styles.footerLinks
+            }
+          >
+            <span>
+              MERGE MASTER
+            </span>
+
+            <span>
+              •
+            </span>
+
+            <span>
+              5 × 5
+            </span>
+
+            <span>
+              •
+            </span>
+
+            <span>
+              2048
+            </span>
+          </div>
+        </footer>
 
         {/* =================================================
             POWER-UP / MILESTONE MESSAGE
@@ -2661,9 +3073,7 @@ function MergeMasterGame({ onGameEnd }) {
         {gameOver && (
           <GameOver
             score={score}
-            canRevive={
-              !hasUsedRevive
-            }
+            canRevive={!hasUsedRevive}
             onRevive={
               handleRevive
             }
