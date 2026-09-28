@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useGameCoins } from "../context/GameCoinStore";
+import { useTokens } from "../context/TokenStore";
 
 import GamesCarousel from "../components/games/GamesCarousel";
 import GameLoader from "../components/common/GameLoader";
@@ -10,6 +12,9 @@ import styles from "./Home.module.css";
 
 function Home() {
   const navigate = useNavigate();
+
+  const { gameCoinBalance } = useGameCoins();
+  const { tokenBalance } = useTokens();
 
   const [isLoading, setIsLoading] = useState(() => gamesData.length > 0);
 
@@ -86,18 +91,46 @@ function Home() {
 
           <button
             type="button"
-            className={styles.walletButton}
-            aria-label="Rewards wallet"
+            className={styles.rewardWallet}
+            aria-label={`Rewards. ${tokenBalance} Tokens and ${gameCoinBalance} Game Coins`}
+            onClick={() => navigate("/redeem")}
           >
-            <img
-              src="/assets/icons/game-coin-icon.png"
-              alt=""
-              className={styles.walletIcon}
-            />
+            <span className={styles.rewardWalletPreview}>
+              
+              <span className={styles.rewardTokenIcon} aria-hidden="true">O</span>
 
-            <span className={styles.walletLabel}>Rewards</span>
+              <span className={styles.rewardArrow}>›</span>
+            </span>
 
-            <span className={styles.walletArrow}>›</span>
+            <span className={styles.rewardWalletDetails}>
+              <span className={styles.rewardItem}>
+                <img
+                  src="/assets/icons/token-icon.png"
+                  alt=""
+                  className={styles.rewardTokenIcon}
+                />
+
+                <span className={styles.rewardItemText}>
+                  <span className={styles.rewardItemLabel}>TOKENS</span>
+                  <strong>{tokenBalance}</strong>
+                </span>
+              </span>
+
+              <span className={styles.rewardDivider} />
+
+              <span className={styles.rewardItem}>
+                <img
+                  src="/assets/icons/game-coin-icon.png"
+                  alt=""
+                  className={styles.rewardCoinIcon}
+                />
+
+                <span className={styles.rewardItemText}>
+                  <span className={styles.rewardItemLabel}>GAME COINS</span>
+                  <strong>{gameCoinBalance}</strong>
+                </span>
+              </span>
+            </span>
           </button>
         </div>
 

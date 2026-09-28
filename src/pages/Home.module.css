@@ -355,90 +355,261 @@
 }
 
 /* =========================================
-   WALLET BUTTON
+   REWARD WALLET
 ========================================= */
 
-.walletButton {
+.rewardWallet {
   position: relative;
+
+  min-width: 48px;
+  height: 46px;
+
+  padding: 5px;
+
+  display: flex;
+  align-items: center;
+
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 15px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.07),
+      rgba(255, 255, 255, 0.025)
+    );
+
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+
+  box-shadow:
+    inset 0 1px rgba(255, 255, 255, 0.07),
+    0 8px 25px rgba(0, 0, 0, 0.18);
+
+  color: var(--veloop-text);
+
+  cursor: pointer;
+
+  overflow: hidden;
+
+  transition:
+    width 420ms cubic-bezier(.2,.8,.2,1),
+    border-color 250ms ease,
+    background 250ms ease,
+    box-shadow 250ms ease,
+    transform 250ms ease;
+
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* =========================================
+   CLOSED PREVIEW
+========================================= */
+
+.rewardWalletPreview {
+  position: relative;
+
+  width: 36px;
+  height: 36px;
+
+  flex: 0 0 36px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 2px;
+}
+
+.rewardIcon {
+  font-size: 1.3rem;
+
+  filter:
+    drop-shadow(0 0 7px rgba(240, 185, 11, 0.45));
+
+  animation: rewardCoinFloat 3s ease-in-out infinite;
+}
+
+.rewardArrow {
+  position: absolute;
+
+  right: -2px;
+  bottom: 0;
+
+  color: var(--veloop-gold);
+
+  font-size: 0.9rem;
+  line-height: 1;
+
+  transition: transform 250ms ease;
+}
+
+/* =========================================
+   HIDDEN DETAILS
+========================================= */
+
+.rewardWalletDetails {
+  width: 0;
+
+  opacity: 0;
+
+  display: flex;
+  align-items: center;
+
+  overflow: hidden;
+
+  pointer-events: none;
+
+  transition:
+    width 380ms cubic-bezier(.2,.8,.2,1),
+    opacity 180ms ease 80ms;
+}
+
+/* =========================================
+   REWARD ITEM
+========================================= */
+
+.rewardItem {
+  min-width: 88px;
 
   display: flex;
   align-items: center;
 
   gap: 7px;
 
-  min-height: 38px;
-
-  padding: 6px 10px;
-
-  border: 1px solid rgba(255, 255, 255, 0.09);
-  border-radius: 13px;
-
-  color: var(--veloop-text-secondary);
-
-  background: rgba(255, 255, 255, 0.045);
-
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-
-  box-shadow:
-    0 8px 24px rgba(0, 0, 0, 0.16);
-
-  cursor: pointer;
-
-  transition:
-    transform 0.2s ease,
-    border-color 0.2s ease,
-    background 0.2s ease,
-    box-shadow 0.2s ease;
-
-  -webkit-tap-highlight-color: transparent;
+  white-space: nowrap;
 }
 
-.walletButton:hover {
+.rewardTokenIcon,
+.rewardCoinIcon {
+  width: 25px;
+  height: 25px;
+
+  object-fit: contain;
+}
+
+.rewardTokenIcon {
+  filter:
+    drop-shadow(0 0 5px rgba(139, 108, 255, 0.45));
+}
+
+.rewardCoinIcon {
+  filter:
+    drop-shadow(0 0 5px rgba(240, 185, 11, 0.5));
+}
+
+.rewardItemText {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+
+  line-height: 1;
+}
+
+.rewardItemLabel {
+  margin-bottom: 4px;
+
+  color: var(--veloop-text-muted);
+
+  font-size: 0.47rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+}
+
+.rewardItemText strong {
+  color: var(--veloop-text);
+
+  font-size: 0.82rem;
+  font-weight: 850;
+}
+
+/* =========================================
+   DIVIDER
+========================================= */
+
+.rewardDivider {
+  width: 1px;
+  height: 27px;
+
+  margin: 0 10px;
+
+  flex: 0 0 1px;
+
+  background:
+    linear-gradient(
+      180deg,
+      transparent,
+      rgba(255,255,255,0.15),
+      transparent
+    );
+}
+
+/* =========================================
+   HOVER / ROLL OPEN
+========================================= */
+
+.rewardWallet:hover,
+.rewardWallet:focus-visible {
+  width: 218px;
+
+  border-color: rgba(240, 185, 11, 0.28);
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(240, 185, 11, 0.09),
+      rgba(255, 255, 255, 0.035)
+    );
+
+  box-shadow:
+    inset 0 1px rgba(255,255,255,0.1),
+    0 12px 32px rgba(0,0,0,0.25),
+    0 0 22px rgba(240,185,11,0.06);
+
   transform: translateY(-1px);
-
-  border-color: rgba(240, 185, 11, 0.24);
-
-  background: rgba(240, 185, 11, 0.07);
-
-  box-shadow:
-    0 10px 28px rgba(0, 0, 0, 0.22),
-    0 0 18px rgba(240, 185, 11, 0.06);
 }
 
-.walletButton:active {
+.rewardWallet:hover .rewardWalletDetails,
+.rewardWallet:focus-visible .rewardWalletDetails {
+  width: 164px;
+
+  opacity: 1;
+
+  pointer-events: auto;
+}
+
+.rewardWallet:hover .rewardArrow,
+.rewardWallet:focus-visible .rewardArrow {
+  transform: translateX(3px);
+}
+
+/* =========================================
+   ACTIVE
+========================================= */
+
+.rewardWallet:active {
   transform: scale(0.96);
 }
 
-.walletButton:focus-visible {
+.rewardWallet:focus-visible {
   outline: 2px solid var(--veloop-gold);
   outline-offset: 3px;
 }
 
-.walletIcon {
-  width: 21px;
-  height: 21px;
+/* =========================================
+   ANIMATION
+========================================= */
 
-  object-fit: contain;
+@keyframes rewardCoinFloat {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-4deg);
+  }
 
-  filter:
-    drop-shadow(0 0 4px rgba(240, 185, 11, 0.45));
+  50% {
+    transform: translateY(-3px) rotate(4deg);
+  }
 }
-
-.walletLabel {
-  font-size: 0.72rem;
-  font-weight: 700;
-
-  letter-spacing: 0.02em;
-}
-
-.walletArrow {
-  color: var(--veloop-gold);
-
-  font-size: 1.15rem;
-  line-height: 1;
-}
-
 /* =========================================
    HERO CONTENT
 ========================================= */
@@ -1585,21 +1756,30 @@
       24px;
   }
 
-  .walletButton {
-    min-height: 34px;
+  .rewardWallet {
+    width: 44px;
+    min-width: 44px;
+    height: 40px;
 
-    padding:
-      5px 8px;
+    padding: 3px;
 
-    gap: 5px;
+    justify-content: center;
   }
 
-  .walletLabel {
-    display: none;
+  .rewardWallet:hover,
+  .rewardWallet:focus-visible {
+    width: 205px;
+    justify-content: flex-start;
   }
 
-  .walletArrow {
-    font-size: 1rem;
+  .rewardWallet:hover .rewardWalletDetails,
+  .rewardWallet:focus-visible .rewardWalletDetails {
+    width: 158px;
+  }
+
+  .rewardWalletPreview {
+    width: 36px;
+    flex: 0 0 36px;
   }
 
   .heroTitle {
