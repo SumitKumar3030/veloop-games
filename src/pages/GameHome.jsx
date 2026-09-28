@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 
 import gamesData from "../data/gamesData";
@@ -31,23 +31,8 @@ function GameHome() {
   const game = gamesData.find((item) => item.slug === slug);
   const accentColor = useDominantColor(game?.image);
 
-  useEffect(() => {
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, []);
-
-  useEffect(() => {
-    if (gameStarted) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
-
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [gameStarted]);
+  // NOTE: the document.body.style.overflow lock was removed on purpose.
+  // It blocked page scrolling as soon as a game started.
 
   if (!game) {
     return (
@@ -141,71 +126,23 @@ function GameHome() {
 
   const intelItems = isMergeMaster
     ? [
-        {
-          value: "20",
-          label: "ENTRY TOKENS",
-          icon: "◈",
-        },
-        {
-          value: "2048",
-          label: "TARGET TILE",
-          icon: "◆",
-        },
-        {
-          value: "BOMB",
-          label: "POWER MOVE",
-          icon: "✦",
-        },
-        {
-          value: "1×",
-          label: "REVIVE",
-          icon: "↻",
-        },
+        { value: "20", label: "ENTRY TOKENS", icon: "◈" },
+        { value: "2048", label: "TARGET TILE", icon: "◆" },
+        { value: "BOMB", label: "POWER MOVE", icon: "✦" },
+        { value: "1×", label: "REVIVE", icon: "↻" },
       ]
     : isWormzy
       ? [
-          {
-            value: "15",
-            label: "LEVELS",
-            icon: "◎",
-          },
-          {
-            value: "2",
-            label: "APPLES / LEVEL",
-            icon: "●",
-          },
-          {
-            value: "3★",
-            label: "MAX STARS",
-            icon: "★",
-          },
-          {
-            value: "20",
-            label: "ENTRY TOKENS",
-            icon: "◈",
-          },
+          { value: "15", label: "LEVELS", icon: "◎" },
+          { value: "2", label: "APPLES / LEVEL", icon: "●" },
+          { value: "3★", label: "MAX STARS", icon: "★" },
+          { value: "20", label: "ENTRY TOKENS", icon: "◈" },
         ]
       : [
-          {
-            value: String(game.cost),
-            label: "ENTRY TOKENS",
-            icon: "◈",
-          },
-          {
-            value: "PLAY",
-            label: "GAME MODE",
-            icon: "▶",
-          },
-          {
-            value: "EARN",
-            label: "REWARDS",
-            icon: "✦",
-          },
-          {
-            value: "20",
-            label: "TOKEN COST",
-            icon: "◈",
-          },
+          { value: String(game.cost), label: "ENTRY TOKENS", icon: "◈" },
+          { value: "PLAY", label: "GAME MODE", icon: "▶" },
+          { value: "EARN", label: "REWARDS", icon: "✦" },
+          { value: "20", label: "TOKEN COST", icon: "◈" },
         ];
 
   return (

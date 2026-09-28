@@ -1113,6 +1113,13 @@
 
 /* =========================================================
    EXACT TILE COLORS
+   --mm-purple: #521e86;
+  --mm-orange: #f14b0f;
+  --mm-blue: #2226e6;
+  --mm-green: #2ef115;
+  --mm-red: #ff0000;
+  --mm-yellow: #fdec00;
+  --mm-pink: #e7069c;
    ========================================================= */
 
 .tile2 {
@@ -1122,7 +1129,7 @@
     linear-gradient(
       145deg,
       #a084ff,
-      #6f4de2
+      #521e86
     );
 
   box-shadow:
@@ -1135,7 +1142,7 @@
     linear-gradient(
       145deg,
       #ffb06c,
-      #ed7130
+      #f14b0f
     );
 
   box-shadow:
@@ -1148,7 +1155,7 @@
     linear-gradient(
       145deg,
       #63b8ff,
-      #2877d5
+      #2226e6
     );
 
   box-shadow:
@@ -1161,7 +1168,7 @@
     linear-gradient(
       145deg,
       #70df96,
-      #279f59
+      #2ef115
     );
 
   box-shadow:
@@ -1174,7 +1181,7 @@
     linear-gradient(
       145deg,
       #ff707e,
-      #c83349
+      #ff0000
     );
 
   box-shadow:
@@ -1189,7 +1196,7 @@
     linear-gradient(
       145deg,
       #ffe979,
-      #dcae24
+      #fdec00
     );
 
   box-shadow:
@@ -1202,7 +1209,7 @@
     linear-gradient(
       145deg,
       #f27cc0,
-      #bc397f
+      #e70a9c
     );
 
   box-shadow:
