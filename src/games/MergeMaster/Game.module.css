@@ -14,17 +14,17 @@
   --mm-muted: #9da2b7;
   --mm-subtle: #6f748b;
 
-  --mm-gold: #f3b91f;
+  --mm-gold: #f1bb26;
   --mm-gold-light: #ffe08a;
   --mm-gold-soft: rgba(243, 185, 31, 0.14);
 
-  --mm-purple: #8f6cff;
-  --mm-orange: #ff914d;
-  --mm-blue: #3e9bff;
-  --mm-green: #48c878;
-  --mm-red: #e94d5d;
-  --mm-yellow: #f5ca42;
-  --mm-pink: #e75aa9;
+  --mm-purple: #521e86;
+  --mm-orange: #f14b0f;
+  --mm-blue: #2226e6;
+  --mm-green: #2ef115;
+  --mm-red: #ff0000;
+  --mm-yellow: #fdec00;
+  --mm-pink: #e7069c;
 
   --mm-border: rgba(255, 255, 255, 0.085);
   --mm-border-strong: rgba(255, 255, 255, 0.15);
