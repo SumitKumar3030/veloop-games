@@ -1,302 +1,45 @@
-.page {
-  position: relative;
-  min-height: 100vh;
-  overflow: hidden;
+/* =========================================================
+   HOME PAGE
+========================================================= */
 
+.page {
+  min-height: 100vh;
+  overflow-x: hidden;
+  padding-bottom: 90px;
   background:
     radial-gradient(
-      circle at 50% 18%,
-      rgba(240, 185, 11, 0.07),
-      transparent 30%
+      circle at 50% 0%,
+      rgba(240, 185, 11, 0.035),
+      transparent 32%
     ),
     var(--veloop-bg);
-
-  padding-bottom: 90px;
+  color: var(--veloop-text);
 }
 
-/* =================================
-   PAGE-WIDE FLOATING COINS
-================================= */
 
-.pageCoins {
-  position: absolute;
-  inset: 0;
+/* =========================================================
+   HEADER
+========================================================= */
 
-  z-index: 1;
-
-  overflow: hidden;
-
-  pointer-events: none;
-}
-
-.pageCoin {
-  position: absolute;
-
-  width: 20px;
-  height: 20px;
-
-  object-fit: contain;
-
-  opacity: 0.16;
-
-  filter:
-    drop-shadow(0 0 8px rgba(240, 185, 11, 0.28));
-
-  will-change: transform;
-
-  animation:
-    pageCoinFloat
-    var(--coin-duration, 12s)
-    ease-in-out
-    var(--coin-delay, 0s)
-    infinite;
-}
-
-/* Different positions */
-
-.pageCoin1 {
-  left: 7%;
-  top: 18%;
-
-  width: 18px;
-
-  --coin-duration: 13s;
-  --coin-delay: -2s;
-}
-
-.pageCoin2 {
-  left: 18%;
-  top: 48%;
-
-  width: 27px;
-
-  opacity: 0.12;
-
-  --coin-duration: 16s;
-  --coin-delay: -8s;
-}
-
-.pageCoin3 {
-  left: 31%;
-  top: 72%;
-
-  width: 15px;
-
-  opacity: 0.2;
-
-  --coin-duration: 11s;
-  --coin-delay: -4s;
-}
-
-.pageCoin4 {
-  left: 44%;
-  top: 38%;
-
-  width: 22px;
-
-  opacity: 0.1;
-
-  --coin-duration: 15s;
-  --coin-delay: -10s;
-}
-
-.pageCoin5 {
-  left: 56%;
-  top: 78%;
-
-  width: 18px;
-
-  opacity: 0.14;
-
-  --coin-duration: 14s;
-  --coin-delay: -5s;
-}
-
-.pageCoin6 {
-  left: 68%;
-  top: 24%;
-
-  width: 29px;
-
-  opacity: 0.13;
-
-  --coin-duration: 17s;
-  --coin-delay: -12s;
-}
-
-.pageCoin7 {
-  left: 79%;
-  top: 52%;
-
-  width: 16px;
-
-  opacity: 0.18;
-
-  --coin-duration: 12s;
-  --coin-delay: -7s;
-}
-
-.pageCoin8 {
-  left: 91%;
-  top: 76%;
-
-  width: 24px;
-
-  opacity: 0.1;
-
-  --coin-duration: 18s;
-  --coin-delay: -14s;
-}
-
-.pageCoin9 {
-  left: 12%;
-  top: 84%;
-
-  width: 14px;
-
-  opacity: 0.13;
-
-  --coin-duration: 15s;
-  --coin-delay: -9s;
-}
-
-.pageCoin10 {
-  left: 37%;
-  top: 20%;
-
-  width: 12px;
-
-  opacity: 0.16;
-
-  --coin-duration: 10s;
-  --coin-delay: -3s;
-}
-
-.pageCoin11 {
-  left: 73%;
-  top: 70%;
-
-  width: 20px;
-
-  opacity: 0.12;
-
-  --coin-duration: 16s;
-  --coin-delay: -11s;
-}
-
-.pageCoin12 {
-  left: 86%;
-  top: 14%;
-
-  width: 13px;
-
-  opacity: 0.18;
-
-  --coin-duration: 11s;
-  --coin-delay: -6s;
-}
-
-@keyframes pageCoinFloat {
-  0% {
-    transform:
-      translate3d(0, 18px, 0)
-      rotate(-8deg)
-      scale(0.9);
-  }
-
-  25% {
-    transform:
-      translate3d(12px, -18px, 0)
-      rotate(5deg)
-      scale(1);
-  }
-
-  50% {
-    transform:
-      translate3d(-8px, -36px, 0)
-      rotate(14deg)
-      scale(1.05);
-  }
-
-  75% {
-    transform:
-      translate3d(-18px, -12px, 0)
-      rotate(4deg)
-      scale(0.96);
-  }
-
-  100% {
-    transform:
-      translate3d(0, 18px, 0)
-      rotate(-8deg)
-      scale(0.9);
-  }
-}
-
-/* =========================================
-   HERO
-========================================= */
-
-.hero {
+.header {
   position: relative;
-
-  min-height: 280px;
-
-  display: flex;
-  flex-direction: column;
-
-  overflow: hidden;
-
-  padding:
-    22px
-    clamp(18px, 4vw, 56px)
-    34px;
-
-  isolation: isolate;
-}
-
-/* =========================================
-   HERO AMBIENT GLOW
-========================================= */
-
-.heroGlow {
-  position: absolute;
-
-  width: 520px;
-  height: 320px;
-
-  left: 50%;
-  top: -180px;
-
-  transform: translateX(-50%);
-
-  border-radius: 50%;
-
-  background:
-    radial-gradient(
-      circle,
-      rgba(240, 185, 11, 0.13),
-      rgba(240, 185, 11, 0.035) 42%,
-      transparent 72%
-    );
-
-  filter: blur(12px);
-
-  pointer-events: none;
-
-  z-index: -2;
-}
-
-/* =========================================
-   BRAND ROW
-========================================= */
-
-.brandRow {
-  position: relative;
-  z-index: 5;
+  z-index: 50;
 
   width: 100%;
-  max-width: 1600px;
+
+  border-bottom: 1px solid var(--veloop-border);
+
+  background:
+    rgba(22, 24, 39, 0.82);
+
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+.headerInner {
+  width: min(1400px, calc(100% - 40px));
+
+  min-height: 76px;
 
   margin: 0 auto;
 
@@ -307,177 +50,102 @@
   gap: 20px;
 }
 
-/* =========================================
-   BRAND
-========================================= */
+
+/* BRAND */
 
 .brand {
-  display: flex;
+  display: inline-flex;
   align-items: center;
 
-  gap: 9px;
+  gap: 10px;
 
-  user-select: none;
-}
+  padding: 0;
 
-.brandMark {
-  width: 30px;
-  height: 30px;
+  border: 0;
 
-  display: grid;
-  place-items: center;
-
-  border-radius: 9px;
-
-  color: #161827;
-
-  background:
-    linear-gradient(
-      145deg,
-      var(--veloop-gold-light),
-      var(--veloop-gold)
-    );
-
-  font-size: 0.95rem;
-  font-weight: 900;
-
-  box-shadow:
-    0 0 18px rgba(240, 185, 11, 0.18);
-}
-
-.brandName {
-  color: var(--veloop-text);
-
-  font-size: 0.95rem;
-  font-weight: 800;
-
-  letter-spacing: 0.16em;
-}
-
-/* =========================================
-   REWARD WALLET
-========================================= */
-
-.rewardWallet {
-  position: relative;
-
-  min-width: 48px;
-  height: 46px;
-
-  padding: 5px;
-
-  display: flex;
-  align-items: center;
-
-  border: 1px solid rgba(255, 255, 255, 0.09);
-  border-radius: 15px;
-
-  background:
-    linear-gradient(
-      145deg,
-      rgba(255, 255, 255, 0.07),
-      rgba(255, 255, 255, 0.025)
-    );
-
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-
-  box-shadow:
-    inset 0 1px rgba(255, 255, 255, 0.07),
-    0 8px 25px rgba(0, 0, 0, 0.18);
+  background: transparent;
 
   color: var(--veloop-text);
 
   cursor: pointer;
-
-  overflow: hidden;
-
-  transition:
-    width 420ms cubic-bezier(.2,.8,.2,1),
-    border-color 250ms ease,
-    background 250ms ease,
-    box-shadow 250ms ease,
-    transform 250ms ease;
-
-  -webkit-tap-highlight-color: transparent;
 }
 
-/* =========================================
-   CLOSED PREVIEW
-========================================= */
+.brandMark {
+  width: 38px;
+  height: 38px;
 
-.rewardWalletPreview {
-  position: relative;
+  display: grid;
+  place-items: center;
 
-  width: 36px;
-  height: 36px;
+  border-radius: 11px;
 
-  flex: 0 0 36px;
+  color: #171827;
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  background:
+    linear-gradient(
+      135deg,
+      var(--veloop-gold-light),
+      var(--veloop-gold)
+    );
 
-  gap: 2px;
+  font-size: 1.15rem;
+  font-weight: 950;
+
+  box-shadow:
+    0 7px 20px rgba(240, 185, 11, 0.16);
 }
 
-.rewardIcon {
-  font-size: 1.3rem;
+.brandName {
+  font-size: 1.05rem;
+  font-weight: 900;
 
-  filter:
-    drop-shadow(0 0 7px rgba(240, 185, 11, 0.45));
-
-  animation: rewardCoinFloat 3s ease-in-out infinite;
+  letter-spacing: 0.16em;
 }
 
-.rewardArrow {
-  position: absolute;
 
-  right: -2px;
-  bottom: 0;
+/* REWARD WALLET */
 
-  color: var(--veloop-gold);
-
-  font-size: 0.9rem;
-  line-height: 1;
-
-  transition: transform 250ms ease;
-}
-
-/* =========================================
-   HIDDEN DETAILS
-========================================= */
-
-.rewardWalletDetails {
-  width: 0;
-
-  opacity: 0;
-
+.rewardWallet {
   display: flex;
   align-items: center;
 
-  overflow: hidden;
+  min-height: 52px;
 
-  pointer-events: none;
+  padding: 7px 11px;
+
+  border: 1px solid var(--veloop-border-strong);
+  border-radius: 15px;
+
+  color: var(--veloop-text);
+
+  background:
+    rgba(255, 255, 255, 0.035);
+
+  cursor: pointer;
 
   transition:
-    width 380ms cubic-bezier(.2,.8,.2,1),
-    opacity 180ms ease 80ms;
+    border-color 180ms ease,
+    background 180ms ease,
+    transform 180ms ease;
 }
 
-/* =========================================
-   REWARD ITEM
-========================================= */
+.rewardWallet:hover {
+  transform: translateY(-1px);
+
+  border-color:
+    rgba(240, 185, 11, 0.3);
+
+  background:
+    rgba(240, 185, 11, 0.055);
+}
 
 .rewardItem {
-  min-width: 88px;
-
   display: flex;
   align-items: center;
 
-  gap: 7px;
+  gap: 8px;
 
-  white-space: nowrap;
+  padding: 0 8px;
 }
 
 .rewardTokenIcon,
@@ -486,781 +154,186 @@
   height: 25px;
 
   object-fit: contain;
+
+  flex: 0 0 auto;
 }
 
-.rewardTokenIcon {
-  filter:
-    drop-shadow(0 0 5px rgba(139, 108, 255, 0.45));
-}
-
-.rewardCoinIcon {
-  filter:
-    drop-shadow(0 0 5px rgba(240, 185, 11, 0.5));
-}
-
-.rewardItemText {
+.rewardItemInfo {
   display: flex;
   flex-direction: column;
+
   align-items: flex-start;
 
-  line-height: 1;
+  gap: 1px;
 }
 
-.rewardItemLabel {
-  margin-bottom: 4px;
-
+.rewardItemInfo span {
   color: var(--veloop-text-muted);
 
-  font-size: 0.47rem;
+  font-size: 0.55rem;
   font-weight: 800;
+
   letter-spacing: 0.1em;
 }
 
-.rewardItemText strong {
+.rewardItemInfo strong {
   color: var(--veloop-text);
 
   font-size: 0.82rem;
-  font-weight: 850;
+  font-weight: 900;
 }
-
-/* =========================================
-   DIVIDER
-========================================= */
 
 .rewardDivider {
   width: 1px;
-  height: 27px;
+  height: 28px;
 
-  margin: 0 10px;
-
-  flex: 0 0 1px;
-
-  background:
-    linear-gradient(
-      180deg,
-      transparent,
-      rgba(255,255,255,0.15),
-      transparent
-    );
+  background: var(--veloop-border-strong);
 }
 
-/* =========================================
-   HOVER / ROLL OPEN
-========================================= */
+.rewardArrow {
+  margin-left: 7px;
 
-.rewardWallet:hover,
-.rewardWallet:focus-visible {
-  width: 218px;
+  color: var(--veloop-gold-light);
 
-  border-color: rgba(240, 185, 11, 0.28);
-
-  background:
-    linear-gradient(
-      145deg,
-      rgba(240, 185, 11, 0.09),
-      rgba(255, 255, 255, 0.035)
-    );
-
-  box-shadow:
-    inset 0 1px rgba(255,255,255,0.1),
-    0 12px 32px rgba(0,0,0,0.25),
-    0 0 22px rgba(240,185,11,0.06);
-
-  transform: translateY(-1px);
+  font-size: 1.45rem;
+  line-height: 1;
 }
 
-.rewardWallet:hover .rewardWalletDetails,
-.rewardWallet:focus-visible .rewardWalletDetails {
-  width: 164px;
 
-  opacity: 1;
-
-  pointer-events: auto;
-}
-
-.rewardWallet:hover .rewardArrow,
-.rewardWallet:focus-visible .rewardArrow {
-  transform: translateX(3px);
-}
-
-/* =========================================
-   ACTIVE
-========================================= */
-
-.rewardWallet:active {
-  transform: scale(0.96);
-}
-
-.rewardWallet:focus-visible {
-  outline: 2px solid var(--veloop-gold);
-  outline-offset: 3px;
-}
-
-/* =========================================
-   ANIMATION
-========================================= */
-
-@keyframes rewardCoinFloat {
-  0%,
-  100% {
-    transform: translateY(0) rotate(-4deg);
-  }
-
-  50% {
-    transform: translateY(-3px) rotate(4deg);
-  }
-}
-/* =========================================
-   HERO CONTENT
-========================================= */
-
-.heroContent {
-  position: relative;
-  z-index: 5;
-  max-width: 850px;
-  margin: 0 auto;
-  text-align: center;
-  padding: 28px 20px 34px;
-}
-
-/* =========================
-   EYEBROW
-========================= */
-
-.heroEyebrow {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 14px;
-
-  color: rgba(255, 255, 255, 0.62);
-  font-size: 0.72rem;
-  font-weight: 800;
-  letter-spacing: 0.24em;
-  text-transform: uppercase;
-
-  animation: eyebrowReveal 900ms cubic-bezier(.2,.8,.2,1) both;
-}
-
-.heroEyebrow span {
-  transition: color 300ms ease, text-shadow 300ms ease;
-}
-
-.heroEyebrow span:nth-child(1) {
-  animation: eyebrowPulse 3s ease-in-out infinite;
-}
-
-.heroEyebrow span:nth-child(3) {
-  animation: eyebrowPulse 3s ease-in-out 1s infinite;
-}
-
-.heroEyebrow span:nth-child(5) {
-  animation: eyebrowPulse 3s ease-in-out 2s infinite;
-}
-
-.heroEyebrow i {
-  color: var(--veloop-gold);
-  font-style: normal;
-  opacity: 0.8;
-  animation: dotPulse 1.8s ease-in-out infinite;
-}
-
-/* =========================
-   MAIN GAMES TITLE
-========================= */
-
-.heroTitle {
-  position: relative;
-  display: inline-block;
-
-  margin: 0;
-
-  font-size: clamp(4rem, 11vw, 8rem);
-  line-height: 0.88;
-  font-weight: 950;
-  letter-spacing: -0.075em;
-
-  transform: translateZ(0);
-
-  animation:
-    titleEnter 1s cubic-bezier(.16,1,.3,1) both,
-    titleFloat 5s ease-in-out 1s infinite;
-}
-
-.titleMain,
-.titleShine {
-  display: block;
-}
-
-.titleMain {
-  position: relative;
-  z-index: 2;
-
-  background:
-    linear-gradient(
-      180deg,
-      #fff8d7 0%,
-      #ffd75e 18%,
-      #f0b90b 48%,
-      #c98b00 78%,
-      #fff0a3 100%
-    );
-
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-
-  text-shadow:
-    0 0 20px rgba(240, 185, 11, 0.28),
-    0 0 55px rgba(240, 185, 11, 0.18);
-
-  background-size: 180% 180%;
-
-  animation: goldShift 4s ease-in-out infinite;
-}
-
-/* Moving light passing through GAMES */
-
-.titleShine {
-  position: absolute;
-  inset: 0;
-
-  z-index: 3;
-
-  color: transparent;
-
-  background:
-    linear-gradient(
-      105deg,
-      transparent 35%,
-      rgba(255,255,255,0.05) 43%,
-      rgba(255,255,255,0.95) 50%,
-      rgba(255,255,255,0.05) 57%,
-      transparent 65%
-    );
-
-  background-size: 250% 100%;
-  background-position: 180% 0;
-
-  -webkit-background-clip: text;
-  background-clip: text;
-
-  pointer-events: none;
-
-  animation: titleSweep 3.8s ease-in-out 1.2s infinite;
-}
-
-/* Glow sitting behind the word */
-
-.titleGlow {
-  position: absolute;
-
-  width: min(620px, 90vw);
-  height: 170px;
-
-  left: 50%;
-  top: 50%;
-
-  transform: translate(-50%, -40%);
-
-  background:
-    radial-gradient(
-      ellipse,
-      rgba(240, 185, 11, 0.20) 0%,
-      rgba(240, 185, 11, 0.09) 35%,
-      transparent 72%
-    );
-
-  filter: blur(28px);
-
-  pointer-events: none;
-
-  animation: glowBreath 3.5s ease-in-out infinite;
-}
-
-/* =========================
-   SUBTITLE
-========================= */
-
-.heroSubtitle {
-  position: relative;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 9px;
-
-  margin: 22px 0 0;
-
-  color: rgba(255,255,255,0.78);
-
-  font-size: clamp(1rem, 2.2vw, 1.35rem);
-  font-weight: 500;
-  letter-spacing: 0.015em;
-
-  animation: subtitleReveal 1s cubic-bezier(.16,1,.3,1) 250ms both;
-}
-
-.heroSubtitle span {
-  position: relative;
-}
-
-.heroSubtitle span::after {
-  content: "";
-
-  position: absolute;
-  left: 0;
-  bottom: -5px;
-
-  width: 100%;
-  height: 1px;
-
-  background:
-    linear-gradient(
-      90deg,
-      transparent,
-      rgba(240,185,11,0.65),
-      transparent
-    );
-
-  transform: scaleX(0);
-  transform-origin: center;
-
-  animation: underlineReveal 1.4s ease 900ms forwards;
-}
-
-.heroSubtitle strong {
-  color: var(--veloop-gold);
-  font-weight: 800;
-
-  text-shadow:
-    0 0 10px rgba(240,185,11,0.65),
-    0 0 24px rgba(240,185,11,0.3);
-
-  animation: ampersandPulse 2s ease-in-out infinite;
-}
-
-/* =========================
-   ACCENT LINE
-========================= */
-
-.heroAccent {
-  position: relative;
-
-  width: 110px;
-  height: 2px;
-
-  margin: 25px auto 0;
-
-  overflow: hidden;
-
-  background: rgba(240,185,11,0.14);
-  border-radius: 999px;
-
-  box-shadow:
-    0 0 14px rgba(240,185,11,0.18);
-}
-
-.heroAccent span {
-  position: absolute;
-  inset: 0;
-
-  width: 35%;
-
-  background:
-    linear-gradient(
-      90deg,
-      transparent,
-      #fff5c4,
-      var(--veloop-gold),
-      transparent
-    );
-
-  filter: blur(0.2px);
-
-  animation: accentSweep 2.2s ease-in-out infinite;
-}
-
-/* =========================
-   PARTICLE FIELD
-========================= */
-
-.heroContent::before,
-.heroContent::after {
-  content: "";
-
-  position: absolute;
-
-  width: 4px;
-  height: 4px;
-
-  border-radius: 50%;
-
-  background: var(--veloop-gold);
-
-  box-shadow:
-    80px -35px 0 rgba(240,185,11,0.5),
-    -100px 20px 0 rgba(255,215,94,0.35),
-    150px 60px 0 rgba(240,185,11,0.25),
-    -170px -50px 0 rgba(255,215,94,0.3),
-    230px -10px 0 rgba(240,185,11,0.2);
-
-  opacity: 0;
-
-  pointer-events: none;
-}
-
-.heroContent::before {
-  animation: particlesOne 5s ease-in-out infinite;
-}
-
-.heroContent::after {
-  animation: particlesTwo 6s ease-in-out 1s infinite;
-}
-
-/* =========================
-   ANIMATIONS
-========================= */
-
-@keyframes eyebrowReveal {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-    letter-spacing: 0.4em;
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-    letter-spacing: 0.24em;
-  }
-}
-
-@keyframes eyebrowPulse {
-  0%, 100% {
-    color: rgba(255,255,255,0.62);
-    text-shadow: none;
-  }
-
-  50% {
-    color: rgba(255,215,94,0.9);
-    text-shadow: 0 0 14px rgba(240,185,11,0.3);
-  }
-}
-
-@keyframes dotPulse {
-  0%, 100% {
-    opacity: 0.5;
-    transform: scale(1);
-  }
-
-  50% {
-    opacity: 1;
-    transform: scale(1.35);
-  }
-}
-
-@keyframes titleEnter {
-  from {
-    opacity: 0;
-    transform: translateY(30px) scale(0.92);
-    filter: blur(12px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-    filter: blur(0);
-  }
-}
-
-@keyframes titleFloat {
-  0%, 100% {
-    transform: translateY(0);
-  }
-
-  50% {
-    transform: translateY(-4px);
-  }
-}
-
-@keyframes goldShift {
-  0%, 100% {
-    background-position: 0% 50%;
-  }
-
-  50% {
-    background-position: 100% 50%;
-  }
-}
-
-@keyframes titleSweep {
-  0%, 55% {
-    background-position: 180% 0;
-  }
-
-  75%, 100% {
-    background-position: -80% 0;
-  }
-}
-
-@keyframes glowBreath {
-  0%, 100% {
-    opacity: 0.65;
-    transform: translate(-50%, -40%) scale(0.95);
-  }
-
-  50% {
-    opacity: 1;
-    transform: translate(-50%, -40%) scale(1.08);
-  }
-}
-
-@keyframes subtitleReveal {
-  from {
-    opacity: 0;
-    transform: translateY(15px);
-    filter: blur(5px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-    filter: blur(0);
-  }
-}
-
-@keyframes underlineReveal {
-  to {
-    transform: scaleX(1);
-  }
-}
-
-@keyframes ampersandPulse {
-  0%, 100% {
-    transform: scale(1);
-  }
-
-  50% {
-    transform: scale(1.18);
-  }
-}
-
-@keyframes accentSweep {
-  0% {
-    transform: translateX(-120%);
-  }
-
-  55%, 100% {
-    transform: translateX(330%);
-  }
-}
-
-@keyframes particlesOne {
-  0%, 100% {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-
-  30%, 70% {
-    opacity: 0.7;
-    transform: translateY(-8px);
-  }
-}
-
-@keyframes particlesTwo {
-  0%, 100% {
-    opacity: 0;
-    transform: translateY(10px) scale(0.8);
-  }
-
-  40%, 70% {
-    opacity: 0.45;
-    transform: translateY(-12px) scale(1);
-  }
-}
-
-/* =========================
-   MOBILE
-========================= */
-
-@media (max-width: 600px) {
-  .heroContent {
-    padding-top: 20px;
-    padding-bottom: 28px;
-  }
-
-  .heroEyebrow {
-    gap: 7px;
-    font-size: 0.62rem;
-    letter-spacing: 0.18em;
-  }
-
-  .heroTitle {
-    font-size: clamp(3.5rem, 20vw, 5.5rem);
-  }
-
-  .heroSubtitle {
-    font-size: 0.95rem;
-    gap: 7px;
-  }
-
-  .titleGlow {
-    width: 90vw;
-    height: 130px;
-  }
-}
-
-@media (max-width: 380px) {
-  .heroEyebrow {
-    font-size: 0.56rem;
-  }
-
-  .heroSubtitle {
-    font-size: 0.85rem;
-  }
-}
-
-/* =========================
-   REDUCED MOTION
-========================= */
-
-@media (prefers-reduced-motion: reduce) {
-  .heroEyebrow,
-  .heroEyebrow span,
-  .heroEyebrow i,
-  .heroTitle,
-  .titleMain,
-  .titleShine,
-  .titleGlow,
-  .heroSubtitle,
-  .heroSubtitle span::after,
-  .heroSubtitle strong,
-  .heroAccent span,
-  .heroContent::before,
-  .heroContent::after {
-    animation: none;
-  }
-
-  .titleShine {
-    display: none;
-  }
-}
-
+/* =========================================================
+   COMMON SECTION
+========================================================= */
+
+.loopSection,
+.exploreSection,
+.whyPlaySection,
+.earnSection,
+.useCoinsSection,
+.featuredSection,
 .howWorks {
-  position: relative;
-  z-index: 2;
+  width: min(1280px, calc(100% - 40px));
 
-  width: min(1180px, calc(100% - 40px));
-  margin: 30px auto 0;
-  padding: 80px 0 100px;
-
-  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
 }
 
-/* =========================
-   SECTION HEADER
-========================= */
 
-.howWorksHeader {
-  position: relative;
-  margin-bottom: 48px;
+/* =========================================================
+   SECTION HEADINGS
+========================================================= */
+
+.sectionHeading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+
+  gap: 30px;
+
+  margin-bottom: 30px;
+}
+
+.sectionHeadingCentered {
+  max-width: 700px;
+
+  margin: 0 auto 42px;
+
+  text-align: center;
 }
 
 .sectionEyebrow {
   display: inline-block;
 
-  margin-bottom: 12px;
+  margin-bottom: 11px;
 
-  color: var(--veloop-gold);
+  color: var(--veloop-gold-light);
 
-  font-size: 0.68rem;
-  font-weight: 800;
-  letter-spacing: 0.22em;
+  font-size: 0.63rem;
+  font-weight: 850;
+
+  letter-spacing: 0.2em;
+
   text-transform: uppercase;
-
-  text-shadow:
-    0 0 14px rgba(240, 185, 11, 0.3);
-
-  animation: howEyebrowPulse 3s ease-in-out infinite;
 }
 
+.sectionHeading h2,
+.sectionHeadingCentered h2,
 .howWorksTitle {
   margin: 0;
 
   color: var(--veloop-text);
 
-  font-size: clamp(2rem, 5vw, 3.4rem);
+  font-size:
+    clamp(2rem, 4vw, 3.3rem);
+
   line-height: 1;
-  font-weight: 850;
+
+  font-weight: 950;
+
   letter-spacing: -0.045em;
 }
 
+.sectionHeading h2 span,
+.sectionHeadingCentered h2 span,
 .howWorksTitle span {
   color: var(--veloop-gold);
-
-  text-shadow:
-    0 0 22px rgba(240, 185, 11, 0.2);
 }
 
-.howWorksSubtitle {
-  margin: 16px 0 0;
+.sectionHeading p,
+.sectionHeadingCentered p {
+  margin: 12px 0 0;
 
   color: var(--veloop-text-secondary);
 
-  font-size: 0.98rem;
+  font-size: 0.9rem;
+  line-height: 1.6;
 }
 
-/* =========================
-   STEP CARDS
-========================= */
 
-.steps {
-  position: relative;
+/* =========================================================
+   PLAY / EARN / REDEEM
+========================================================= */
 
+.loopSection {
+  padding-top: 105px;
+  padding-bottom: 115px;
+}
+
+.loopGrid {
   display: grid;
-  grid-template-columns: 1fr auto 1fr auto 1fr;
 
-  align-items: stretch;
+  grid-template-columns:
+    repeat(3, minmax(0, 1fr));
+
   gap: 18px;
 }
 
-.stepCard {
+.loopCard {
   position: relative;
 
-  min-height: 245px;
+  min-height: 330px;
 
-  padding: 28px 24px;
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  padding: 25px;
 
   overflow: hidden;
+
+  border: 1px solid var(--veloop-border);
+
+  border-radius: var(--veloop-radius-lg);
 
   background:
     linear-gradient(
       145deg,
-      rgba(255,255,255,0.045),
-      rgba(255,255,255,0.015)
+      rgba(255, 255, 255, 0.045),
+      rgba(255, 255, 255, 0.018)
     );
 
-  border: 1px solid rgba(255,255,255,0.08);
-  border-radius: var(--veloop-radius-lg);
-
-  box-shadow:
-    0 18px 45px rgba(0,0,0,0.22);
-
-  backdrop-filter: blur(14px);
-
   transition:
-    transform 300ms ease,
-    border-color 300ms ease,
-    box-shadow 300ms ease;
+    transform 220ms ease,
+    border-color 220ms ease,
+    background 220ms ease;
 }
 
-.stepCard::before {
+.loopCard::before {
   content: "";
 
   position: absolute;
@@ -1268,547 +341,1896 @@
   width: 180px;
   height: 180px;
 
-  top: -90px;
-  right: -90px;
+  right: -80px;
+  top: -80px;
 
   border-radius: 50%;
 
   background:
     radial-gradient(
       circle,
-      rgba(240,185,11,0.12),
+      rgba(240, 185, 11, 0.12),
       transparent 68%
     );
 
   pointer-events: none;
 }
 
-.stepCard:hover {
-  transform: translateY(-7px);
+.loopCard:hover {
+  transform: translateY(-6px);
 
-  border-color: rgba(240,185,11,0.28);
-
-  box-shadow:
-    0 24px 55px rgba(0,0,0,0.3),
-    0 0 25px rgba(240,185,11,0.06);
-}
-
-/* =========================
-   NUMBER
-========================= */
-
-.stepNumber {
-  position: absolute;
-
-  top: 16px;
-  right: 18px;
-
-  color: rgba(255,255,255,0.18);
-
-  font-size: 0.68rem;
-  font-weight: 800;
-  letter-spacing: 0.12em;
-}
-
-/* =========================
-   ICON
-========================= */
-
-.stepIcon {
-  width: 70px;
-  height: 70px;
-
-  margin-bottom: 20px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  border-radius: 20px;
+  border-color:
+    rgba(240, 185, 11, 0.26);
 
   background:
     linear-gradient(
       145deg,
-      rgba(240,185,11,0.15),
-      rgba(240,185,11,0.045)
+      rgba(240, 185, 11, 0.065),
+      rgba(255, 255, 255, 0.018)
     );
-
-  border: 1px solid rgba(240,185,11,0.18);
-
-  box-shadow:
-    inset 0 0 20px rgba(240,185,11,0.04),
-    0 8px 25px rgba(0,0,0,0.2);
-
-  transition:
-    transform 300ms ease,
-    box-shadow 300ms ease;
 }
 
-.stepCard:hover .stepIcon {
-  transform: translateY(-3px) scale(1.05);
-
-  box-shadow:
-    0 0 25px rgba(240,185,11,0.15);
+.loopCardTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
-.stepIcon span {
-  font-size: 2rem;
+.loopNumber {
+  color: var(--veloop-text-disabled);
 
-  filter:
-    drop-shadow(0 0 8px rgba(240,185,11,0.18));
+  font-size: 0.7rem;
+  font-weight: 900;
+
+  letter-spacing: 0.1em;
 }
 
-.stepIcon img {
-  width: 39px;
-  height: 39px;
+.loopIcon {
+  width: 52px;
+  height: 52px;
+
+  display: grid;
+  place-items: center;
+
+  border: 1px solid
+    rgba(240, 185, 11, 0.16);
+
+  border-radius: 15px;
+
+  background:
+    rgba(240, 185, 11, 0.07);
+
+  font-size: 1.45rem;
+}
+
+.loopIcon img {
+  width: 30px;
+  height: 30px;
 
   object-fit: contain;
-
-  filter:
-    drop-shadow(0 0 9px rgba(240,185,11,0.4));
-
-  animation: stepCoinFloat 3s ease-in-out infinite;
 }
 
-/* =========================
-   CONTENT
-========================= */
+.loopLabel {
+  display: block;
 
-.stepContent h3 {
-  margin: 0 0 9px;
+  margin-top: 34px;
 
-  color: var(--veloop-text);
+  color: var(--veloop-gold);
 
-  font-size: 1rem;
-  font-weight: 800;
-  letter-spacing: 0.12em;
+  font-size: 0.65rem;
+  font-weight: 900;
+
+  letter-spacing: 0.16em;
 }
 
-.stepContent p {
-  max-width: 230px;
+.loopCard h3 {
+  margin: 8px 0 10px;
+
+  font-size: 1.35rem;
+  font-weight: 850;
+
+  letter-spacing: -0.025em;
+}
+
+.loopCard p {
+  max-width: 360px;
 
   margin: 0;
 
-  color: var(--veloop-text-muted);
+  color: var(--veloop-text-secondary);
 
-  font-size: 0.86rem;
-  line-height: 1.6;
+  font-size: 0.87rem;
+
+  line-height: 1.65;
 }
 
-/* =========================
-   CONNECTORS
-========================= */
+.loopCardLine {
+  position: absolute;
+
+  left: 25px;
+  right: 25px;
+  bottom: 22px;
+
+  height: 1px;
+
+  background:
+    linear-gradient(
+      90deg,
+      var(--veloop-gold),
+      transparent
+    );
+
+  opacity: 0.35;
+}
+
+
+/* =========================================================
+   EXPLORE GAMES
+========================================================= */
+
+.exploreSection {
+  padding-top: 80px;
+  padding-bottom: 12px;
+}
+
+.gameCount {
+  min-width: 90px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.gameCount strong {
+  color: var(--veloop-gold);
+
+  font-size: 2.2rem;
+  line-height: 1;
+
+  font-weight: 950;
+}
+
+.gameCount span {
+  margin-top: 4px;
+
+  color: var(--veloop-text-muted);
+
+  font-size: 0.58rem;
+  font-weight: 850;
+
+  letter-spacing: 0.16em;
+}
+
+.categories {
+  display: flex;
+  align-items: center;
+
+  gap: 8px;
+
+  margin-bottom: 20px;
+
+  overflow-x: auto;
+
+  scrollbar-width: none;
+}
+
+.categories::-webkit-scrollbar {
+  display: none;
+}
+
+.categoryButton {
+  flex: 0 0 auto;
+
+  min-height: 38px;
+
+  padding:
+    0
+    15px;
+
+  border: 1px solid var(--veloop-border);
+
+  border-radius: 999px;
+
+  color: var(--veloop-text-secondary);
+
+  background:
+    rgba(255, 255, 255, 0.025);
+
+  font-size: 0.72rem;
+  font-weight: 750;
+
+  cursor: pointer;
+
+  transition:
+    color 180ms ease,
+    border-color 180ms ease,
+    background 180ms ease;
+}
+
+.categoryButton:hover {
+  color: var(--veloop-text);
+
+  border-color:
+    rgba(240, 185, 11, 0.3);
+}
+
+.categoryActive {
+  color: #171827;
+
+  border-color: var(--veloop-gold);
+
+  background: var(--veloop-gold);
+
+  font-weight: 900;
+}
+
+
+/* =========================================================
+   CAROUSEL
+========================================================= */
+
+.gamesCarouselSection {
+  width: 100%;
+
+  padding:
+    0 0 110px;
+}
+
+
+/* =========================================================
+   WHY PLAY
+========================================================= */
+
+.whyPlaySection {
+  padding-top: 90px;
+  padding-bottom: 110px;
+}
+
+.whyPlayGrid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(3, minmax(0, 1fr));
+
+  gap: 18px;
+}
+
+.whyPlayCard {
+  position: relative;
+
+  min-height: 275px;
+
+  padding: 25px;
+
+  border: 1px solid var(--veloop-border);
+
+  border-radius: var(--veloop-radius-lg);
+
+  background:
+    rgba(255, 255, 255, 0.025);
+
+  transition:
+    transform 220ms ease,
+    border-color 220ms ease;
+}
+
+.whyPlayCard:hover {
+  transform: translateY(-5px);
+
+  border-color:
+    rgba(240, 185, 11, 0.25);
+}
+
+.cardIcon {
+  width: 52px;
+  height: 52px;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 15px;
+
+  background:
+    rgba(240, 185, 11, 0.08);
+
+  border: 1px solid
+    rgba(240, 185, 11, 0.15);
+
+  font-size: 1.35rem;
+}
+
+.cardIcon img {
+  width: 30px;
+  height: 30px;
+
+  object-fit: contain;
+}
+
+.cardNumber {
+  position: absolute;
+
+  top: 26px;
+  right: 25px;
+
+  color: var(--veloop-text-disabled);
+
+  font-size: 0.65rem;
+  font-weight: 900;
+}
+
+.whyPlayCard h3 {
+  margin: 28px 0 9px;
+
+  font-size: 1.2rem;
+  font-weight: 850;
+}
+
+.whyPlayCard p {
+  margin: 0;
+
+  color: var(--veloop-text-secondary);
+
+  font-size: 0.84rem;
+
+  line-height: 1.65;
+}
+
+
+/* =========================================================
+   EARN GAME COINS
+========================================================= */
+
+.earnSection {
+  padding-top: 90px;
+  padding-bottom: 110px;
+}
+
+.coinBalanceShowcase {
+  display: flex;
+  align-items: center;
+
+  gap: 12px;
+
+  padding:
+    12px 16px;
+
+  border: 1px solid
+    rgba(240, 185, 11, 0.16);
+
+  border-radius: 16px;
+
+  background:
+    rgba(240, 185, 11, 0.045);
+}
+
+.coinBalanceShowcase img {
+  width: 38px;
+  height: 38px;
+
+  object-fit: contain;
+}
+
+.coinBalanceShowcase div {
+  display: flex;
+  flex-direction: column;
+}
+
+.coinBalanceShowcase span {
+  color: var(--veloop-text-muted);
+
+  font-size: 0.56rem;
+  font-weight: 800;
+
+  letter-spacing: 0.1em;
+}
+
+.coinBalanceShowcase strong {
+  margin-top: 2px;
+
+  color: var(--veloop-gold-light);
+
+  font-size: 1.2rem;
+  font-weight: 950;
+}
+
+.earnSteps {
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1fr)
+    70px
+    minmax(0, 1fr)
+    70px
+    minmax(0, 1fr);
+
+  align-items: center;
+}
+
+.earnStep {
+  min-height: 255px;
+
+  padding: 24px;
+
+  border: 1px solid var(--veloop-border);
+
+  border-radius: var(--veloop-radius-lg);
+
+  background:
+    rgba(255, 255, 255, 0.025);
+}
+
+.stepNumber {
+  display: block;
+
+  color: var(--veloop-gold);
+
+  font-size: 0.65rem;
+  font-weight: 900;
+
+  letter-spacing: 0.12em;
+}
+
+.stepIcon {
+  width: 52px;
+  height: 52px;
+
+  display: grid;
+  place-items: center;
+
+  margin-top: 20px;
+
+  border-radius: 15px;
+
+  background:
+    rgba(240, 185, 11, 0.08);
+
+  font-size: 1.35rem;
+}
+
+.stepIcon img {
+  width: 29px;
+  height: 29px;
+
+  object-fit: contain;
+}
+
+.earnStep h3 {
+  margin: 22px 0 8px;
+
+  font-size: 1.12rem;
+  font-weight: 850;
+}
+
+.earnStep p {
+  margin: 0;
+
+  color: var(--veloop-text-secondary);
+
+  font-size: 0.82rem;
+
+  line-height: 1.65;
+}
 
 .stepConnector {
-  align-self: center;
-
-  width: 42px;
   height: 1px;
 
   background:
     linear-gradient(
       90deg,
       transparent,
-      rgba(240,185,11,0.5),
+      rgba(240, 185, 11, 0.5),
       transparent
     );
-
-  position: relative;
 }
 
-.stepConnector::after {
-  content: "›";
 
-  position: absolute;
+/* =========================================================
+   USE GAME COINS
+========================================================= */
 
-  left: 50%;
-  top: 50%;
+.useCoinsSection {
+  padding-top: 90px;
+  padding-bottom: 110px;
 
-  transform: translate(-50%, -54%);
+  text-align: center;
+}
 
-  color: rgba(240,185,11,0.65);
+.useCoinsGrid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(3, minmax(0, 1fr));
+
+  gap: 18px;
+
+  text-align: left;
+}
+
+.useCoinCard {
+  min-height: 260px;
+
+  padding: 25px;
+
+  border: 1px solid var(--veloop-border);
+
+  border-radius: var(--veloop-radius-lg);
+
+  background:
+    rgba(255, 255, 255, 0.025);
+
+  transition:
+    transform 220ms ease,
+    border-color 220ms ease;
+}
+
+.useCoinCard:hover {
+  transform: translateY(-5px);
+
+  border-color:
+    rgba(240, 185, 11, 0.24);
+}
+
+.useCoinIcon {
+  width: 52px;
+  height: 52px;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 15px;
+
+  background:
+    rgba(240, 185, 11, 0.08);
+
+  font-size: 1.35rem;
+}
+
+.useCoinCard > span {
+  display: block;
+
+  margin-top: 25px;
+
+  color: var(--veloop-gold);
+
+  font-size: 0.62rem;
+  font-weight: 900;
+}
+
+.useCoinCard h3 {
+  margin: 7px 0 9px;
+
+  font-size: 1.15rem;
+  font-weight: 850;
+}
+
+.useCoinCard p {
+  margin: 0;
+
+  color: var(--veloop-text-secondary);
+
+  font-size: 0.83rem;
+
+  line-height: 1.65;
+}
+
+.textLink {
+  display: inline-flex;
+  align-items: center;
+
+  gap: 8px;
+
+  margin-top: 28px;
+
+  padding: 0;
+
+  border: 0;
+
+  color: var(--veloop-gold-light);
+
+  background: transparent;
+
+  font-size: 0.78rem;
+  font-weight: 850;
+
+  cursor: pointer;
+}
+
+.textLink span {
+  transition: transform 180ms ease;
+}
+
+.textLink:hover span {
+  transform: translateX(4px);
+}
+
+
+/* =========================================================
+   FEATURED GAMES
+========================================================= */
+
+.featuredSection {
+  padding-top: 90px;
+  padding-bottom: 110px;
+}
+
+.featuredBadge {
+  padding:
+    7px 11px;
+
+  border: 1px solid
+    rgba(240, 185, 11, 0.2);
+
+  border-radius: 999px;
+
+  color: var(--veloop-gold-light);
+
+  background:
+    rgba(240, 185, 11, 0.06);
+
+  font-size: 0.58rem;
+  font-weight: 900;
+
+  letter-spacing: 0.1em;
+}
+
+.featuredGrid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 20px;
+}
+
+.featuredGameCard {
+  overflow: hidden;
+
+  border: 1px solid var(--veloop-border);
+
+  border-radius: 24px;
+
+  background:
+    var(--veloop-surface);
+
+  transition:
+    transform 250ms ease,
+    border-color 250ms ease,
+    box-shadow 250ms ease;
+}
+
+.featuredGameCard:hover {
+  transform: translateY(-6px);
+
+  border-color:
+    rgba(240, 185, 11, 0.25);
+
+  box-shadow:
+    var(--veloop-shadow-md);
+}
+
+.featuredGameVisual {
+  position: relative;
+
+  min-height: 230px;
+
+  overflow: hidden;
+
+  display: grid;
+  place-items: center;
+}
+
+.mergeMasterCard .featuredGameVisual {
+  background:
+    radial-gradient(
+      circle at 50% 45%,
+      rgba(139, 108, 255, 0.22),
+      transparent 55%
+    ),
+    #171928;
+}
+
+.wormzyCard .featuredGameVisual {
+  background:
+    radial-gradient(
+      circle at 50% 45%,
+      rgba(16, 185, 129, 0.2),
+      transparent 55%
+    ),
+    #101d1b;
+}
+
+.featuredGamePattern {
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 8px;
+
+  transform: rotate(-8deg);
+}
+
+.featuredGamePattern span {
+  width: 55px;
+  height: 55px;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 13px;
+
+  color: white;
 
   font-size: 1rem;
+  font-weight: 950;
 
-  text-shadow:
-    0 0 10px rgba(240,185,11,0.35);
+  box-shadow:
+    0 12px 25px rgba(0,0,0,0.25);
 }
 
-/* =========================
-   ANIMATION
-========================= */
-
-@keyframes howEyebrowPulse {
-  0%, 100% {
-    opacity: 0.65;
-  }
-
-  50% {
-    opacity: 1;
-  }
+.featuredGamePattern span:nth-child(1) {
+  background: #7c3aed;
 }
 
-@keyframes stepCoinFloat {
-  0%, 100% {
-    transform: translateY(0) rotate(-3deg);
-  }
-
-  50% {
-    transform: translateY(-5px) rotate(3deg);
-  }
+.featuredGamePattern span:nth-child(2) {
+  background: #f97316;
 }
 
-/* =========================
-   TABLET
-========================= */
-
-@media (max-width: 850px) {
-  .steps {
-    grid-template-columns: 1fr;
-    gap: 14px;
-  }
-
-  .stepConnector {
-    width: 1px;
-    height: 28px;
-
-    justify-self: center;
-  }
-
-  .stepConnector::after {
-    content: "↓";
-  }
-
-  .stepCard {
-    min-height: 190px;
-  }
+.featuredGamePattern span:nth-child(3) {
+  background: #2563eb;
 }
 
-/* =========================
-   MOBILE
-========================= */
-
-@media (max-width: 600px) {
-  .howWorks {
-    width: min(100% - 28px, 500px);
-
-    margin-top: 15px;
-    padding: 60px 0 85px;
-  }
-
-  .howWorksHeader {
-    margin-bottom: 32px;
-  }
-
-  .howWorksTitle {
-    font-size: 2rem;
-  }
-
-  .howWorksSubtitle {
-    font-size: 0.88rem;
-  }
-
-  .stepCard {
-    min-height: 175px;
-    padding: 25px 20px;
-  }
-
-  .stepIcon {
-    width: 62px;
-    height: 62px;
-    margin-bottom: 15px;
-  }
-
-  .stepIcon span {
-    font-size: 1.7rem;
-  }
-
-  .stepIcon img {
-    width: 34px;
-    height: 34px;
-  }
+.featuredGamePattern span:nth-child(4) {
+  background: #16a34a;
 }
 
-/* =========================
-   REDUCED MOTION
-========================= */
-
-@media (prefers-reduced-motion: reduce) {
-  .sectionEyebrow,
-  .stepIcon img {
-    animation: none;
-  }
-
-  .stepCard {
-    transition: none;
-  }
-
-  .stepCard:hover {
-    transform: none;
-  }
+.featuredGamePattern span:nth-child(5) {
+  background: #d4a72c;
 }
-/* =========================================
-   FLOATING COINS
-========================================= */
 
-.coinField {
+.wormzyVisual {
+  font-size: 6rem;
+
+  filter:
+    drop-shadow(
+      0 12px 25px rgba(0,0,0,0.35)
+    );
+}
+
+.featuredGameBadge {
+  position: absolute;
+
+  top: 18px;
+  right: 18px;
+
+  padding:
+    6px 10px;
+
+  border: 1px solid
+    rgba(255,255,255,0.12);
+
+  border-radius: 999px;
+
+  color: var(--veloop-gold-light);
+
+  background:
+    rgba(22, 24, 39, 0.7);
+
+  backdrop-filter: blur(8px);
+
+  font-size: 0.55rem;
+  font-weight: 900;
+
+  letter-spacing: 0.12em;
+}
+
+.featuredGameContent {
+  padding: 24px;
+}
+
+.featuredGameCategory {
+  color: var(--veloop-gold);
+
+  font-size: 0.58rem;
+  font-weight: 900;
+
+  letter-spacing: 0.15em;
+}
+
+.featuredGameContent h3 {
+  margin: 8px 0 8px;
+
+  font-size: 1.6rem;
+  font-weight: 900;
+
+  letter-spacing: -0.035em;
+}
+
+.featuredGameContent p {
+  max-width: 470px;
+
+  margin: 0 0 20px;
+
+  color: var(--veloop-text-secondary);
+
+  font-size: 0.83rem;
+
+  line-height: 1.65;
+}
+
+.featuredPlayButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 18px;
+
+  min-height: 43px;
+
+  padding:
+    0 15px;
+
+  border: 1px solid
+    rgba(240, 185, 11, 0.25);
+
+  border-radius: 11px;
+
+  color: #171827;
+
+  background: var(--veloop-gold);
+
+  font-size: 0.7rem;
+  font-weight: 900;
+
+  cursor: pointer;
+
+  transition:
+    transform 180ms ease,
+    background 180ms ease;
+}
+
+.featuredPlayButton:hover {
+  transform: translateY(-2px);
+
+  background:
+    var(--veloop-gold-light);
+}
+
+
+/* =========================================================
+   GAME COIN SHOWCASE
+========================================================= */
+
+.coinShowcaseSection {
+  position: relative;
+
+  width: min(1280px, calc(100% - 40px));
+
+  min-height: 620px;
+
+  margin:
+    30px auto 110px;
+
+  overflow: hidden;
+
+  display: flex;
+  align-items: center;
+
+  border: 1px solid var(--veloop-border);
+
+  border-radius: 30px;
+
+  background:
+    radial-gradient(
+      circle at 72% 50%,
+      rgba(240, 185, 11, 0.12),
+      transparent 35%
+    ),
+    #191b2c;
+}
+
+.coinShowcaseBackground {
   position: absolute;
 
   inset: 0;
 
   pointer-events: none;
-
-  overflow: hidden;
-
-  z-index: 1;
 }
 
-.floatingCoin {
+.showcaseGlow {
   position: absolute;
 
-  width: 25px;
-  height: 25px;
+  width: 420px;
+  height: 420px;
+
+  right: 10%;
+
+  top: 50%;
+
+  transform: translateY(-50%);
+
+  border-radius: 50%;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(240, 185, 11, 0.18),
+      transparent 68%
+    );
+
+  filter: blur(25px);
+}
+
+.showcaseRing {
+  position: absolute;
+
+  border: 1px solid
+    rgba(240, 185, 11, 0.14);
+
+  border-radius: 50%;
+
+  right: 8%;
+  top: 50%;
+
+  transform:
+    translateY(-50%)
+    rotate(-18deg);
+}
+
+.showcaseRingOne {
+  width: 420px;
+  height: 420px;
+}
+
+.showcaseRingTwo {
+  width: 520px;
+  height: 520px;
+
+  border-color:
+    rgba(255,255,255,0.055);
+}
+
+.coinShowcaseContent {
+  position: relative;
+
+  z-index: 3;
+
+  width: 50%;
+
+  padding:
+    70px;
+}
+
+.coinShowcaseContent h2 {
+  margin: 0;
+
+  font-size:
+    clamp(2.2rem, 4vw, 4rem);
+
+  line-height: 0.98;
+
+  font-weight: 950;
+
+  letter-spacing: -0.055em;
+}
+
+.coinShowcaseContent h2 span {
+  color: var(--veloop-gold);
+}
+
+.coinShowcaseContent p {
+  max-width: 490px;
+
+  margin: 20px 0;
+
+  color: var(--veloop-text-secondary);
+
+  font-size: 0.9rem;
+
+  line-height: 1.7;
+}
+
+.showcaseBalance {
+  display: inline-flex;
+  align-items: center;
+
+  gap: 12px;
+
+  margin-bottom: 22px;
+
+  padding:
+    10px 15px;
+
+  border: 1px solid
+    rgba(240, 185, 11, 0.18);
+
+  border-radius: 15px;
+
+  background:
+    rgba(240, 185, 11, 0.05);
+}
+
+.showcaseBalance img {
+  width: 37px;
+  height: 37px;
+
+  object-fit: contain;
+}
+
+.showcaseBalance div {
+  display: flex;
+  flex-direction: column;
+}
+
+.showcaseBalance span {
+  color: var(--veloop-text-muted);
+
+  font-size: 0.53rem;
+  font-weight: 850;
+
+  letter-spacing: 0.1em;
+}
+
+.showcaseBalance strong {
+  color: var(--veloop-gold-light);
+
+  font-size: 1.15rem;
+  font-weight: 950;
+}
+
+.bigCoinContainer {
+  position: absolute;
+
+  z-index: 2;
+
+  width: 50%;
+
+  height: 100%;
+
+  right: 0;
+
+  display: grid;
+  place-items: center;
+}
+
+.bigCoin {
+  width: clamp(220px, 30vw, 350px);
+  aspect-ratio: 1;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 50%;
+
+  background:
+    radial-gradient(
+      circle at 35% 25%,
+      #fff1a8,
+      #ffd75e 18%,
+      #f0b90b 48%,
+      #c88700 76%,
+      #8b6100
+    );
+
+  border:
+    9px solid rgba(255,255,255,0.15);
+
+  box-shadow:
+    inset 0 0 0 10px rgba(255,255,255,0.1),
+    inset 0 0 45px rgba(255,255,255,0.16),
+    0 35px 80px rgba(0,0,0,0.4),
+    0 0 70px rgba(240,185,11,0.2);
+
+  animation:
+    showcaseCoinFloat
+    4s
+    ease-in-out
+    infinite;
+}
+
+.bigCoin img {
+  width: 70%;
+  height: 70%;
 
   object-fit: contain;
 
-  opacity: 0.18;
-
   filter:
-    drop-shadow(0 0 5px rgba(240, 185, 11, 0.28));
-
-  will-change: transform, opacity;
-
-  animation:
-    coinFloat 6s ease-in-out infinite;
+    drop-shadow(
+      0 10px 15px rgba(75,45,0,0.35)
+    );
 }
 
-.coinOne {
-  left: 16%;
-  top: 42%;
-
-  width: 22px;
-  height: 22px;
-
-  animation-delay: -1s;
-}
-
-.coinTwo {
-  left: 29%;
-  top: 20%;
-
-  width: 17px;
-  height: 17px;
-
-  opacity: 0.11;
-
-  animation-delay: -3.5s;
-}
-
-.coinThree {
-  right: 19%;
-  top: 35%;
-
-  width: 29px;
-  height: 29px;
-
-  opacity: 0.16;
-
-  animation-delay: -2s;
-}
-
-.coinFour {
-  right: 31%;
-  top: 17%;
-
-  width: 15px;
-  height: 15px;
-
-  opacity: 0.1;
-
-  animation-delay: -4.5s;
-}
-
-.coinFive {
-  left: 48%;
-  top: 65%;
-
-  width: 19px;
-  height: 19px;
-
-  opacity: 0.09;
-
-  animation-delay: -5s;
-}
-
-/* =========================================
-   ANIMATIONS
-========================================= */
-
-@keyframes coinFloat {
-  0% {
-    transform:
-      translate3d(0, 16px, 0)
-      rotate(-8deg);
-
-    opacity: 0.05;
-  }
-
-  30% {
-    opacity: 0.18;
-  }
-
-  50% {
-    transform:
-      translate3d(10px, -12px, 0)
-      rotate(8deg);
-
-    opacity: 0.2;
-  }
-
-  75% {
-    opacity: 0.13;
-  }
-
-  100% {
-    transform:
-      translate3d(-5px, -32px, 0)
-      rotate(-5deg);
-
-    opacity: 0.03;
-  }
-}
-
-@keyframes titleGlow {
+@keyframes showcaseCoinFloat {
   0%,
   100% {
-    text-shadow:
-      0 0 20px rgba(240, 185, 11, 0.08),
-      0 5px 28px rgba(0, 0, 0, 0.42);
+    transform: translateY(0) rotate(-3deg);
   }
 
   50% {
-    text-shadow:
-      0 0 26px rgba(240, 185, 11, 0.16),
-      0 5px 28px rgba(0, 0, 0, 0.42);
+    transform: translateY(-14px) rotate(3deg);
   }
 }
 
-@keyframes accentPulse {
-  0%,
-  100% {
-    opacity: 0.45;
-    transform: scaleX(0.8);
+
+/* =========================================================
+   BUTTONS
+========================================================= */
+
+.primaryButton,
+.secondaryButton {
+  min-height: 46px;
+
+  padding:
+    0 18px;
+
+  border-radius: 12px;
+
+  font-size: 0.72rem;
+  font-weight: 900;
+
+  cursor: pointer;
+
+  transition:
+    transform 180ms ease,
+    background 180ms ease,
+    border-color 180ms ease;
+}
+
+.primaryButton {
+  border: 1px solid var(--veloop-gold);
+
+  color: #171827;
+
+  background: var(--veloop-gold);
+
+  box-shadow:
+    0 8px 22px rgba(240,185,11,0.13);
+}
+
+.primaryButton:hover {
+  transform: translateY(-2px);
+
+  background: var(--veloop-gold-light);
+}
+
+.secondaryButton {
+  border: 1px solid var(--veloop-border-strong);
+
+  color: var(--veloop-text);
+
+  background:
+    rgba(255,255,255,0.035);
+}
+
+.secondaryButton:hover {
+  transform: translateY(-2px);
+
+  border-color:
+    rgba(240,185,11,0.3);
+}
+
+
+/* =========================================================
+   HOW VELOOP WORKS
+========================================================= */
+
+.howWorks {
+  padding-top: 90px;
+  padding-bottom: 110px;
+}
+
+.howWorksHeader {
+  max-width: 650px;
+
+  margin: 0 auto 45px;
+
+  text-align: center;
+}
+
+.howWorksSubtitle {
+  margin-top: 12px;
+
+  color: var(--veloop-text-secondary);
+
+  font-size: 0.88rem;
+}
+
+.steps {
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1fr)
+    70px
+    minmax(0, 1fr)
+    70px
+    minmax(0, 1fr);
+
+  align-items: center;
+}
+
+.stepCard {
+  min-height: 240px;
+
+  padding: 24px;
+
+  border: 1px solid var(--veloop-border);
+
+  border-radius: var(--veloop-radius-lg);
+
+  background:
+    rgba(255,255,255,0.025);
+}
+
+.stepCard .stepNumber {
+  color: var(--veloop-text-disabled);
+}
+
+.stepCard .stepIcon {
+  margin-top: 18px;
+}
+
+.stepContent h3 {
+  margin: 18px 0 7px;
+
+  color: var(--veloop-gold-light);
+
+  font-size: 0.78rem;
+
+  letter-spacing: 0.12em;
+}
+
+.stepContent p {
+  margin: 0;
+
+  color: var(--veloop-text-secondary);
+
+  font-size: 0.82rem;
+
+  line-height: 1.6;
+}
+
+
+/* =========================================================
+   REWARDS CTA
+========================================================= */
+
+.rewardsCta {
+  position: relative;
+
+  width: min(1100px, calc(100% - 40px));
+
+  min-height: 430px;
+
+  margin:
+    0 auto 100px;
+
+  overflow: hidden;
+
+  display: grid;
+  place-items: center;
+
+  border:
+    1px solid
+    rgba(240,185,11,0.16);
+
+  border-radius: 30px;
+
+  text-align: center;
+
+  background:
+    radial-gradient(
+      circle at 50% 50%,
+      rgba(240,185,11,0.1),
+      transparent 55%
+    ),
+    var(--veloop-surface);
+}
+
+.ctaBackground {
+  position: absolute;
+
+  inset: 0;
+
+  pointer-events: none;
+}
+
+.ctaGlow {
+  position: absolute;
+
+  width: 330px;
+  height: 330px;
+
+  left: 50%;
+  top: 50%;
+
+  transform: translate(-50%, -50%);
+
+  border-radius: 50%;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(240,185,11,0.14),
+      transparent 70%
+    );
+
+  filter: blur(25px);
+}
+
+.ctaContent {
+  position: relative;
+
+  z-index: 2;
+
+  width: min(700px, calc(100% - 40px));
+}
+
+.ctaContent h2 {
+  margin: 0;
+
+  font-size:
+    clamp(2.2rem, 5vw, 4.2rem);
+
+  line-height: 0.98;
+
+  font-weight: 950;
+
+  letter-spacing: -0.055em;
+}
+
+.ctaContent h2 span {
+  color: var(--veloop-gold);
+}
+
+.ctaContent p {
+  max-width: 540px;
+
+  margin:
+    20px auto 25px;
+
+  color: var(--veloop-text-secondary);
+
+  font-size: 0.9rem;
+
+  line-height: 1.65;
+}
+
+.ctaActions {
+  display: flex;
+
+  justify-content: center;
+
+  gap: 10px;
+
+  flex-wrap: wrap;
+}
+
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+.footer {
+  width: min(1280px, calc(100% - 40px));
+
+  margin: 0 auto;
+
+  padding:
+    45px 0 30px;
+
+  border-top: 1px solid var(--veloop-border);
+}
+
+.footerTop {
+  display: flex;
+
+  justify-content: space-between;
+
+  gap: 50px;
+
+  padding-bottom: 35px;
+}
+
+.footerBrand {
+  display: flex;
+  flex-direction: column;
+}
+
+.footerLogo {
+  display: flex;
+  align-items: center;
+
+  gap: 9px;
+
+  color: var(--veloop-text);
+
+  font-size: 1rem;
+  font-weight: 900;
+
+  letter-spacing: 0.12em;
+}
+
+.footerLogo span {
+  width: 31px;
+  height: 31px;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 9px;
+
+  color: #171827;
+
+  background: var(--veloop-gold);
+
+  font-size: 0.9rem;
+}
+
+.footerBrand p {
+  margin: 12px 0 0;
+
+  color: var(--veloop-text-muted);
+
+  font-size: 0.75rem;
+}
+
+.footerLinks {
+  display: flex;
+
+  gap: 80px;
+}
+
+.footerLinks > div {
+  display: flex;
+  flex-direction: column;
+
+  align-items: flex-start;
+
+  gap: 9px;
+}
+
+.footerLinks > div > span {
+  margin-bottom: 4px;
+
+  color: var(--veloop-text-muted);
+
+  font-size: 0.58rem;
+  font-weight: 850;
+
+  letter-spacing: 0.15em;
+}
+
+.footerLinks button {
+  padding: 0;
+
+  border: 0;
+
+  color: var(--veloop-text-secondary);
+
+  background: transparent;
+
+  font-size: 0.75rem;
+
+  cursor: pointer;
+
+  transition: color 180ms ease;
+}
+
+.footerLinks button:hover {
+  color: var(--veloop-gold-light);
+}
+
+.footerBottom {
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 15px;
+
+  padding-top: 20px;
+
+  border-top: 1px solid var(--veloop-border);
+
+  color: var(--veloop-text-disabled);
+
+  font-size: 0.62rem;
+}
+
+
+/* =========================================================
+   RESPONSIVE — TABLET
+========================================================= */
+
+@media (max-width: 900px) {
+  .headerInner {
+    width: min(100% - 28px, 1280px);
   }
 
-  50% {
-    opacity: 1;
-    transform: scaleX(1.15);
+  .loopSection,
+  .exploreSection,
+  .whyPlaySection,
+  .earnSection,
+  .useCoinsSection,
+  .featuredSection,
+  .howWorks {
+    width: min(100% - 28px, 1100px);
+  }
+
+  .loopGrid,
+  .whyPlayGrid,
+  .useCoinsGrid {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+
+  .loopCard:last-child,
+  .whyPlayCard:last-child,
+  .useCoinCard:last-child {
+    grid-column: 1 / -1;
+  }
+
+  .featuredGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .coinShowcaseSection {
+    width: calc(100% - 28px);
+
+    min-height: 570px;
+  }
+
+  .coinShowcaseContent {
+    width: 58%;
+
+    padding: 45px;
+  }
+
+  .bigCoinContainer {
+    width: 45%;
+  }
+
+  .steps,
+  .earnSteps {
+    grid-template-columns:
+      1fr
+      1fr
+      1fr;
+
+    gap: 15px;
+  }
+
+  .stepConnector {
+    display: none;
   }
 }
 
-/* =========================================
-   TABLET
-========================================= */
 
-@media (max-width: 768px) {
-  .hero {
-    min-height: 250px;
+/* =========================================================
+   RESPONSIVE — MOBILE
+========================================================= */
 
-    padding:
-      18px
-      20px
-      28px;
+@media (max-width: 650px) {
+  .page {
+    padding-bottom: 82px;
+  }
+
+  .headerInner {
+    min-height: 68px;
+
+    width: calc(100% - 20px);
   }
 
   .brandMark {
-    width: 28px;
-    height: 28px;
+    width: 34px;
+    height: 34px;
+
+    border-radius: 9px;
   }
 
   .brandName {
     font-size: 0.88rem;
   }
 
-  .coinOne {
-    left: 8%;
-  }
-
-  .coinThree {
-    right: 8%;
-  }
-
-  .coinFive {
-    left: 48%;
-  }
-}
-
-/* =========================================
-   SMALL PHONES
-========================================= */
-
-@media (max-width: 380px) {
-  .hero {
-    min-height: 225px;
-
-    padding:
-      16px
-      16px
-      24px;
-  }
-
   .rewardWallet {
-    width: 44px;
-    min-width: 44px;
-    height: 40px;
+    min-height: 46px;
 
-    padding: 3px;
+    padding: 5px 7px;
 
-    justify-content: center;
+    border-radius: 13px;
   }
 
-  .rewardWallet:hover,
-  .rewardWallet:focus-visible {
-    width: 205px;
+  .rewardItem {
+    gap: 5px;
+
+    padding: 0 4px;
+  }
+
+  .rewardTokenIcon,
+  .rewardCoinIcon {
+    width: 21px;
+    height: 21px;
+  }
+
+  .rewardItemInfo span {
+    font-size: 0.47rem;
+  }
+
+  .rewardItemInfo strong {
+    font-size: 0.72rem;
+  }
+
+  .rewardDivider {
+    height: 23px;
+  }
+
+  .rewardArrow {
+    margin-left: 3px;
+
+    font-size: 1.2rem;
+  }
+
+  .loopSection,
+  .exploreSection,
+  .whyPlaySection,
+  .earnSection,
+  .useCoinsSection,
+  .featuredSection,
+  .howWorks {
+    width: calc(100% - 24px);
+
+    padding-top: 65px;
+    padding-bottom: 75px;
+  }
+
+  .sectionHeading {
+    align-items: flex-start;
+
+    flex-direction: column;
+
+    gap: 18px;
+  }
+
+  .sectionHeadingCentered {
+    margin-bottom: 30px;
+  }
+
+  .sectionHeading h2,
+  .sectionHeadingCentered h2,
+  .howWorksTitle {
+    font-size: 2rem;
+  }
+
+  .loopGrid,
+  .whyPlayGrid,
+  .useCoinsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .loopCard:last-child,
+  .whyPlayCard:last-child,
+  .useCoinCard:last-child {
+    grid-column: auto;
+  }
+
+  .loopCard {
+    min-height: 290px;
+  }
+
+  .loopCardLine {
+    bottom: 20px;
+  }
+
+  .gameCount {
+    align-items: flex-start;
+  }
+
+  .categories {
+    margin-bottom: 12px;
+  }
+
+  .gamesCarouselSection {
+    padding-bottom: 70px;
+  }
+
+  .earnSteps,
+  .steps {
+    display: grid;
+
+    grid-template-columns: 1fr;
+
+    gap: 12px;
+  }
+
+  .earnStep,
+  .stepCard {
+    min-height: auto;
+  }
+
+  .stepConnector {
+    display: none;
+  }
+
+  .coinBalanceShowcase {
+    align-self: stretch;
+  }
+
+  .coinShowcaseSection {
+    width: calc(100% - 24px);
+
+    min-height: 760px;
+
+    margin-bottom: 75px;
+
+    display: flex;
+    flex-direction: column;
+
     justify-content: flex-start;
   }
 
-  .rewardWallet:hover .rewardWalletDetails,
-  .rewardWallet:focus-visible .rewardWalletDetails {
-    width: 158px;
+  .coinShowcaseContent {
+    width: 100%;
+
+    padding: 45px 24px 0;
   }
 
-  .rewardWalletPreview {
-    width: 36px;
-    flex: 0 0 36px;
+  .coinShowcaseContent h2 {
+    font-size: 2.35rem;
   }
 
-  .heroTitle {
-    font-size: 2.25rem;
+  .bigCoinContainer {
+    position: relative;
+
+    width: 100%;
+    height: 350px;
+
+    margin-top: 15px;
   }
 
-  .heroSubtitle {
-    font-size: 0.82rem;
+  .bigCoin {
+    width: 230px;
   }
 
-  .floatingCoin {
-    opacity: 0.11;
+  .showcaseRingOne {
+    width: 300px;
+    height: 300px;
+
+    right: 50%;
+
+    transform:
+      translate(50%, -5%)
+      rotate(-18deg);
+  }
+
+  .showcaseRingTwo {
+    width: 380px;
+    height: 380px;
+
+    right: 50%;
+
+    transform:
+      translate(50%, -5%)
+      rotate(-18deg);
+  }
+
+  .showcaseGlow {
+    width: 300px;
+    height: 300px;
+
+    right: 50%;
+
+    transform:
+      translate(50%, 10%);
+  }
+
+  .featuredGameVisual {
+    min-height: 200px;
+  }
+
+  .featuredGamePattern span {
+    width: 45px;
+    height: 45px;
+
+    border-radius: 10px;
+  }
+
+  .wormzyVisual {
+    font-size: 5rem;
+  }
+
+  .footer {
+    width: calc(100% - 24px);
+  }
+
+  .footerTop {
+    flex-direction: column;
+
+    gap: 35px;
+  }
+
+  .footerLinks {
+    gap: 55px;
+  }
+
+  .footerBottom {
+    flex-direction: column;
+
+    align-items: flex-start;
+  }
+
+  .rewardsCta {
+    width: calc(100% - 24px);
+
+    min-height: 390px;
+
+    margin-bottom: 70px;
+  }
+
+  .ctaContent h2 {
+    font-size: 2.35rem;
   }
 }
 
-/* =========================================
-   REDUCED MOTION
-========================================= */
 
-@media (prefers-reduced-motion: reduce) {
-  .floatingCoin,
-  .heroTitle,
-  .heroAccent {
-    animation: none;
+/* =========================================================
+   VERY SMALL PHONES
+========================================================= */
+
+@media (max-width: 380px) {
+  .brandName {
+    display: none;
   }
 
-  .heroTitle {
-    text-shadow:
-      0 0 20px rgba(240, 185, 11, 0.1),
-      0 5px 28px rgba(0, 0, 0, 0.42);
+  .rewardItemInfo span {
+    font-size: 0.43rem;
+  }
+
+  .rewardItemInfo strong {
+    font-size: 0.68rem;
+  }
+
+  .loopCard,
+  .whyPlayCard,
+  .useCoinCard,
+  .earnStep,
+  .stepCard {
+    padding: 20px;
+  }
+
+  .featuredGameContent {
+    padding: 20px;
+  }
+
+  .coinShowcaseContent {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  .bigCoin {
+    width: 205px;
+  }
+
+  .footerLinks {
+    gap: 35px;
+  }
+}
+
+
+/* =========================================================
+   REDUCED MOTION
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .loopCard,
+  .whyPlayCard,
+  .useCoinCard,
+  .featuredGameCard,
+  .featuredPlayButton,
+  .primaryButton,
+  .secondaryButton,
+  .textLink,
+  .bigCoin {
+    transition: none;
+    animation: none;
   }
 }

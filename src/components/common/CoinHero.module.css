@@ -1,0 +1,679 @@
+.coinHero {
+  --gold: #f0b90b;
+  --gold-light: #ffd75e;
+  --gold-dark: #b87f00;
+
+  position: relative;
+
+  width: 100%;
+  min-height: 620px;
+
+  overflow: hidden;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  color: var(--veloop-text);
+
+  isolation: isolate;
+
+  background:
+    radial-gradient(
+      ellipse at 50% 45%,
+      rgba(240, 185, 11, 0.12) 0%,
+      rgba(240, 185, 11, 0.035) 30%,
+      transparent 68%
+    ),
+    radial-gradient(
+      ellipse at 50% 100%,
+      rgba(139, 108, 255, 0.045),
+      transparent 55%
+    ),
+    var(--veloop-bg);
+}
+
+.coinHero * {
+  box-sizing: border-box;
+}
+
+
+/* =========================================================
+   CANVAS EFFECT
+========================================================= */
+
+.fx {
+  position: absolute;
+
+  inset: 0;
+
+  width: 100%;
+  height: 100%;
+
+  pointer-events: none;
+
+  z-index: 0;
+}
+
+
+/* =========================================================
+   AMBIENT GLOW
+========================================================= */
+
+.glow {
+  position: absolute;
+
+  width: min(70vw, 560px);
+  aspect-ratio: 1;
+
+  left: 50%;
+  top: 40%;
+
+  transform: translate(-50%, -50%);
+
+  border-radius: 50%;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(240, 185, 11, 0.18),
+      rgba(240, 185, 11, 0.055) 38%,
+      transparent 70%
+    );
+
+  filter: blur(28px);
+
+  pointer-events: none;
+
+  z-index: 1;
+
+  animation:
+    glowPulse
+    4.5s
+    ease-in-out
+    infinite;
+}
+
+@keyframes glowPulse {
+  0%,
+  100% {
+    opacity: 0.65;
+
+    transform:
+      translate(-50%, -50%)
+      scale(0.94);
+  }
+
+  50% {
+    opacity: 1;
+
+    transform:
+      translate(-50%, -50%)
+      scale(1.08);
+  }
+}
+
+
+/* =========================================================
+   COIN SCENE
+========================================================= */
+
+.scene {
+  --coin-size: min(58vw, 310px);
+
+  position: relative;
+
+  z-index: 3;
+
+  width: var(--coin-size);
+  height: var(--coin-size);
+
+  perspective: 1100px;
+
+  animation:
+    coinFloat
+    4.5s
+    ease-in-out
+    infinite;
+}
+
+@keyframes coinFloat {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-14px);
+  }
+}
+
+
+/* =========================================================
+   COIN TILT
+========================================================= */
+
+.tilt {
+  width: 100%;
+  height: 100%;
+
+  transform-style: preserve-3d;
+
+  transform:
+    rotateZ(-12deg)
+    rotateX(-14deg);
+}
+
+
+/* =========================================================
+   3D COIN
+========================================================= */
+
+.coin {
+  position: relative;
+
+  width: 100%;
+  height: 100%;
+
+  transform-style: preserve-3d;
+
+  animation:
+    coinSpin
+    7s
+    linear
+    infinite;
+}
+
+@keyframes coinSpin {
+  from {
+    transform: rotateY(0deg);
+  }
+
+  to {
+    transform: rotateY(360deg);
+  }
+}
+
+
+/* =========================================================
+   COIN THICKNESS
+========================================================= */
+
+.layer,
+.face {
+  position: absolute;
+
+  inset: 0;
+
+  border-radius: 50%;
+}
+
+
+/* Edge layers */
+
+.layer {
+  background:
+    linear-gradient(
+      90deg,
+      #8b6100 0%,
+      #f0b90b 18%,
+      #ffd75e 50%,
+      #d99e00 82%,
+      #8b6100 100%
+    );
+
+  box-shadow:
+    inset 0 0 8px rgba(255,255,255,0.18);
+}
+
+
+/* =========================================================
+   COIN FACE
+========================================================= */
+
+.face {
+  display: grid;
+
+  place-items: center;
+
+  backface-visibility: hidden;
+
+  background:
+    radial-gradient(
+      circle at 34% 25%,
+      #fff0a6 0%,
+      #ffd75e 18%,
+      #f0b90b 48%,
+      #c88700 78%,
+      #9b6500 100%
+    );
+
+  border:
+    6px solid rgba(255,255,255,0.18);
+
+  box-shadow:
+    inset 0 0 0 7px rgba(255,255,255,0.1),
+    inset 0 0 0 13px rgba(137,91,0,0.2),
+    inset 0 0 42px rgba(255,255,255,0.16),
+    0 0 35px rgba(240,185,11,0.22);
+}
+
+
+/* =========================================================
+   EMBLEM
+========================================================= */
+
+.face svg {
+  width: 62%;
+
+  filter:
+    drop-shadow(
+      -2px -2px 1px rgba(255,255,255,0.42)
+    )
+    drop-shadow(
+      2px 3px 3px rgba(80,50,0,0.55)
+    );
+}
+
+
+/* =========================================================
+   SHADOW
+========================================================= */
+
+.shadow {
+  position: absolute;
+
+  bottom: 20%;
+
+  z-index: 2;
+
+  width: min(48vw, 270px);
+  height: 30px;
+
+  border-radius: 50%;
+
+  background:
+    radial-gradient(
+      ellipse,
+      rgba(240,185,11,0.28),
+      transparent 70%
+    );
+
+  filter: blur(9px);
+
+  animation:
+    shadowFloat
+    4.5s
+    ease-in-out
+    infinite;
+}
+
+@keyframes shadowFloat {
+  0%,
+  100% {
+    transform: scale(1);
+
+    opacity: 0.7;
+  }
+
+  50% {
+    transform: scale(0.78);
+
+    opacity: 0.4;
+  }
+}
+
+
+/* =========================================================
+   COPY
+========================================================= */
+
+.copy {
+  position: relative;
+
+  z-index: 4;
+
+  width: min(720px, calc(100% - 32px));
+
+  margin-top: 38px;
+
+  text-align: center;
+}
+
+
+/* Eyebrow */
+
+.eyebrow {
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 10px;
+
+  margin-bottom: 13px;
+
+  color: var(--gold-light);
+
+  font-size: 0.66rem;
+
+  font-weight: 850;
+
+  letter-spacing: 0.28em;
+
+  text-transform: uppercase;
+
+  opacity: 0.88;
+}
+
+.eyebrow span {
+  width: 26px;
+  height: 1px;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      var(--gold)
+    );
+}
+
+.eyebrow span:last-child {
+  background:
+    linear-gradient(
+      90deg,
+      var(--gold),
+      transparent
+    );
+}
+
+
+/* Heading */
+
+.copy h1 {
+  margin: 0;
+
+  color: var(--veloop-text);
+
+  font-size:
+    clamp(2.3rem, 6vw, 4.8rem);
+
+  line-height: 0.95;
+
+  font-weight: 950;
+
+  letter-spacing: -0.055em;
+
+  text-shadow:
+    0 0 30px rgba(240,185,11,0.12);
+}
+
+.copy p {
+  max-width: 570px;
+
+  margin:
+    17px auto 25px;
+
+  color: var(--veloop-text-secondary);
+
+  font-size:
+    clamp(0.85rem, 1.8vw, 1rem);
+
+  line-height: 1.7;
+}
+
+
+/* =========================================================
+   PLAY BUTTON
+========================================================= */
+
+.button {
+  position: relative;
+
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 11px;
+
+  min-height: 50px;
+
+  padding:
+    0
+    22px;
+
+  border:
+    1px solid rgba(255,255,255,0.2);
+
+  border-radius: 14px;
+
+  color: #171827;
+
+  background:
+    linear-gradient(
+      135deg,
+      var(--gold-light),
+      var(--gold)
+    );
+
+  font-size: 0.76rem;
+
+  font-weight: 950;
+
+  letter-spacing: 0.08em;
+
+  cursor: pointer;
+
+  overflow: hidden;
+
+  box-shadow:
+    0 12px 30px rgba(240,185,11,0.18),
+    inset 0 1px 0 rgba(255,255,255,0.55);
+
+  transition:
+    transform 220ms ease,
+    box-shadow 220ms ease;
+}
+
+.button::before {
+  content: "";
+
+  position: absolute;
+
+  inset: 0;
+
+  background:
+    linear-gradient(
+      110deg,
+      transparent 25%,
+      rgba(255,255,255,0.55) 50%,
+      transparent 75%
+    );
+
+  background-size: 220% 100%;
+
+  animation:
+    buttonShine
+    3.8s
+    ease-in-out
+    infinite;
+
+  pointer-events: none;
+}
+
+.button span {
+  position: relative;
+
+  z-index: 1;
+}
+
+.buttonArrow {
+  font-size: 1rem;
+
+  transition:
+    transform 220ms ease;
+}
+
+.button:hover {
+  transform:
+    translateY(-3px)
+    scale(1.02);
+
+  box-shadow:
+    0 17px 40px rgba(240,185,11,0.28),
+    0 0 25px rgba(240,185,11,0.12),
+    inset 0 1px 0 rgba(255,255,255,0.65);
+}
+
+.button:hover .buttonArrow {
+  transform: translateX(4px);
+}
+
+.button:active {
+  transform: scale(0.96);
+}
+
+.button:focus-visible {
+  outline:
+    2px solid var(--gold-light);
+
+  outline-offset: 4px;
+}
+
+@keyframes buttonShine {
+  0%,
+  55% {
+    background-position: 180% 0;
+  }
+
+  75%,
+  100% {
+    background-position: -80% 0;
+  }
+}
+
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 900px) {
+  .coinHero {
+    min-height: 570px;
+  }
+
+  .scene {
+    --coin-size: min(52vw, 270px);
+  }
+
+  .copy {
+    margin-top: 30px;
+  }
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 600px) {
+  .coinHero {
+    min-height: 540px;
+
+    padding:
+      35px 0 40px;
+  }
+
+  .scene {
+    --coin-size: min(62vw, 230px);
+  }
+
+  .glow {
+    width: 90vw;
+
+    filter: blur(22px);
+  }
+
+  .shadow {
+    bottom: 27%;
+
+    width: 48vw;
+
+    height: 22px;
+  }
+
+  .copy {
+    width: min(100% - 28px, 520px);
+
+    margin-top: 28px;
+  }
+
+  .eyebrow {
+    font-size: 0.57rem;
+
+    letter-spacing: 0.2em;
+  }
+
+  .copy h1 {
+    font-size:
+      clamp(2.1rem, 11vw, 3.4rem);
+  }
+
+  .copy p {
+    font-size: 0.84rem;
+
+    margin-top: 14px;
+  }
+
+  .button {
+    min-height: 48px;
+
+    padding:
+      0
+      19px;
+  }
+}
+
+
+/* =========================================================
+   SMALL PHONES
+========================================================= */
+
+@media (max-width: 380px) {
+  .coinHero {
+    min-height: 500px;
+  }
+
+  .scene {
+    --coin-size: 190px;
+  }
+
+  .copy {
+    margin-top: 23px;
+  }
+
+  .copy h1 {
+    font-size: 2rem;
+  }
+
+  .copy p {
+    font-size: 0.78rem;
+  }
+}
+
+
+/* =========================================================
+   REDUCED MOTION
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .coin,
+  .scene,
+  .glow,
+  .shadow,
+  .button::before {
+    animation: none !important;
+  }
+}
