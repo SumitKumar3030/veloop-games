@@ -111,15 +111,18 @@ function Home() {
           {/* BRAND */}
 
           <button
-            type="button"
-            className={styles.brand}
-            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-            aria-label="VELOOP Games home"
-          >
-            <span className={styles.brandMark}>V</span>
+  type="button"
+  className={styles.brand}
+  onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+  aria-label="VEl∞p Rewards home"
+>
+  
 
-            <span className={styles.brandName}>VELOOP</span>
-          </button>
+  <span className={styles.brandName}>
+    VEl<span className={styles.infinityMark}>∞</span>p
+    <span className={styles.rewardsBrand}>REWARDS</span>
+  </span>
+</button>
 
           {/* REWARD WALLET */}
 

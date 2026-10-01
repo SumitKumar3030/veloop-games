@@ -22,31 +22,32 @@
 ========================================================= */
 
 .header {
-  position: relative;
-  z-index: 50;
+  position: sticky;
+  top: 0;
+  z-index: 100;
 
   width: 100%;
+  padding: 14px 20px;
 
-  border-bottom: 1px solid var(--veloop-border);
-
-  background:
-    rgba(22, 24, 39, 0.82);
+  background: rgba(22, 24, 39, 0.82);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.055);
 
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
+
+  box-shadow:
+    0 8px 30px rgba(0, 0, 0, 0.16),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.02);
 }
 
 .headerInner {
-  width: min(1400px, calc(100% - 40px));
-
-  min-height: 76px;
-
+  width: min(1280px, 100%);
+  min-height: 54px;
   margin: 0 auto;
 
   display: flex;
   align-items: center;
   justify-content: space-between;
-
   gap: 20px;
 }
 
@@ -54,149 +55,209 @@
 /* BRAND */
 
 .brand {
+  position: relative;
+
   display: inline-flex;
   align-items: center;
 
-  gap: 10px;
-
-  padding: 0;
-
+  padding: 6px 0;
   border: 0;
-
   background: transparent;
 
   color: var(--veloop-text);
-
   cursor: pointer;
+
+  transition:
+    transform 220ms ease,
+    opacity 220ms ease;
 }
 
-.brandMark {
-  width: 38px;
-  height: 38px;
+.brand:hover {
+  transform: translateY(-1px);
+}
 
-  display: grid;
-  place-items: center;
+.brand:active {
+  transform: scale(0.97);
+}
 
-  border-radius: 11px;
-
-  color: #171827;
-
-  background:
-    linear-gradient(
-      135deg,
-      var(--veloop-gold-light),
-      var(--veloop-gold)
-    );
-
-  font-size: 1.15rem;
-  font-weight: 950;
-
-  box-shadow:
-    0 7px 20px rgba(240, 185, 11, 0.16);
+.brand:focus-visible {
+  outline: 2px solid var(--veloop-gold);
+  outline-offset: 5px;
+  border-radius: 8px;
 }
 
 .brandName {
-  font-size: 1.05rem;
-  font-weight: 900;
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
 
-  letter-spacing: 0.16em;
+  color: var(--veloop-text);
+
+  font-size: 1.35rem;
+  font-weight: 850;
+  line-height: 1;
+
+  letter-spacing: -0.045em;
+  white-space: nowrap;
 }
 
 
 /* REWARD WALLET */
 
 .rewardWallet {
+  position: relative;
+
   display: flex;
   align-items: center;
 
-  min-height: 52px;
+  padding: 7px 10px;
 
-  padding: 7px 11px;
-
-  border: 1px solid var(--veloop-border-strong);
+  border: 1px solid rgba(255, 255, 255, 0.075);
   border-radius: 15px;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.055),
+      rgba(255, 255, 255, 0.018)
+    );
 
   color: var(--veloop-text);
 
-  background:
-    rgba(255, 255, 255, 0.035);
-
   cursor: pointer;
 
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.035);
+
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+
   transition:
-    border-color 180ms ease,
-    background 180ms ease,
-    transform 180ms ease;
+    transform 220ms ease,
+    border-color 220ms ease,
+    background 220ms ease,
+    box-shadow 220ms ease;
 }
 
 .rewardWallet:hover {
-  transform: translateY(-1px);
+  transform: translateY(-2px);
 
-  border-color:
-    rgba(240, 185, 11, 0.3);
+  border-color: rgba(240, 185, 11, 0.24);
 
   background:
-    rgba(240, 185, 11, 0.055);
+    linear-gradient(
+      135deg,
+      rgba(240, 185, 11, 0.075),
+      rgba(255, 255, 255, 0.025)
+    );
+
+  box-shadow:
+    0 12px 30px rgba(0, 0, 0, 0.22),
+    0 0 24px rgba(240, 185, 11, 0.055);
+}
+
+.rewardWallet:active {
+  transform: scale(0.98);
+}
+
+.rewardWallet:focus-visible {
+  outline: 2px solid var(--veloop-gold);
+  outline-offset: 3px;
 }
 
 .rewardItem {
   display: flex;
   align-items: center;
-
   gap: 8px;
 
-  padding: 0 8px;
-}
-
-.rewardTokenIcon,
-.rewardCoinIcon {
-  width: 25px;
-  height: 25px;
-
-  object-fit: contain;
-
-  flex: 0 0 auto;
+  min-width: 82px;
 }
 
 .rewardItemInfo {
   display: flex;
   flex-direction: column;
-
-  align-items: flex-start;
-
-  gap: 1px;
+  gap: 3px;
 }
 
 .rewardItemInfo span {
   color: var(--veloop-text-muted);
 
-  font-size: 0.55rem;
+  font-size: 0.54rem;
   font-weight: 800;
-
-  letter-spacing: 0.1em;
+  letter-spacing: 0.08em;
+  line-height: 1;
 }
 
 .rewardItemInfo strong {
   color: var(--veloop-text);
 
   font-size: 0.82rem;
-  font-weight: 900;
+  font-weight: 800;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.rewardTokenIcon {
+  width: 25px;
+  height: 25px;
+
+  object-fit: contain;
+
+  filter:
+    drop-shadow(0 0 7px rgba(240, 185, 11, 0.16));
+
+  transition:
+    transform 220ms ease,
+    filter 220ms ease;
+}
+
+.rewardCoinIcon {
+  width: 25px;
+  height: 25px;
+
+  object-fit: contain;
+
+  filter:
+    drop-shadow(0 0 8px rgba(240, 185, 11, 0.18));
+
+  transition:
+    transform 220ms ease,
+    filter 220ms ease;
+}
+
+.rewardWallet:hover .rewardTokenIcon,
+.rewardWallet:hover .rewardCoinIcon {
+  transform: scale(1.08);
+  filter:
+    drop-shadow(0 0 11px rgba(240, 185, 11, 0.28));
 }
 
 .rewardDivider {
   width: 1px;
   height: 28px;
 
-  background: var(--veloop-border-strong);
+  margin: 0 9px;
+
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .rewardArrow {
-  margin-left: 7px;
+  margin-left: 5px;
 
-  color: var(--veloop-gold-light);
+  color: var(--veloop-text-muted);
 
-  font-size: 1.45rem;
+  font-size: 1.25rem;
   line-height: 1;
+
+  transition:
+    color 200ms ease,
+    transform 200ms ease;
+}
+
+.rewardWallet:hover .rewardArrow {
+  color: var(--veloop-gold);
+  transform: translateX(2px);
 }
 
 
@@ -1915,35 +1976,40 @@
     padding-bottom: 82px;
   }
 
-  .headerInner {
-    min-height: 68px;
-
-    width: calc(100% - 20px);
+  .header {
+    padding: 11px 14px;
   }
 
-  .brandMark {
-    width: 34px;
-    height: 34px;
-
-    border-radius: 9px;
+  .headerInner {
+    min-height: 48px;
+    gap: 10px;
   }
 
   .brandName {
-    font-size: 0.88rem;
+    font-size: 1.08rem;
+  }
+
+  .rewardsBrand {
+    margin-left: 6px;
+    font-size: 0.44em;
   }
 
   .rewardWallet {
-    min-height: 46px;
-
-    padding: 5px 7px;
-
+    padding: 6px 7px;
     border-radius: 13px;
   }
 
   .rewardItem {
+    min-width: auto;
     gap: 5px;
+  }
 
-    padding: 0 4px;
+  .rewardItemInfo span {
+    font-size: 0.46rem;
+  }
+
+  .rewardItemInfo strong {
+    font-size: 0.72rem;
   }
 
   .rewardTokenIcon,
@@ -1952,23 +2018,15 @@
     height: 21px;
   }
 
-  .rewardItemInfo span {
-    font-size: 0.47rem;
-  }
-
-  .rewardItemInfo strong {
-    font-size: 0.72rem;
-  }
-
   .rewardDivider {
-    height: 23px;
+    height: 24px;
+    margin: 0 5px;
   }
 
   .rewardArrow {
-    margin-left: 3px;
-
-    font-size: 1.2rem;
+    display: none;
   }
+
 
   .loopSection,
   .exploreSection,
@@ -2232,5 +2290,113 @@
   .bigCoin {
     transition: none;
     animation: none;
+  }
+}
+
+/* =====================================================
+   VELOOP REWARDS BRAND
+===================================================== */
+
+/* 1. Add a parent style to handle the hover trigger & base text shimmer setup */
+.brandName {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  
+  /* Shimmer gradient setup for the text parts */
+  background: linear-gradient(
+    to right, 
+    var(--veloop-text) 20%, 
+    #ffffff 40%, 
+    #ffffff 60%, 
+    var(--veloop-text) 80%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  transition: background-position 0.6s ease;
+}
+
+/* Trigger text shimmer seamlessly on hover */
+.brand:hover .brandName {
+  background-position: -200% center;
+  animation: logoShimmer 1.5s linear infinite;
+}
+
+.infinityMark {
+  display: inline-block;
+  margin: 0 3px;
+  font-size: 1.2em; /* Slightly boosted to highlight the star of the logo */
+  font-weight: 800;
+  line-height: 1;
+  text-shadow: 0 0 14px rgba(240, 185, 11, 0.4);
+  
+  /* Overwrite transparent text fill from parent to keep it gold */
+  -webkit-text-fill-color: initial; 
+  color: var(--veloop-gold);
+  
+  /* Smooth continuous infinity pulse/weave */
+  animation: infinityWave 4s ease-in-out infinite;
+  transform-origin: center;
+}
+
+/* Enhance the infinity mark action on hover */
+.brand:hover .infinityMark {
+  animation: infinityHoverSpin 1.8s ease-in-out infinite;
+  text-shadow: 0 0 20px rgba(240, 185, 11, 0.7);
+}
+
+.rewardsBrand {
+  display: inline-block;
+  margin-left: 8px;
+  font-size: 0.7em;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  
+  /* Overwrite parent transparent text fill to use your secondary color */
+  -webkit-text-fill-color: initial;
+  color: var(--veloop-text-secondary);
+  opacity: 0.85;
+  transition: opacity 0.3s ease, color 0.3s ease;
+}
+
+/* Make REWARDS elegant on hover */
+.brand:hover .rewardsBrand {
+  opacity: 1;
+  color: var(--veloop-text);
+}
+
+/* =====================================================
+   ANIMATIONS
+===================================================== */
+
+/* Subtle breathing & slight tilt wave for idle state */
+@keyframes infinityWave {
+  0%, 100% {
+    transform: translateY(1px) scale(1) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-1px) scale(1.05) rotate(4deg);
+  }
+}
+
+/* Elegant horizontal loop twist when user hovers */
+@keyframes infinityHoverSpin {
+  0% {
+    transform: translateY(1px) rotateY(0deg);
+  }
+  50% {
+    transform: translateY(1px) rotateY(180deg);
+  }
+  100% {
+    transform: translateY(1px) rotateY(360deg);
+  }
+}
+
+/* Text Shimmer loop */
+@keyframes logoShimmer {
+  to {
+    background-position: -200% center;
   }
 }
