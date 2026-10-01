@@ -287,32 +287,23 @@
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
-
   gap: 30px;
-
   margin-bottom: 30px;
 }
 
 .sectionHeadingCentered {
   max-width: 700px;
-
-  margin: 0 auto 42px;
-
+  margin: 0 auto 32px; /* Reduced from 42px to tighten the gap */
   text-align: center;
 }
 
 .sectionEyebrow {
   display: inline-block;
-
   margin-bottom: 11px;
-
   color: var(--veloop-gold-light);
-
   font-size: 0.63rem;
   font-weight: 850;
-
   letter-spacing: 0.2em;
-
   text-transform: uppercase;
 }
 
@@ -320,16 +311,10 @@
 .sectionHeadingCentered h2,
 .howWorksTitle {
   margin: 0;
-
   color: var(--veloop-text);
-
-  font-size:
-    clamp(2rem, 4vw, 3.3rem);
-
+  font-size: clamp(2rem, 4vw, 3.3rem);
   line-height: 1;
-
   font-weight: 950;
-
   letter-spacing: -0.045em;
 }
 
@@ -342,93 +327,89 @@
 .sectionHeading p,
 .sectionHeadingCentered p {
   margin: 12px 0 0;
-
   color: var(--veloop-text-secondary);
-
   font-size: 0.9rem;
   line-height: 1.6;
 }
 
 
 /* =========================================================
-   PLAY / EARN / REDEEM
+   PLAY / EARN / REDEEM (UPDATED FOR RESPONSIVENESS & EFFECTS)
 ========================================================= */
 
 .loopSection {
-  padding-top: 105px;
-  padding-bottom: 115px;
+  padding-top: 40px; /* Reduced from 105px to eliminate the massive gap below CoinHero */
+  padding-bottom: 100px;
+  padding-left: 20px;
+  padding-right: 20px;
 }
 
 .loopGrid {
   display: grid;
-
-  grid-template-columns:
-    repeat(3, minmax(0, 1fr));
-
-  gap: 18px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .loopCard {
   position: relative;
-
-  min-height: 330px;
-
-  padding: 25px;
-
+  min-height: 320px;
+  padding: 30px 25px;
   overflow: hidden;
-
   border: 1px solid var(--veloop-border);
-
   border-radius: var(--veloop-radius-lg);
-
-  background:
-    linear-gradient(
-      145deg,
-      rgba(255, 255, 255, 0.045),
-      rgba(255, 255, 255, 0.018)
-    );
-
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.045),
+    rgba(255, 255, 255, 0.018)
+  );
+  /* Smooth transitions for interactive properties */
   transition:
-    transform 220ms ease,
-    border-color 220ms ease,
-    background 220ms ease;
+    transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1),
+    border-color 0.3s ease,
+    background 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
+/* Premium ambient backdrop glow */
 .loopCard::before {
   content: "";
-
   position: absolute;
-
-  width: 180px;
-  height: 180px;
-
+  width: 200px;
+  height: 200px;
   right: -80px;
   top: -80px;
-
   border-radius: 50%;
-
-  background:
-    radial-gradient(
-      circle,
-      rgba(240, 185, 11, 0.12),
-      transparent 68%
-    );
-
+  background: radial-gradient(
+    circle,
+    rgba(240, 185, 11, 0.12),
+    transparent 70%
+  );
   pointer-events: none;
+  transition: transform 0.5s ease, background 0.5s ease;
 }
 
+/* High-end Hover Interactions */
 .loopCard:hover {
-  transform: translateY(-6px);
+  transform: translateY(-8px);
+  border-color: rgba(240, 185, 11, 0.4);
+  background: linear-gradient(
+    145deg,
+    rgba(240, 185, 11, 0.08),
+    rgba(255, 255, 255, 0.02)
+  );
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4), 0 0 20px rgba(240, 185, 11, 0.03);
+}
 
-  border-color:
-    rgba(240, 185, 11, 0.26);
-
-  background:
-    linear-gradient(
-      145deg,
-      rgba(240, 185, 11, 0.065),
-      rgba(255, 255, 255, 0.018)
-    );
+/* Animate the backdrop glow position on hover */
+.loopCard:hover::before {
+  transform: scale(1.2) translate(-20px, 20px);
+  background: radial-gradient(
+    circle,
+    rgba(240, 185, 11, 0.22),
+    transparent 70%
+  );
 }
 
 .loopCardTop {
@@ -439,191 +420,299 @@
 
 .loopNumber {
   color: var(--veloop-text-disabled);
-
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   font-weight: 900;
-
   letter-spacing: 0.1em;
+  opacity: 0.6;
 }
 
 .loopIcon {
-  width: 52px;
-  height: 52px;
-
+  width: 54px;
+  height: 54px;
   display: grid;
   place-items: center;
-
-  border: 1px solid
-    rgba(240, 185, 11, 0.16);
-
-  border-radius: 15px;
-
-  background:
-    rgba(240, 185, 11, 0.07);
-
-  font-size: 1.45rem;
+  border: 1px solid rgba(240, 185, 11, 0.2);
+  border-radius: 16px;
+  background: rgba(240, 185, 11, 0.06);
+  font-size: 1.5rem;
+  transition: transform 0.3s ease, background-color 0.3s ease;
 }
 
 .loopIcon img {
-  width: 30px;
-  height: 30px;
-
+  width: 32px;
+  height: 32px;
   object-fit: contain;
+}
+
+/* Pop effect on icon when card is hovered */
+.loopCard:hover .loopIcon {
+  transform: scale(1.1) rotate(-4deg);
+  background: rgba(240, 185, 11, 0.15);
+  box-shadow: 0 0 15px rgba(240, 185, 11, 0.2);
 }
 
 .loopLabel {
   display: block;
-
-  margin-top: 34px;
-
+  margin-top: 30px;
   color: var(--veloop-gold);
-
-  font-size: 0.65rem;
+  font-size: 0.68rem;
   font-weight: 900;
-
-  letter-spacing: 0.16em;
+  letter-spacing: 0.18em;
 }
 
 .loopCard h3 {
-  margin: 8px 0 10px;
-
-  font-size: 1.35rem;
+  margin: 6px 0 10px;
+  font-size: 1.4rem;
   font-weight: 850;
-
   letter-spacing: -0.025em;
+  color: var(--veloop-text);
 }
 
 .loopCard p {
   max-width: 360px;
-
   margin: 0;
-
   color: var(--veloop-text-secondary);
-
-  font-size: 0.87rem;
-
-  line-height: 1.65;
+  font-size: 0.88rem;
+  line-height: 1.6;
 }
 
+/* Animated structural bottom border accent line */
 .loopCardLine {
   position: absolute;
-
-  left: 25px;
-  right: 25px;
-  bottom: 22px;
-
-  height: 1px;
-
-  background:
-    linear-gradient(
-      90deg,
-      var(--veloop-gold),
-      transparent
-    );
-
-  opacity: 0.35;
+  left: 0;
+  bottom: 0;
+  height: 2px;
+  width: 40px; /* Short subtle accent line by default */
+  background: linear-gradient(
+    90deg,
+    var(--veloop-gold),
+    transparent
+  );
+  opacity: 0.5;
+  transition: width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.3s ease;
 }
 
+/* Expand the bottom accent line completely across the card on hover */
+.loopCard:hover .loopCardLine {
+  width: 100%;
+  opacity: 1;
+  background: linear-gradient(
+    90deg,
+    var(--veloop-gold),
+    rgba(240, 185, 11, 0.4),
+    transparent
+  );
+}
+
+
+/* =========================================================
+   MEDIA QUERIES (TABLET & MOBILE RESPONSIVENESS)
+========================================================= */
+
+/* Tablets & Small Laptops */
+@media (max-width: 900px) {
+  .loopGrid {
+    gap: 15px;
+  }
+  .loopCard {
+    padding: 20px;
+    min-height: 290px;
+  }
+  .loopSection {
+    padding-top: 30px;
+  }
+}
+
+/* Mobile Screen Layout -> Horizontal Rows Transformation */
+@media (max-width: 650px) {
+  .loopSection {
+    padding-top: 20px;
+    padding-bottom: 60px;
+  }
+
+  .loopGrid {
+    grid-template-columns: 1fr; /* Convert vertical columns into rows stacked vertically */
+    gap: 16px;
+  }
+
+  .loopCard {
+    display: flex;
+    flex-direction: column;
+    min-height: auto; /* Allow flexible height as content spreads out horizontally */
+    padding: 24px;
+  }
+
+  /* Structural rearrangement for beautiful horizontal readability on mobile devices */
+  .loopCardTop {
+    order: 1;
+    margin-bottom: 0;
+  }
+
+  .loopLabel {
+    order: 2;
+    margin-top: 14px; /* Tightened label space */
+  }
+
+  .loopCard h3 {
+    order: 3;
+    margin-top: 4px;
+    margin-bottom: 6px;
+    font-size: 1.25rem;
+  }
+
+  .loopCard p {
+    order: 4;
+    max-width: 100%; /* Take up complete screen row width */
+    font-size: 0.85rem;
+  }
+}
 
 /* =========================================================
    EXPLORE GAMES
 ========================================================= */
 
 .exploreSection {
-  padding-top: 80px;
+  padding-top: 40px; /* Reduced from 80px to pull it closer to the Reward Loop section */
   padding-bottom: 12px;
+  padding-left: 20px;
+  padding-right: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
+/* Enhanced Section Heading for alignment across all layouts */
+.exploreSection .sectionHeading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 30px;
+  margin-bottom: 24px; /* Reduced to bring filter pills closer to heading */
+}
+
+/* Premium Dashboard-style Game Counter Badge */
 .gameCount {
   min-width: 90px;
-
   display: flex;
   flex-direction: column;
   align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 4px;
 }
 
 .gameCount strong {
   color: var(--veloop-gold);
-
-  font-size: 2.2rem;
-  line-height: 1;
-
+  font-size: clamp(2rem, 3.5vw, 2.4rem); /* Responsive scaling font size */
+  line-height: 0.95;
   font-weight: 950;
+  text-shadow: 0 0 15px rgba(240, 185, 11, 0.2);
 }
 
 .gameCount span {
   margin-top: 4px;
-
   color: var(--veloop-text-muted);
-
   font-size: 0.58rem;
   font-weight: 850;
-
   letter-spacing: 0.16em;
 }
 
+/* Clean Pill Carousel Row */
 .categories {
   display: flex;
   align-items: center;
-
-  gap: 8px;
-
+  gap: 10px; /* Enhanced pill spacing */
   margin-bottom: 20px;
-
   overflow-x: auto;
-
   scrollbar-width: none;
+  padding: 4px 0; /* Clear container overflow edge clipping shadows */
 }
 
 .categories::-webkit-scrollbar {
   display: none;
 }
 
+/* High-End interactive capsule button */
 .categoryButton {
   flex: 0 0 auto;
-
-  min-height: 38px;
-
-  padding:
-    0
-    15px;
-
+  min-height: 40px;
+  padding: 0 20px; /* Increased side padding for a more modern appearance */
   border: 1px solid var(--veloop-border);
-
   border-radius: 999px;
-
   color: var(--veloop-text-secondary);
-
-  background:
-    rgba(255, 255, 255, 0.025);
-
-  font-size: 0.72rem;
+  background: rgba(255, 255, 255, 0.02);
+  font-size: 0.75rem;
   font-weight: 750;
-
   cursor: pointer;
-
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03); /* Subtle high-end inner rim lighting */
   transition:
-    color 180ms ease,
-    border-color 180ms ease,
-    background 180ms ease;
+    color 0.25s cubic-bezier(0.25, 0.8, 0.25, 1),
+    border-color 0.25s cubic-bezier(0.25, 0.8, 0.25, 1),
+    background 0.25s cubic-bezier(0.25, 0.8, 0.25, 1),
+    transform 0.2s ease,
+    box-shadow 0.25s ease;
 }
 
+/* Tactile bounce feedback on hover */
 .categoryButton:hover {
   color: var(--veloop-text);
-
-  border-color:
-    rgba(240, 185, 11, 0.3);
+  border-color: rgba(240, 185, 11, 0.45);
+  background: rgba(240, 185, 11, 0.04);
+  transform: translateY(-1px);
 }
 
+/* Press interaction feedback */
+.categoryButton:active {
+  transform: translateY(0);
+}
+
+/* Vibrant state for active elements */
 .categoryActive {
   color: #171827;
-
   border-color: var(--veloop-gold);
-
   background: var(--veloop-gold);
-
   font-weight: 900;
+  box-shadow: 
+    0 4px 14px rgba(240, 185, 11, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3); /* Premium internal highlight glow */
 }
+
+/* Hover guard safety lock when the filter is already chosen */
+.categoryActive:hover {
+  color: #171827;
+  background: var(--veloop-gold);
+  border-color: var(--veloop-gold);
+  transform: none;
+  box-shadow: 0 4px 14px rgba(240, 185, 11, 0.35);
+}
+
+
+/* =========================================================
+   MEDIA QUERIES (TABLET & MOBILE RESPONSIVENESS)
+========================================================= */
+
+@media (max-width: 650px) {
+  .exploreSection {
+    padding-top: 25px; /* Pull tighter on smaller mobile screens */
+  }
+
+  /* Split layout stack adjustment so headings and metrics scale cleanly on phones */
+  .exploreSection .sectionHeading {
+    flex-direction: row; 
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  .exploreSection .sectionHeading p {
+    max-width: 80%; /* Ensure text blocks don't collide with the counter badge */
+  }
+
+  .gameCount {
+    align-items: flex-end;
+    min-width: auto;
+  }
+}
+
 
 
 /* =========================================================

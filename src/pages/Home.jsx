@@ -70,12 +70,10 @@ function Home() {
   };
 
   const scrollToGames = () => {
-    document
-      .getElementById("explore-games")
-      ?.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-      });
+    document.getElementById("explore-games")?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
   };
 
   const handleStartPlaying = () => {
@@ -111,18 +109,16 @@ function Home() {
           {/* BRAND */}
 
           <button
-  type="button"
-  className={styles.brand}
-  onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-  aria-label="VEl∞p Rewards home"
->
-  
-
-  <span className={styles.brandName}>
-    VEl<span className={styles.infinityMark}>∞</span>p
-    <span className={styles.rewardsBrand}>REWARDS</span>
-  </span>
-</button>
+            type="button"
+            className={styles.brand}
+            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+            aria-label="VEl∞p Rewards home"
+          >
+            <span className={styles.brandName}>
+              VEl<span className={styles.infinityMark}>∞</span>p
+              <span className={styles.rewardsBrand}>REWARDS</span>
+            </span>
+          </button>
 
           {/* REWARD WALLET */}
 
@@ -182,17 +178,13 @@ function Home() {
 
         <section className={styles.loopSection}>
           <div className={styles.sectionHeadingCentered}>
-            <span className={styles.sectionEyebrow}>
-              THE REWARD LOOP
-            </span>
+            <span className={styles.sectionEyebrow}>THE REWARD LOOP</span>
 
             <h2>
               Play. Earn. <span>Redeem.</span>
             </h2>
 
-            <p>
-              A simple journey from gameplay to rewards.
-            </p>
+            <p>A simple journey from gameplay to rewards.</p>
           </div>
 
           <div className={styles.loopGrid}>
@@ -212,8 +204,8 @@ function Home() {
               <h3>Choose Your Challenge</h3>
 
               <p>
-                Pick a game from the VELOOP Games collection and put your
-                skills to the test.
+                Pick a game from the VELOOP Games collection and put your skills
+                to the test.
               </p>
 
               <div className={styles.loopCardLine} />
@@ -226,10 +218,7 @@ function Home() {
                 <span className={styles.loopNumber}>02</span>
 
                 <div className={styles.loopIcon}>
-                  <img
-                    src="/assets/icons/game-coin-icon.png"
-                    alt=""
-                  />
+                  <img src="/assets/icons/game-coin-icon.png" alt="" />
                 </div>
               </div>
 
@@ -238,8 +227,8 @@ function Home() {
               <h3>Collect Game Coins</h3>
 
               <p>
-                Complete challenges, improve your performance and collect
-                Game Coins through gameplay.
+                Complete challenges, improve your performance and collect Game
+                Coins through gameplay.
               </p>
 
               <div className={styles.loopCardLine} />
@@ -261,8 +250,8 @@ function Home() {
               <h3>Turn Coins Into Rewards</h3>
 
               <p>
-                Use your Game Coins inside the Rewards Center and continue
-                the loop.
+                Use your Game Coins inside the Rewards Center and continue the
+                loop.
               </p>
 
               <div className={styles.loopCardLine} />
@@ -274,10 +263,7 @@ function Home() {
             04 — EXPLORE GAMES
         ==================================================== */}
 
-        <section
-          className={styles.exploreSection}
-          id="explore-games"
-        >
+        <section className={styles.exploreSection} id="explore-games">
           <div className={styles.sectionHeading}>
             <div>
               <span className={styles.sectionEyebrow}>
@@ -288,9 +274,7 @@ function Home() {
                 Explore <span>Games</span>
               </h2>
 
-              <p>
-                Pick your challenge. Play with skill. Earn your reward.
-              </p>
+              <p>Pick your challenge. Play with skill. Earn your reward.</p>
             </div>
 
             <div className={styles.gameCount}>
@@ -309,31 +293,19 @@ function Home() {
               All Games
             </button>
 
-            <button
-              type="button"
-              className={styles.categoryButton}
-            >
+            <button type="button" className={styles.categoryButton}>
               Arcade
             </button>
 
-            <button
-              type="button"
-              className={styles.categoryButton}
-            >
+            <button type="button" className={styles.categoryButton}>
               Puzzle
             </button>
 
-            <button
-              type="button"
-              className={styles.categoryButton}
-            >
+            <button type="button" className={styles.categoryButton}>
               Adventure
             </button>
 
-            <button
-              type="button"
-              className={styles.categoryButton}
-            >
+            <button type="button" className={styles.categoryButton}>
               Skill
             </button>
           </div>
@@ -353,65 +325,48 @@ function Home() {
 
         <section className={styles.whyPlaySection}>
           <div className={styles.sectionHeadingCentered}>
-            <span className={styles.sectionEyebrow}>
-              MORE THAN JUST GAMES
-            </span>
+            <span className={styles.sectionEyebrow}>MORE THAN JUST GAMES</span>
 
             <h2>
               Why <span>Play?</span>
             </h2>
 
-            <p>
-              Every game is part of the VELOOP reward journey.
-            </p>
+            <p>Every game is part of the VELOOP reward journey.</p>
           </div>
 
           <div className={styles.whyPlayGrid}>
             <article className={styles.whyPlayCard}>
-              <div className={styles.cardIcon}>
-                🎮
-              </div>
+              <div className={styles.cardIcon}>🎮</div>
 
-              <span className={styles.cardNumber}>
-                01
-              </span>
+              <span className={styles.cardNumber}>01</span>
 
               <h3>Play & Challenge</h3>
 
               <p>
-                Jump into exciting games and challenge yourself across
-                different game styles.
+                Jump into exciting games and challenge yourself across different
+                game styles.
               </p>
             </article>
 
             <article className={styles.whyPlayCard}>
               <div className={styles.cardIcon}>
-                <img
-                  src="/assets/icons/game-coin-icon.png"
-                  alt=""
-                />
+                <img src="/assets/icons/game-coin-icon.png" alt="" />
               </div>
 
-              <span className={styles.cardNumber}>
-                02
-              </span>
+              <span className={styles.cardNumber}>02</span>
 
               <h3>Earn Game Coins</h3>
 
               <p>
-                Complete games, improve your performance and collect Game
-                Coins as you play.
+                Complete games, improve your performance and collect Game Coins
+                as you play.
               </p>
             </article>
 
             <article className={styles.whyPlayCard}>
-              <div className={styles.cardIcon}>
-                🎁
-              </div>
+              <div className={styles.cardIcon}>🎁</div>
 
-              <span className={styles.cardNumber}>
-                03
-              </span>
+              <span className={styles.cardNumber}>03</span>
 
               <h3>Redeem Rewards</h3>
 
@@ -430,24 +385,17 @@ function Home() {
         <section className={styles.earnSection}>
           <div className={styles.sectionHeading}>
             <div>
-              <span className={styles.sectionEyebrow}>
-                BUILD YOUR BALANCE
-              </span>
+              <span className={styles.sectionEyebrow}>BUILD YOUR BALANCE</span>
 
               <h2>
                 How to Earn <span>Game Coins</span>
               </h2>
 
-              <p>
-                Play, perform and collect Game Coins along the way.
-              </p>
+              <p>Play, perform and collect Game Coins along the way.</p>
             </div>
 
             <div className={styles.coinBalanceShowcase}>
-              <img
-                src="/assets/icons/game-coin-icon.png"
-                alt=""
-              />
+              <img src="/assets/icons/game-coin-icon.png" alt="" />
 
               <div>
                 <span>YOUR BALANCE</span>
@@ -459,61 +407,43 @@ function Home() {
 
           <div className={styles.earnSteps}>
             <article className={styles.earnStep}>
-              <span className={styles.stepNumber}>
-                01
-              </span>
+              <span className={styles.stepNumber}>01</span>
 
-              <div className={styles.stepIcon}>
-                🎮
-              </div>
+              <div className={styles.stepIcon}>🎮</div>
 
               <h3>Play Games</h3>
 
               <p>
-                Enter your favourite game using Tokens and start your
-                challenge.
+                Enter your favourite game using Tokens and start your challenge.
               </p>
             </article>
 
             <div className={styles.stepConnector} />
 
             <article className={styles.earnStep}>
-              <span className={styles.stepNumber}>
-                02
-              </span>
+              <span className={styles.stepNumber}>02</span>
 
-              <div className={styles.stepIcon}>
-                🏆
-              </div>
+              <div className={styles.stepIcon}>🏆</div>
 
               <h3>Complete Challenges</h3>
 
               <p>
-                Finish levels, score higher and complete gameplay
-                objectives.
+                Finish levels, score higher and complete gameplay objectives.
               </p>
             </article>
 
             <div className={styles.stepConnector} />
 
             <article className={styles.earnStep}>
-              <span className={styles.stepNumber}>
-                03
-              </span>
+              <span className={styles.stepNumber}>03</span>
 
               <div className={styles.stepIcon}>
-                <img
-                  src="/assets/icons/game-coin-icon.png"
-                  alt=""
-                />
+                <img src="/assets/icons/game-coin-icon.png" alt="" />
               </div>
 
               <h3>Collect Game Coins</h3>
 
-              <p>
-                Successful gameplay adds Game Coins to your reward
-                balance.
-              </p>
+              <p>Successful gameplay adds Game Coins to your reward balance.</p>
             </article>
           </div>
         </section>
@@ -532,16 +462,12 @@ function Home() {
               How to Use <span>Game Coins</span>
             </h2>
 
-            <p>
-              Turn the coins you earn through gameplay into rewards.
-            </p>
+            <p>Turn the coins you earn through gameplay into rewards.</p>
           </div>
 
           <div className={styles.useCoinsGrid}>
             <article className={styles.useCoinCard}>
-              <div className={styles.useCoinIcon}>
-                🎁
-              </div>
+              <div className={styles.useCoinIcon}>🎁</div>
 
               <span>01</span>
 
@@ -554,31 +480,24 @@ function Home() {
             </article>
 
             <article className={styles.useCoinCard}>
-              <div className={styles.useCoinIcon}>
-                ✨
-              </div>
+              <div className={styles.useCoinIcon}>✨</div>
 
               <span>02</span>
 
               <h3>Explore Rewards</h3>
 
-              <p>
-                Discover the different reward options available to you.
-              </p>
+              <p>Discover the different reward options available to you.</p>
             </article>
 
             <article className={styles.useCoinCard}>
-              <div className={styles.useCoinIcon}>
-                🚀
-              </div>
+              <div className={styles.useCoinIcon}>🚀</div>
 
               <span>03</span>
 
               <h3>Keep Playing</h3>
 
               <p>
-                Play more games and continue building your Game Coin
-                balance.
+                Play more games and continue building your Game Coin balance.
               </p>
             </article>
           </div>
@@ -608,14 +527,10 @@ function Home() {
                 Featured <span>Games</span>
               </h2>
 
-              <p>
-                Take on deeper challenges in our fully playable games.
-              </p>
+              <p>Take on deeper challenges in our fully playable games.</p>
             </div>
 
-            <span className={styles.featuredBadge}>
-              2 PLAYABLE
-            </span>
+            <span className={styles.featuredBadge}>2 PLAYABLE</span>
           </div>
 
           <div className={styles.featuredGrid}>
@@ -633,9 +548,7 @@ function Home() {
                   <span>512</span>
                 </div>
 
-                <div className={styles.featuredGameBadge}>
-                  PLAYABLE
-                </div>
+                <div className={styles.featuredGameBadge}>PLAYABLE</div>
               </div>
 
               <div className={styles.featuredGameContent}>
@@ -645,16 +558,12 @@ function Home() {
 
                 <h3>Merge Master</h3>
 
-                <p>
-                  Merge numbers, build combos and chase your highest score.
-                </p>
+                <p>Merge numbers, build combos and chase your highest score.</p>
 
                 <button
                   type="button"
                   className={styles.featuredPlayButton}
-                  onClick={() =>
-                    navigate("/games/merge-master")
-                  }
+                  onClick={() => navigate("/games/merge-master")}
                 >
                   <span>Play Merge Master</span>
                   <span>→</span>
@@ -672,9 +581,7 @@ function Home() {
                   <span>🐍</span>
                 </div>
 
-                <div className={styles.featuredGameBadge}>
-                  PLAYABLE
-                </div>
+                <div className={styles.featuredGameBadge}>PLAYABLE</div>
               </div>
 
               <div className={styles.featuredGameContent}>
@@ -685,16 +592,13 @@ function Home() {
                 <h3>Wormzy</h3>
 
                 <p>
-                  Solve levels, collect apples and guide Wormzy to the
-                  exit.
+                  Solve levels, collect apples and guide Wormzy to the exit.
                 </p>
 
                 <button
                   type="button"
                   className={styles.featuredPlayButton}
-                  onClick={() =>
-                    navigate("/games/wormzy")
-                  }
+                  onClick={() => navigate("/games/wormzy")}
                 >
                   <span>Play Wormzy</span>
                   <span>→</span>
@@ -722,9 +626,7 @@ function Home() {
           </div>
 
           <div className={styles.coinShowcaseContent}>
-            <span className={styles.sectionEyebrow}>
-              YOUR REWARD CURRENCY
-            </span>
+            <span className={styles.sectionEyebrow}>YOUR REWARD CURRENCY</span>
 
             <h2>
               Every Game.
@@ -735,15 +637,12 @@ function Home() {
             </h2>
 
             <p>
-              Game Coins are at the heart of the VELOOP Games experience.
-              Keep playing and keep earning.
+              Game Coins are at the heart of the VELOOP Games experience. Keep
+              playing and keep earning.
             </p>
 
             <div className={styles.showcaseBalance}>
-              <img
-                src="/assets/icons/game-coin-icon.png"
-                alt=""
-              />
+              <img src="/assets/icons/game-coin-icon.png" alt="" />
 
               <div>
                 <span>CURRENT GAME COINS</span>
@@ -763,10 +662,7 @@ function Home() {
 
           <div className={styles.bigCoinContainer}>
             <div className={styles.bigCoin}>
-              <img
-                src="/assets/icons/game-coin-icon.png"
-                alt="Game Coin"
-              />
+              <img src="/assets/icons/game-coin-icon.png" alt="Game Coin" />
             </div>
           </div>
         </section>
@@ -777,9 +673,7 @@ function Home() {
 
         <section className={styles.howWorks}>
           <div className={styles.howWorksHeader}>
-            <span className={styles.sectionEyebrow}>
-              THE VELOOP JOURNEY
-            </span>
+            <span className={styles.sectionEyebrow}>THE VELOOP JOURNEY</span>
 
             <h2 className={styles.howWorksTitle}>
               Play. Earn. <span>Redeem.</span>
@@ -792,63 +686,44 @@ function Home() {
 
           <div className={styles.steps}>
             <article className={styles.stepCard}>
-              <div className={styles.stepNumber}>
-                01
-              </div>
+              <div className={styles.stepNumber}>01</div>
 
-              <div className={styles.stepIcon}>
-                🎮
-              </div>
+              <div className={styles.stepIcon}>🎮</div>
 
               <div className={styles.stepContent}>
                 <h3>PLAY</h3>
 
-                <p>
-                  Choose a game and put your skills to the test.
-                </p>
+                <p>Choose a game and put your skills to the test.</p>
               </div>
             </article>
 
             <div className={styles.stepConnector} />
 
             <article className={styles.stepCard}>
-              <div className={styles.stepNumber}>
-                02
-              </div>
+              <div className={styles.stepNumber}>02</div>
 
               <div className={styles.stepIcon}>
-                <img
-                  src="/assets/icons/game-coin-icon.png"
-                  alt=""
-                />
+                <img src="/assets/icons/game-coin-icon.png" alt="" />
               </div>
 
               <div className={styles.stepContent}>
                 <h3>EARN</h3>
 
-                <p>
-                  Complete challenges and collect Game Coins.
-                </p>
+                <p>Complete challenges and collect Game Coins.</p>
               </div>
             </article>
 
             <div className={styles.stepConnector} />
 
             <article className={styles.stepCard}>
-              <div className={styles.stepNumber}>
-                03
-              </div>
+              <div className={styles.stepNumber}>03</div>
 
-              <div className={styles.stepIcon}>
-                🎁
-              </div>
+              <div className={styles.stepIcon}>🎁</div>
 
               <div className={styles.stepContent}>
                 <h3>REDEEM</h3>
 
-                <p>
-                  Exchange your Game Coins for exciting rewards.
-                </p>
+                <p>Exchange your Game Coins for exciting rewards.</p>
               </div>
             </article>
           </div>
@@ -864,9 +739,7 @@ function Home() {
           </div>
 
           <div className={styles.ctaContent}>
-            <span className={styles.sectionEyebrow}>
-              READY TO PLAY?
-            </span>
+            <span className={styles.sectionEyebrow}>READY TO PLAY?</span>
 
             <h2>
               Your next reward
@@ -875,8 +748,7 @@ function Home() {
             </h2>
 
             <p>
-              Choose your challenge, earn Game Coins and keep the loop
-              going.
+              Choose your challenge, earn Game Coins and keep the loop going.
             </p>
 
             <div className={styles.ctaActions}>
@@ -919,17 +791,11 @@ function Home() {
             <div>
               <span>EXPLORE</span>
 
-              <button
-                type="button"
-                onClick={scrollToGames}
-              >
+              <button type="button" onClick={scrollToGames}>
                 Games
               </button>
 
-              <button
-                type="button"
-                onClick={() => navigate("/redeem")}
-              >
+              <button type="button" onClick={() => navigate("/redeem")}>
                 Rewards
               </button>
             </div>
@@ -937,17 +803,11 @@ function Home() {
             <div>
               <span>ACCOUNT</span>
 
-              <button
-                type="button"
-                onClick={() => navigate("/profile")}
-              >
+              <button type="button" onClick={() => navigate("/profile")}>
                 Profile
               </button>
 
-              <button
-                type="button"
-                onClick={() => navigate("/redeem")}
-              >
+              <button type="button" onClick={() => navigate("/redeem")}>
                 Redeem
               </button>
             </div>
