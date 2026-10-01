@@ -225,19 +225,48 @@
 
 .copy h1 {
   margin: 0;
-  color: var(--veloop-text);
   font-size: clamp(2.4rem, 6vw, 4.8rem);
   line-height: 0.95;
   font-weight: 950;
   letter-spacing: -0.055em;
   text-shadow: 0 0 30px rgba(240, 185, 11, 0.12);
+
+  /* --- SHIMMER EFFECT ADDITIONS --- */
+  /* 1. Base gold color, bright white-gold shine, back to base gold */
+  background: linear-gradient(
+    to right, 
+    var(--gold) 20%, 
+    #fffce0 40%, 
+    #fffce0 60%, 
+    var(--gold) 80%
+  );
+  background-size: 200% auto;
+  
+  /* 2. Clip the gradient to the text shapes */
+  -webkit-background-clip: text;
+  background-clip: text;
+  
+  /* 3. Hide the original text fill so the gradient shines through */
+  -webkit-text-fill-color: transparent;
+  
+  /* 4. Trigger the loop animation */
+  animation: goldShimmer 3.5s linear infinite;
 }
+
+/* 5. The keyframe animation that moves the shine across the words */
+@keyframes goldShimmer {
+  to {
+    background-position: 200% center;
+  }
+}
+
 
 .copy p {
   max-width: 570px;
   margin: 17px auto 25px;
   color: var(--veloop-text-secondary);
-  font-size: clamp(0.85rem, 1.8vw, 1rem);
+  font:100% "Inter", roboto;
+  font-size: clamp(1.1rem, 1.8vw, 1.2rem);
   line-height: 1.7;
 }
 
