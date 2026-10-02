@@ -7,6 +7,7 @@ import { useTokens } from "../context/TokenStore";
 
 import GameGuide from "../components/games/GameGuide";
 import BottomNav from "../components/common/BottomNav";
+import GameLoader from "../components/common/GameLoader";
 import GameArtworkPreloader from "../components/common/GameArtworkPreloader";
 
 import MergeMasterGame from "../games/MergeMaster/Game";
@@ -76,7 +77,7 @@ function GameHome() {
       }
 
       setIsStarting(false);
-    }, 450);
+    }, 900);
   };
 
   const handleGuideClose = () => {
@@ -144,6 +145,16 @@ function GameHome() {
           { value: "EARN", label: "REWARDS", icon: "✦" },
           { value: "20", label: "TOKEN COST", icon: "◈" },
         ];
+
+  if (isStarting) {
+    return (
+      <GameLoader
+        theme="light"
+        title={`Starting ${game.name}...`}
+        subtitle="Preparing your game..."
+      />
+    );
+  }
 
   return (
     <GameArtworkPreloader key={game.slug} game={game}>
