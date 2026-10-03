@@ -732,8 +732,8 @@
 ========================================================= */
 
 .whyPlaySection {
-  padding-top: 90px;
-  padding-bottom: 110px;
+  padding-top: 1px;
+  padding-bottom: 40px;
 }
 
 .whyPlayGrid {
@@ -831,8 +831,8 @@
 ========================================================= */
 
 .earnSection {
-  padding-top: 90px;
-  padding-bottom: 110px;
+  padding-top: 40px;
+  padding-bottom: 40px;
 }
 
 .coinBalanceShowcase {
@@ -979,8 +979,8 @@
 ========================================================= */
 
 .useCoinsSection {
-  padding-top: 90px;
-  padding-bottom: 110px;
+  padding-top: 40px;
+  padding-bottom: 40px;
 
   text-align: center;
 }
@@ -1099,8 +1099,8 @@
 ========================================================= */
 
 .featuredSection {
-  padding-top: 90px;
-  padding-bottom: 110px;
+  padding-top: 40px;
+  padding-bottom: 40px;
 }
 
 .featuredBadge {
@@ -1611,7 +1611,7 @@
   min-height: 46px;
 
   padding:
-    0 18px;
+    20px 100px;
 
   border-radius: 12px;
 
@@ -1665,8 +1665,8 @@
 ========================================================= */
 
 .howWorks {
-  padding-top: 90px;
-  padding-bottom: 110px;
+  padding-top: 40px;
+  padding-bottom: 40px;
 }
 
 .howWorksHeader {
