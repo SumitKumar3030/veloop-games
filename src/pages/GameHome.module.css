@@ -995,9 +995,66 @@
 }
 
 .intelIcon {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border: 1px solid rgba(240, 185, 11, 0.22);
+  border-radius: 14px;
+  background:
+    radial-gradient(
+      circle at 50% 35%,
+      rgba(240, 185, 11, 0.18),
+      transparent 68%
+    ),
+    rgba(240, 185, 11, 0.055);
+  color: var(--veloop-gold-light);
+  font-size: 1.55rem;
+  font-weight: 800;
+  line-height: 1;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 8px 22px rgba(0, 0, 0, 0.16);
+  transition:
+    transform 250ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    border-color 250ms ease,
+    box-shadow 250ms ease;
+}
+
+.intelIcon::after {
+  content: "";
+  position: absolute;
+  inset: -5px;
+  border-radius: 18px;
+  border: 1px solid rgba(240, 185, 11, 0.08);
+  opacity: 0;
+  transform: scale(0.88);
+  transition:
+    opacity 250ms ease,
+    transform 250ms ease;
+}
+
+.intelCard:hover .intelIcon {
+  transform: translateY(-3px) scale(1.04);
+  border-color: rgba(240, 185, 11, 0.4);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 10px 28px rgba(0, 0, 0, 0.2),
+    0 0 22px rgba(240, 185, 11, 0.1);
+}
+
+.intelCard:hover .intelIcon::after {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.intelCard strong {
   display: block;
-  color: var(--veloop-gold);
-  font-size: 0.8rem;
+  margin-top: 17px;
+  color: var(--text);
+  font-size: 1.65rem;
+  line-height: 1;
 }
 
 .intelCard strong {
@@ -1049,9 +1106,59 @@
 }
 
 .stepIcon {
-  margin-top: 25px;
-  color: var(--veloop-gold);
-  font-size: 1.3rem;
+  position: relative;
+  width: 52px;
+  height: 52px;
+  margin-top: 22px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(240, 185, 11, 0.22);
+  border-radius: 15px;
+  background:
+    radial-gradient(
+      circle at 50% 35%,
+      rgba(240, 185, 11, 0.18),
+      transparent 68%
+    ),
+    rgba(240, 185, 11, 0.055);
+  color: var(--veloop-gold-light);
+  font-size: 1.55rem;
+  font-weight: 800;
+  line-height: 1;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 8px 22px rgba(0, 0, 0, 0.16);
+  transition:
+    transform 250ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    border-color 250ms ease,
+    box-shadow 250ms ease;
+}
+
+.stepIcon::after {
+  content: "";
+  position: absolute;
+  inset: -5px;
+  border: 1px solid rgba(240, 185, 11, 0.08);
+  border-radius: 19px;
+  opacity: 0;
+  transform: scale(0.88);
+  transition:
+    opacity 250ms ease,
+    transform 250ms ease;
+}
+
+.stepCard:hover .stepIcon {
+  transform: translateY(-3px) scale(1.05);
+  border-color: rgba(240, 185, 11, 0.4);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 10px 28px rgba(0, 0, 0, 0.2),
+    0 0 22px rgba(240, 185, 11, 0.1);
+}
+
+.stepCard:hover .stepIcon::after {
+  opacity: 1;
+  transform: scale(1);
 }
 
 .stepCard h3 {
@@ -1738,9 +1845,19 @@
     padding: 17px;
   }
 
-  .stepIcon {
-    margin-top: 18px;
-  }
+ .stepIcon {
+  width: 46px;
+  height: 46px;
+  margin-top: 18px;
+  font-size: 1.35rem;
+}
+
+.intelIcon {
+  width: 44px;
+  height: 44px;
+  border-radius: 13px;
+  font-size: 1.4rem;
+}
 
   .rewardSection {
     grid-template-columns: 1fr;

@@ -347,7 +347,7 @@ function GameHome() {
                     <div className={styles.artworkShine} />
 
                     <div className={styles.artworkBadge}>
-                      <span>20</span>
+                      <span>{game.cost}</span>
                       <small>TOKENS</small>
                     </div>
                   </div>

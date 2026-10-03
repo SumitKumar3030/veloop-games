@@ -285,9 +285,9 @@ function rotatePositionCounterClockwise(
 export function move(grid, direction) {
   const rotations = {
     left: 0,
-    up: 1,
+    up: 3,
     right: 2,
-    down: 3,
+    down: 1,
   };
 
   const steps = rotations[direction];
