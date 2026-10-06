@@ -26,9 +26,9 @@ const LEVELS = [
     platforms: [
       { row: 4, col: 0 }, { row: 4, col: 1 }, { row: 4, col: 2 }, { row: 4, col: 3 },
       { row: 4, col: 4 }, { row: 4, col: 5 }, { row: 4, col: 6 }, { row: 4, col: 7 },
-      { row: 4, col: 8 }, { row: 4, col: 9 },
+      { row: 4, col: 8 }, { row: 4, col: 9 }, { row: 5, col: 4 }, { row: 6, col: 4 },
     ],
-    spikes: [],
+    spikes: [{row: 3, col: 5}],
     stones: [],
     targets: [],
     apples: [{ row: 3, col: 4 }, { row: 3, col: 7 }],

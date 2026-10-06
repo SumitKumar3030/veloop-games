@@ -2784,13 +2784,14 @@
   }
 
   .missionStats {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(4, minmax(0, 1fr));
 
     border-left: 0;
     border-top: 1px solid var(--wormzy-border);
   }
 
   .missionStat {
+    min-width: 0;
     border-left: 1px solid var(--wormzy-border);
   }
 
@@ -2799,7 +2800,8 @@
   }
 
   .gameLayout {
-    grid-template-columns: minmax(0, 1fr) 220px;
+    grid-template-columns: minmax(0, 1fr) 205px;
+    gap: 10px;
   }
 
   .sidePanel {
@@ -2808,6 +2810,75 @@
 
   .boardColumn {
     min-width: 0;
+    width: 100%;
+  }
+
+  .howToPanel {
+    min-width: 0;
+  }
+
+  .howVisual {
+    height: 135px;
+  }
+
+  .instruction {
+    grid-template-columns: 22px minmax(0, 1fr);
+  }
+
+  .missionDescription {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 820px) {
+  .gameContainer {
+    padding: 10px;
+  }
+
+  .gameLayout {
+    grid-template-columns: minmax(0, 1fr) 185px;
+    gap: 9px;
+  }
+
+  .howVisual {
+    height: 120px;
+  }
+
+  .instruction {
+    padding: 9px 2px;
+  }
+
+  .instruction strong {
+    font-size: 7px;
+  }
+
+  .instruction p {
+    font-size: 7px;
+  }
+
+  .tipBox {
+    margin: 8px;
+    padding: 9px;
+  }
+
+  .missionMain {
+    padding: 19px;
+  }
+
+  .missionStats {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .missionStat {
+    padding: 10px 8px;
+  }
+
+  .missionStat small {
+    font-size: 6px;
+  }
+
+  .missionStat strong {
+    font-size: 12px;
   }
 }
 
@@ -2818,6 +2889,11 @@
 @media (max-width: 700px) {
   .gameContainer {
     padding: 8px;
+  }
+
+  .game {
+    width: 100%;
+    min-width: 0;
   }
 
   .gameNav {
@@ -2831,26 +2907,38 @@
   }
 
   .navActions {
+    min-width: 0;
     gap: 6px;
   }
 
   .navLevel {
+    min-width: 0;
     margin-right: 0;
   }
 
+  .navLevel strong,
+  .navLevel small {
+    white-space: nowrap;
+  }
+
   .navBack {
+    min-width: 0;
     font-size: 11px;
   }
 
   .navBackIcon {
+    flex: 0 0 auto;
     width: 30px;
     height: 30px;
   }
 
   .iconButton {
+    flex: 0 0 auto;
     width: 34px;
     height: 34px;
   }
+
+  /* HERO */
 
   .heroBanner {
     min-height: 185px;
@@ -2862,13 +2950,19 @@
     padding: 28px 15px;
   }
 
+  .heroCopy {
+    max-width: 100%;
+  }
+
   .heroCopy h1 {
-    font-size: clamp(48px, 17vw, 72px);
+    font-size: clamp(46px, 17vw, 72px);
   }
 
   .heroCopy p {
+    max-width: 100%;
     font-size: 8px;
-    letter-spacing: 0.22em;
+    line-height: 1.5;
+    letter-spacing: 0.2em;
   }
 
   .heroSymbol {
@@ -2893,11 +2987,14 @@
     right: 10%;
   }
 
+  /* MISSION */
+
   .missionPanel {
     border-radius: 16px;
   }
 
   .missionMain {
+    min-width: 0;
     padding: 17px;
   }
 
@@ -2912,30 +3009,46 @@
   }
 
   .missionDescription {
+    max-width: 100%;
     font-size: 10px;
+    line-height: 1.6;
   }
 
   .objectiveRow {
+    min-width: 0;
     align-items: flex-start;
   }
 
+  .objectiveIcon {
+    flex: 0 0 auto;
+  }
+
   .objectiveCopy {
-    flex: 1;
+    min-width: 0;
+    flex: 1 1 auto;
+  }
+
+  .objectiveCopy strong {
+    overflow-wrap: anywhere;
   }
 
   .appleProgress {
+    flex: 0 0 65px;
     width: 65px;
+    margin-left: auto;
   }
 
   .missionStats {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 
   .missionStat {
+    min-width: 0;
     padding: 11px 7px;
   }
 
   .missionStat small {
+    overflow-wrap: anywhere;
     font-size: 6px;
   }
 
@@ -2943,21 +3056,41 @@
     font-size: 11px;
   }
 
+  /* GAME */
+
   .gameLayout {
     display: block;
+    width: 100%;
     margin-top: 10px;
   }
 
+  .boardColumn {
+    width: 100%;
+    min-width: 0;
+  }
+
   .howToPanel {
+    width: 100%;
     margin-top: 12px;
   }
 
+  .boardTopline {
+    min-width: 0;
+  }
+
+  .boardTopline > span,
+  .boardStatus {
+    min-width: 0;
+  }
+
   .boardShell {
+    width: 100%;
     padding: 6px;
     border-radius: 16px;
   }
 
   .board {
+    width: 100%;
     border-radius: 11px;
   }
 
@@ -2966,15 +3099,18 @@
     font-size: 6px;
   }
 
+  /* CONTROLS */
+
   .mobileControls {
     display: block;
   }
 
+  /* DETAILS */
+
   .detailsSection {
     display: block;
-
     margin-top: 25px;
-    padding-top: 24px;
+    padding: 24px 0 10px;
   }
 
   .detailIntro h2 {
@@ -2986,8 +3122,10 @@
   }
 
   .detailGrid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  /* FOOTER */
 
   .gameFooter {
     align-items: flex-start;
@@ -3003,7 +3141,14 @@
     padding: 0;
   }
 
+  /* OVERLAYS */
+
+  .boardOverlay {
+    padding: 12px;
+  }
+
   .stateCard {
+    width: min(390px, 100%);
     padding: 22px 18px;
     border-radius: 18px;
   }
@@ -3012,16 +3157,22 @@
     font-size: 21px;
   }
 
-  .completeStats {
-    gap: 0;
+  .countdownCard {
+    width: min(210px, 80%);
   }
 
+  /* MODAL */
+
   .modalBackdrop {
-    align-items: start;
+    align-items: flex-start;
     padding: 12px;
   }
 
   .howModal {
+    width: min(560px, 100%);
+    max-height: calc(100svh - 24px);
+    overflow-y: auto;
+
     margin: auto 0;
     padding: 24px 18px;
     border-radius: 19px;
@@ -3032,6 +3183,7 @@
   }
 }
 
+
 /* ============================================================
    SMALL PHONES
    ============================================================ */
@@ -3039,6 +3191,12 @@
 @media (max-width: 430px) {
   .gameContainer {
     padding: 6px;
+  }
+
+  /* NAV */
+
+  .gameNav {
+    gap: 6px;
   }
 
   .navBack span:last-child {
@@ -3062,13 +3220,23 @@
     font-size: 12px;
   }
 
+  .navLevel small {
+    font-size: 8px;
+  }
+
+  /* HERO */
+
   .heroBanner,
   .heroContent {
     min-height: 165px;
   }
 
+  .heroContent {
+    padding: 24px 10px;
+  }
+
   .heroCopy h1 {
-    font-size: 52px;
+    font-size: clamp(46px, 15vw, 52px);
   }
 
   .heroEyebrow {
@@ -3082,7 +3250,15 @@
 
   .heroCopy p {
     font-size: 7px;
+    letter-spacing: 0.16em;
   }
+
+  .heroSymbol {
+    width: 32px;
+    height: 32px;
+  }
+
+  /* MISSION */
 
   .missionMain {
     padding: 14px;
@@ -3090,6 +3266,10 @@
 
   .missionTitleRow h2 {
     font-size: 22px;
+  }
+
+  .objectiveRow {
+    gap: 8px;
   }
 
   .objectiveIcon {
@@ -3102,15 +3282,21 @@
   }
 
   .appleProgress {
+    flex-basis: 50px;
     width: 50px;
   }
 
+  .appleProgress strong {
+    font-size: 11px;
+  }
+
   .missionStats {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .missionStat {
     min-height: 58px;
+    padding: 10px;
   }
 
   .missionStat:nth-child(3) {
@@ -3122,7 +3308,11 @@
     border-top: 1px solid var(--wormzy-border);
   }
 
+  /* BOARD */
+
   .boardTopline {
+    margin-left: 2px;
+    margin-right: 2px;
     font-size: 6px;
   }
 
@@ -3131,9 +3321,19 @@
     border-radius: 14px;
   }
 
+  .board {
+    border-radius: 10px;
+  }
+
+  .boardLegend {
+    gap: 7px;
+  }
+
   .boardLegend span:nth-child(n + 4) {
     display: none;
   }
+
+  /* CONTROLS */
 
   .mobileControls {
     padding: 13px;
@@ -3152,11 +3352,19 @@
     height: 44px;
   }
 
+  /* DETAILS */
+
+  .detailsSection {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
   .detailGrid {
     gap: 7px;
   }
 
   .detailCard {
+    min-width: 0;
     padding: 13px;
   }
 
@@ -3168,8 +3376,254 @@
     font-size: 8px;
   }
 
+  /* FOOTER */
+
   .footerCenter {
     flex-wrap: wrap;
+  }
+
+  /* OVERLAYS */
+
+  .boardOverlay {
+    padding: 8px;
+  }
+
+  .stateCard {
+    padding: 18px 14px;
+  }
+
+  .stateIcon,
+  .dangerIcon,
+  .completeIcon,
+  .trophyIcon {
+    width: 44px;
+    height: 44px;
+    margin-bottom: 11px;
+  }
+
+  .stateCard h2 {
+    font-size: 19px;
+  }
+
+  .stateCard > p {
+    font-size: 10px;
+    margin-bottom: 14px;
+  }
+
+  .countdownCard {
+    width: 170px;
+    padding: 20px;
+  }
+
+  .countdownCard strong {
+    font-size: 52px;
+  }
+
+  /* MODAL */
+
+  .modalBackdrop {
+    padding: 8px;
+  }
+
+  .howModal {
+    max-height: calc(100svh - 16px);
+    padding: 22px 14px;
+    border-radius: 17px;
+  }
+
+  .modalClose {
+    top: 12px;
+    right: 12px;
+  }
+
+  .howModal h2 {
+    padding-right: 38px;
+    font-size: 25px;
+  }
+
+  .modalIntro {
+    font-size: 10px;
+  }
+
+  .modalSteps > div {
+    padding: 12px;
+  }
+}
+
+@media (max-width: 360px) {
+  .gameContainer {
+    padding: 4px;
+  }
+
+  .gameNav {
+    padding-left: 2px;
+    padding-right: 2px;
+  }
+
+  .iconButton {
+    width: 32px;
+    height: 32px;
+  }
+
+  .navBackIcon {
+    width: 32px;
+    height: 32px;
+  }
+
+  .navLevel strong {
+    font-size: 11px;
+  }
+
+  .heroBanner,
+  .heroContent {
+    min-height: 150px;
+  }
+
+  .heroCopy h1 {
+    font-size: 45px;
+  }
+
+  .heroCopy p {
+    max-width: 230px;
+    margin-inline: auto;
+    line-height: 1.6;
+  }
+
+  .heroSymbol {
+    width: 28px;
+    height: 28px;
+  }
+
+  .missionMain {
+    padding: 12px;
+  }
+
+  .missionLabel,
+  .panelHeading,
+  .sectionEyebrow {
+    font-size: 8px;
+  }
+
+  .missionTitleRow h2 {
+    font-size: 20px;
+  }
+
+  .missionDescription {
+    font-size: 9px;
+  }
+
+  .objectiveRow {
+    gap: 6px;
+  }
+
+  .objectiveIcon {
+    width: 30px;
+    height: 30px;
+    font-size: 14px;
+  }
+
+  .objectiveCopy strong {
+    font-size: 8px;
+  }
+
+  .appleProgress {
+    flex-basis: 43px;
+    width: 43px;
+  }
+
+  .appleProgress strong {
+    font-size: 10px;
+  }
+
+  .missionStat {
+    min-height: 54px;
+    padding: 8px;
+  }
+
+  .missionStat small {
+    font-size: 5px;
+  }
+
+  .missionStat strong {
+    font-size: 10px;
+  }
+
+  .boardShell {
+    padding: 4px;
+  }
+
+  .boardLegend {
+    gap: 5px;
+    font-size: 5px;
+  }
+
+  .mobileControls {
+    padding: 10px;
+  }
+
+  .dPad {
+    width: 135px;
+    height: 124px;
+
+    grid-template-columns: repeat(3, 40px);
+    grid-template-rows: repeat(2, 40px);
+    gap: 6px;
+  }
+
+  .dPad button {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    font-size: 17px;
+  }
+
+  .detailGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .detailCard {
+    padding: 12px;
+  }
+}
+
+@media (max-width: 900px) and (orientation: landscape) {
+  .gameContainer {
+    padding: 6px;
+  }
+
+  .heroBanner,
+  .heroContent {
+    min-height: 145px;
+  }
+
+  .heroContent {
+    padding: 20px 15px;
+  }
+
+  .heroCopy h1 {
+    font-size: clamp(42px, 10vw, 64px);
+  }
+
+  .missionPanel {
+    margin-top: 10px;
+  }
+
+  .gameLayout {
+    margin-top: 10px;
+  }
+
+  .mobileControls {
+    margin-top: 10px;
+  }
+
+  .howModal {
+    max-height: calc(100svh - 12px);
+    padding-top: 18px;
+    padding-bottom: 18px;
+  }
+
+  .modalBackdrop {
+    padding: 6px;
   }
 }
 
