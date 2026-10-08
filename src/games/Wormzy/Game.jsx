@@ -1013,6 +1013,50 @@ function WormzyGame({ onGameEnd, onExit, onGameOver }) {
             </div>
           </div>
 
+           {/* =========================================================
+            MOBILE CONTROLS
+        ========================================================= */}
+        <section className={styles.mobileControls}>
+          <div className={styles.mobileControlTitle}>
+            <span>MOVE WORMZY</span>
+            <small>SWIPE OR TAP</small>
+          </div>
+
+          <div className={styles.dPad}>
+            <button
+              type="button"
+              onClick={() => handleMove("up")}
+              aria-label="Move up"
+            >
+              ↑
+            </button>
+
+            <button
+              type="button"
+              onClick={() => handleMove("left")}
+              aria-label="Move left"
+            >
+              ←
+            </button>
+
+            <button
+              type="button"
+              onClick={() => handleMove("down")}
+              aria-label="Move down"
+            >
+              ↓
+            </button>
+
+            <button
+              type="button"
+              onClick={() => handleMove("right")}
+              aria-label="Move right"
+            >
+              →
+            </button>
+          </div>
+        </section>
+
           {/* RIGHT PANEL */}
           <aside className={styles.howToPanel}>
             <div className={styles.panelHeading}>
@@ -1095,49 +1139,6 @@ function WormzyGame({ onGameEnd, onExit, onGameOver }) {
           </aside>
         </section>
 
-        {/* =========================================================
-            MOBILE CONTROLS
-        ========================================================= */}
-        <section className={styles.mobileControls}>
-          <div className={styles.mobileControlTitle}>
-            <span>MOVE WORMZY</span>
-            <small>SWIPE OR TAP</small>
-          </div>
-
-          <div className={styles.dPad}>
-            <button
-              type="button"
-              onClick={() => handleMove("up")}
-              aria-label="Move up"
-            >
-              ↑
-            </button>
-
-            <button
-              type="button"
-              onClick={() => handleMove("left")}
-              aria-label="Move left"
-            >
-              ←
-            </button>
-
-            <button
-              type="button"
-              onClick={() => handleMove("down")}
-              aria-label="Move down"
-            >
-              ↓
-            </button>
-
-            <button
-              type="button"
-              onClick={() => handleMove("right")}
-              aria-label="Move right"
-            >
-              →
-            </button>
-          </div>
-        </section>
 
         {/* =========================================================
             DETAILS
