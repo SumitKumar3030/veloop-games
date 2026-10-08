@@ -17,6 +17,13 @@ export const KEY_TO_DIRECTION = {
   w: "up", W: "up", s: "down", S: "down", a: "left", A: "left", d: "right", D: "right",
 };
 
+export const OPPOSITE_DIRECTION = {
+  up: "down",
+  down: "up",
+  left: "right",
+  right: "left",
+};
+
 // ---------- Level data ----------
 const LEVELS = [
   {
@@ -25,13 +32,14 @@ const LEVELS = [
     worm: [{ row: 3, col: 1 }, { row: 3, col: 0 }],
     platforms: [
       { row: 4, col: 0 }, { row: 4, col: 1 }, { row: 4, col: 2 }, { row: 4, col: 3 },
-      { row: 4, col: 4 }, { row: 4, col: 5 }, { row: 4, col: 6 }, { row: 4, col: 7 },
-      { row: 4, col: 8 }, { row: 4, col: 9 }, { row: 5, col: 4 }, { row: 6, col: 4 },
+      { row: 4, col: 4 }, { row: 4, col: 6 }, { row: 4, col: 7 },
+      { row: 4, col: 8 }, { row: 4, col: 9 }, { row: 5, col: 4 }, {row: 6, col: 5}, {row: 6, col: 6}, 
+      { row: 6, col: 4 }, {row: 5, col: 6},
     ],
-    spikes: [{row: 3, col: 5}],
+    spikes: [{row: 4, col: 5}, {row: 3, col: 7}],
     stones: [],
     targets: [],
-    apples: [{ row: 3, col: 4 }, { row: 3, col: 7 }],
+    apples: [{ row: 3, col: 4 }, { row: 3, col: 6 }],
     hole: { row: 3, col: 9 },
   },
   {
@@ -39,14 +47,14 @@ const LEVELS = [
     description: "Push the stone into the gap to cross safely.",
     worm: [{ row: 3, col: 1 }, { row: 3, col: 0 }],
     platforms: [
-      { row: 4, col: 0 }, { row: 4, col: 1 }, { row: 4, col: 2 }, { row: 4, col: 3 },
-      { row: 4, col: 5 }, { row: 4, col: 6 }, { row: 4, col: 7 }, { row: 4, col: 8 }, { row: 4, col: 9 },
+      { row: 8, col: 3}, {row: 7, col: 4}, {row: 6, col: 5}, {row: 5, col: 6}, {row: 4, col: 7},
+      {row: 3, col: 8}, {row: 2, col: 9}, {row: 6, col: 0}, {row: 6, col: 1}, {row: 8, col: 2}
     ],
     spikes: [],
-    stones: [{ row: 3, col: 3 }],
-    targets: [{ row: 4, col: 4 }],
-    apples: [{ row: 3, col: 2 }, { row: 3, col: 8 }],
-    hole: { row: 3, col: 9 },
+    stones: [],
+    targets: [],
+    apples: [{row: 2, col: 7}, {row: 2, col: 0}],
+    hole: { row: 0, col: 6 },
   },
     {
     name: "Twin Stones",
@@ -381,7 +389,9 @@ export function createLevelState(levelIndex = 0) {
   const settledStones = level.stones.map((s) => dropStoneUntilSupported(rawState, s).pos);
   rawState.stones = settledStones;
 
-  const settledApples = level.apples.map((a) => dropUntilSupported(rawState, a).pos);
+    // Apples are placed exactly where the level designer put them — they do
+  // NOT fall, even if there's no platform below them. Only stones fall.
+  const placedApples = level.apples.map(clone);
 
   return {
     levelIndex,
@@ -392,7 +402,7 @@ export function createLevelState(levelIndex = 0) {
     spikes: level.spikes.map(clone),
     targets: level.targets.map(clone),
     stones: settledStones,
-    apples: settledApples,
+    apples: placedApples,
     applesEaten: 0,
     hole: clone(level.hole),
     requiresLength: level.hole.requiresLength || 0,
@@ -402,25 +412,49 @@ export function createLevelState(levelIndex = 0) {
     failReason: null,
     invalidMove: false,
     lastDirection: null,
+    queuedDirection: null,
   };
 }
 
 // ---------- Movement ----------
+
+// Queue a direction. Reject true 180° reversals based on the current
+// lastDirection (or the queued direction if one is already pending).
+// This lets the UI call queueMove() on every keypress without worrying
+// about dropped or reversed inputs — moveWorm() will consume the queue.
+export function queueMove(state, directionName) {
+  if (!directionName || !DIRECTIONS[directionName]) return state;
+  if (state.completed || state.failed) return state;
+
+  const reference = state.queuedDirection || state.lastDirection;
+  if (reference && OPPOSITE_DIRECTION[reference] === directionName) {
+    return state;
+  }
+
+  if (state.queuedDirection === directionName) return state;
+
+  return { ...state, queuedDirection: directionName };
+}
+
+     //--Movement--//
 export function moveWorm(state, directionName) {
   if (state.completed || state.failed) return state;
 
-  const direction = DIRECTIONS[directionName];
+  // Prefer a queued turn if one is waiting; fall back to the passed-in
+  // direction (used by the auto-tick / tests / direct callers).
+  const effectiveName = state.queuedDirection || directionName;
+  const direction = DIRECTIONS[effectiveName];
   if (!direction) return state;
 
   const head = state.worm[0];
   const nextHead = { row: head.row + direction.row, col: head.col + direction.col };
 
   if (!inBounds(nextHead)) {
-    return { ...state, invalidMove: true };
+        return { ...state, invalidMove: true, queuedDirection: null };
   }
 
   if (findIn(state.platforms, nextHead) !== -1) {
-    return { ...state, invalidMove: true };
+      return { ...state, invalidMove: true, queuedDirection: null };
   }
 
   // Figure out apple-eating up front, since it changes whether the tail
@@ -441,14 +475,14 @@ export function moveWorm(state, directionName) {
       findIn(pushBodyToCheck, pushedTo) !== -1 ||
       findIn(state.apples, pushedTo) !== -1 ||
       same(state.hole, pushedTo);
-    if (blocked) return { ...state, invalidMove: true };
+    if (blocked)  return { ...state, invalidMove: true, queuedDirection: null };
 
     const stonesWithoutThisOne = state.stones.filter((_, i) => i !== stoneIdx);
     const tempState = { ...state, stones: stonesWithoutThisOne };
     const settled = dropStoneUntilSupported(tempState, pushedTo);
 
     if (settled.fellOff || settled.hitSpike) {
-      return { ...state, invalidMove: true };
+        return { ...state, invalidMove: true, queuedDirection: null };
     }
 
     nextStones[stoneIdx] = settled.pos;
@@ -459,7 +493,7 @@ export function moveWorm(state, directionName) {
   // the snake just ate an apple (growing keeps the tail segment in place).
   const bodyToCheck = ateApple ? state.worm : state.worm.slice(0, -1);
   if (findIn(bodyToCheck, nextHead) !== -1) {
-    return { ...state, invalidMove: true };
+        return { ...state, invalidMove: true, queuedDirection: null };
   }
 
   let nextApples = state.apples;
@@ -472,7 +506,7 @@ export function moveWorm(state, directionName) {
     nextWorm = [nextHead, ...state.worm.slice(0, -1).map(clone)];
   }
 
-  let workingState = {
+    let workingState = {
     ...state,
     worm: nextWorm,
     stones: nextStones,
@@ -480,7 +514,8 @@ export function moveWorm(state, directionName) {
     applesEaten: state.applesEaten + (ateApple ? 1 : 0),
     moves: state.moves + 1,
     invalidMove: false,
-    lastDirection: directionName,
+    lastDirection: effectiveName,
+    queuedDirection: null,
   };
 
   if (isSpike(workingState, nextHead)) {
